@@ -10,7 +10,7 @@ Object.assign(TEAMS.svetunited, {
 
 Object.assign(TEAMS.daddytate, {
   name: "Spidey",
-  logo: "/sister-cities/assets/spidey-2026.jpg"
+  logo: "/sister-cities/assets/spidey-logo-v3.jpg"
 });
 
 Object.assign(TEAMS.miami, {
