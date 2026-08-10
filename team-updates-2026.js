@@ -5,17 +5,17 @@
 
 Object.assign(TEAMS.svetunited, {
   name: "Trablos United",
-  logo: "/sister-cities/assets/svetunited.jpg"
+  logo: "/sister-cities/assets/trablos-united-2026.jpg"
 });
 
 Object.assign(TEAMS.daddytate, {
   name: "Spidey",
-  logo: "/sister-cities/assets/daddytate.jpg"
+  logo: "/sister-cities/assets/spidey-2026.jpg"
 });
 
 Object.assign(TEAMS.miami, {
   name: "Buy the Dip-hins",
-  logo: "/sister-cities/assets/miami.jpg"
+  logo: "/sister-cities/assets/buy-the-diphins-2026.jpg"
 });
 
 Object.assign(TEAMS.snorlax, {
