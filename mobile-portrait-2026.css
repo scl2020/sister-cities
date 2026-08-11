@@ -1,0 +1,96 @@
+/* =========================
+   2026 MOBILE PORTRAIT REFINEMENTS
+   Keeps desktop and landscape layouts unchanged.
+   ========================= */
+
+@media (max-width: 720px) and (orientation: portrait){
+  /* Let the league header leave the screen normally while scrolling. */
+  .header{
+    position: static;
+    top: auto;
+    padding: 0 10px 8px;
+  }
+
+  /* Remove the vertical space created by the empty desktop side columns. */
+  .header > .container{
+    padding: 10px 6px 8px;
+  }
+
+  .topbar{
+    gap: 0;
+  }
+
+  .topbar-left,
+  .topbar-right{
+    display: none;
+    min-height: 0;
+  }
+
+  .topbar-center{
+    gap: 10px;
+  }
+
+  .league-logo{
+    height: 64px;
+  }
+
+  .tabs{
+    margin-top: 10px;
+    gap: 8px;
+  }
+
+  .tab{
+    padding: 9px 12px;
+  }
+
+  /* Standings: keep every season on the same predictable five-column grid. */
+  #seasonStandings{
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #seasonStandings .table{
+    width: 100%;
+    min-width: 320px;
+    table-layout: fixed;
+  }
+
+  #seasonStandings .table th,
+  #seasonStandings .table td{
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  #seasonStandings .table th:nth-child(1),
+  #seasonStandings .table td:nth-child(1){ width: 12%; }
+
+  #seasonStandings .table th:nth-child(2),
+  #seasonStandings .table td:nth-child(2){ width: 32%; }
+
+  #seasonStandings .table th:nth-child(3),
+  #seasonStandings .table td:nth-child(3){ width: 18%; }
+
+  #seasonStandings .table th:nth-child(4),
+  #seasonStandings .table td:nth-child(4){ width: 19%; }
+
+  #seasonStandings .table th:nth-child(5),
+  #seasonStandings .table td:nth-child(5){ width: 19%; }
+
+  /* Stack the logo over the team name so long names wrap vertically, not sideways. */
+  #seasonStandings .team-pill{
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #seasonStandings .team-pill-text{
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+}
