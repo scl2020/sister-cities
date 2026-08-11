@@ -84,7 +84,7 @@
         />
         <div class="brand-text">
           <div class="brand-title">Sister Cities</div>
-          <div class="brand-subtitle">Season 2021–2025</div>
+          <div class="brand-subtitle">Season 2020–2025</div>
         </div>
       </div>
 
@@ -115,6 +115,7 @@
         <button class="season-year-button" data-season="2023">2023</button>
         <button class="season-year-button" data-season="2022">2022</button>
         <button class="season-year-button" data-season="2021">2021</button>
+        <button class="season-year-button" data-season="2020">2020</button>
       </div>
     </div>
 
@@ -126,7 +127,13 @@
       </div>
     </div>
 
-    <div class="card">
+    <div
+      id="archivedSeasonNotice"
+      class="muted"
+      style="display:none; text-align:center; font-weight:800; padding:2px 0 16px;"
+    >Season archived on ESPN. No standings or stats available.</div>
+
+    <div id="seasonDetailsCard" class="card">
       <div class="season-subtabs">
         <button class="season-subtab active" data-subtab="standings">Standings</button>
         <button class="season-subtab" data-subtab="stats">Stats</button>
@@ -212,5 +219,6 @@
 
 <script src="./script.js"></script>
 <script src="./team-updates-2026.js"></script>
+<script src="./season-2020-archive.js"></script>
 </body>
 </html>
