@@ -1,0 +1,10 @@
+/* =========================
+   ALL TIME RECORDS — GOLD RECORD VALUES
+   Scoped only to the All Time Records tab.
+   ========================= */
+
+#tab-records .record-value{
+  background: var(--gold);
+  color: #111;
+  font-weight: 950;
+}
