@@ -22,6 +22,11 @@ Object.assign(TEAMS.snorlax, {
   logo: "/sister-cities/assets/snorlax.jpg"
 });
 
+Object.assign(TEAMS.maleksexcornflex, {
+  name: "Invincibles",
+  logo: "/sister-cities/assets/invincibles-logo-2026.jpg"
+});
+
 // =====================
 // 2026 FRANCHISE HUB ORDER
 // Active franchises stay forward; inactive franchises move to the end.
