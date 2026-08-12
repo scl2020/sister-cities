@@ -4,14 +4,14 @@
 .logo-dot .logo-img[src*="invincibles-logo-v3.jpg"],
 .franchise-logoWrap .franchise-logo[src*="invincibles-logo-v3.jpg"],
 .franchise-modal-logoWrap .franchise-modal-logo[src*="invincibles-logo-v3.jpg"]{
-  transform: scale(1.08);
+  transform: scale(1.24);
   transform-origin: center;
 }
 
 /* The champion logo has no separate wrapper, so the clip radius compensates
-   for the 1.08x image zoom and keeps the visible circle at the normal size. */
+   for the 1.24x image zoom and keeps the visible circle at the normal size. */
 #championTeam .champion-team-logo[src*="invincibles-logo-v3.jpg"]{
-  transform: scale(1.08);
+  transform: scale(1.24);
   transform-origin: center;
-  clip-path: circle(46.3% at 50% 50%);
+  clip-path: circle(40.3% at 50% 50%);
 }
