@@ -24,7 +24,7 @@ Object.assign(TEAMS.snorlax, {
 
 Object.assign(TEAMS.maleksexcornflex, {
   name: "Invincibles",
-  logo: "/sister-cities/assets/invincibles-logo-v2.jpg"
+  logo: "/sister-cities/assets/invincibles-logo-v3.jpg"
 });
 
 // =====================
