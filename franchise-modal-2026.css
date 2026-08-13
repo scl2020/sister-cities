@@ -1,0 +1,197 @@
+/* =====================
+   2026 FRANCHISE PROFILE MODAL
+   Scoped to the clicked-team profile only. Franchise Hub grid is untouched.
+   ===================== */
+
+.franchise-modal{
+  backdrop-filter: blur(5px);
+}
+
+.franchise-modal-card{
+  width: min(820px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.42);
+}
+
+.franchise-profile-shell{
+  color: #0b1220;
+}
+
+.franchise-profile-identity{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 24px 22px;
+  background: linear-gradient(180deg, rgba(177,138,0,0.08), rgba(255,255,255,0));
+}
+
+.franchise-profile-stars{
+  min-height: 29px;
+  margin-bottom: 4px;
+  color: #b18a00;
+  font-size: 23px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: 4px;
+}
+
+.franchise-profile-logoWrap{
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid rgba(177,138,0,0.34);
+  background: #ffffff;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+}
+
+.franchise-profile-logo{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.franchise-profile-name{
+  margin-top: 12px;
+  font-size: 30px;
+  line-height: 1.05;
+  font-weight: 950;
+  letter-spacing: -0.5px;
+}
+
+.franchise-profile-owner{
+  margin-top: 7px;
+  color: #5f6b7a;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.franchise-profile-years{
+  margin-top: 8px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.05);
+  color: #5f6b7a;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.25px;
+}
+
+.franchise-profile-columns{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid rgba(0,0,0,0.10);
+}
+
+.franchise-profile-section{
+  min-width: 0;
+  padding: 22px 26px 24px;
+}
+
+.franchise-profile-regular{
+  border-left: 1px solid rgba(0,0,0,0.10);
+}
+
+.franchise-profile-section-title{
+  margin-bottom: 10px;
+  color: #b18a00;
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: 1.6px;
+}
+
+.franchise-profile-stat{
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+}
+
+.franchise-profile-stat:last-child{
+  border-bottom: 0;
+}
+
+.franchise-profile-stat-label{
+  margin-bottom: 5px;
+  color: #5f6b7a;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+}
+
+.franchise-profile-stat-value{
+  color: #0b1220;
+  font-size: 21px;
+  line-height: 1.25;
+  font-weight: 950;
+}
+
+.franchise-profile-stat-years{
+  color: #5f6b7a;
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 800;
+  white-space: normal;
+}
+
+@media (max-width: 720px){
+  .franchise-modal{
+    align-items: center;
+    padding: 14px;
+  }
+
+  .franchise-modal-card{
+    width: 94vw;
+    max-height: 90vh;
+    border-radius: 19px;
+  }
+
+  .franchise-profile-identity{
+    padding: 19px 18px 18px;
+  }
+
+  .franchise-profile-stars{
+    font-size: 21px;
+  }
+
+  .franchise-profile-logoWrap{
+    width: 96px;
+    height: 96px;
+  }
+
+  .franchise-profile-name{
+    margin-top: 10px;
+    font-size: 26px;
+  }
+
+  .franchise-profile-owner{
+    font-size: 14px;
+  }
+
+  .franchise-profile-columns{
+    grid-template-columns: 1fr;
+  }
+
+  .franchise-profile-section{
+    padding: 19px 21px 20px;
+  }
+
+  .franchise-profile-regular{
+    border-left: 0;
+    border-top: 1px solid rgba(0,0,0,0.10);
+  }
+
+  .franchise-profile-stat-value{
+    font-size: 19px;
+  }
+}
