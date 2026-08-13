@@ -18,6 +18,29 @@
   box-shadow: 0 24px 80px rgba(0,0,0,0.42);
 }
 
+/* Make the modal exit control obvious and intentional instead of a loose white X. */
+.franchise-close{
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  top: 22px;
+  right: 22px;
+  border: 2px solid rgba(255,255,255,0.92);
+  border-radius: 50%;
+  background: #0b1220;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.32);
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  z-index: 10001;
+}
+
+.franchise-close:hover{
+  background: #1a2231;
+}
+
 .franchise-profile-shell{
   color: #0b1220;
 }
@@ -145,15 +168,31 @@
 }
 
 @media (max-width: 720px){
+  /* Use a consistent top offset on phones instead of vertical centering.
+     That keeps every franchise card visibly framed below the browser UI,
+     regardless of how tall that team's content happens to be. */
   .franchise-modal{
-    align-items: center;
-    padding: 14px;
+    align-items: flex-start;
+    padding: 60px 14px 18px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .franchise-modal-card{
-    width: 94vw;
-    max-height: 90vh;
+    width: min(94vw, 100%);
+    max-height: calc(100dvh - 84px);
     border-radius: 19px;
+    overscroll-behavior: contain;
+  }
+
+  /* Position the close control against the card's upper-right corner. */
+  .franchise-close{
+    top: 68px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-width: 2px;
+    font-size: 28px;
   }
 
   .franchise-profile-identity{
