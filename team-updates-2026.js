@@ -28,7 +28,7 @@ Object.assign(TEAMS.maleksexcornflex, {
 });
 
 Object.assign(TEAMS.drhtown, {
-  logo: "/sister-cities/assets/drhtown-logo-2026-clean-v2.jpg"
+  logo: "/sister-cities/assets/drhtown-logo-source-clean-v12.jpg"
 });
 
 // =====================
