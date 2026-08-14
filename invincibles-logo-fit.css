@@ -1,6 +1,7 @@
-/* Invincibles logo fit refinement.
-   Keep every circular frame unchanged; enlarge only the artwork inside it. */
+/* Team-logo fit refinements.
+   Keep the site's circular frames unchanged; adjust only specific artwork inside them. */
 
+/* Invincibles: enlarge the artwork inside normal circular frames. */
 .logo-dot .logo-img[src*="invincibles-logo-v3.jpg"],
 .franchise-logoWrap .franchise-logo[src*="invincibles-logo-v3.jpg"],
 .franchise-modal-logoWrap .franchise-modal-logo[src*="invincibles-logo-v3.jpg"]{
@@ -8,10 +9,27 @@
   transform-origin: center;
 }
 
-/* The champion logo has no separate wrapper, so the clip radius compensates
-   for the 1.24x image zoom and keeps the visible circle at the normal size. */
 #championTeam .champion-team-logo[src*="invincibles-logo-v3.jpg"]{
   transform: scale(1.24);
   transform-origin: center;
-  clip-path: circle(40.3% at 50% 50%);
+  clip-path: circle(40.32% at 50% 50%);
+}
+
+/* Dr. H-Town: the lower scanlines in the current portrait asset are damaged.
+   Use the clean upper portion as a tighter sports headshot everywhere the logo
+   appears. The existing wrappers keep every badge at its normal circle size. */
+.logo-dot .logo-img[src*="drhtown-logo-source-clean-v12.jpg"],
+.franchise-logoWrap .franchise-logo[src*="drhtown-logo-source-clean-v12.jpg"],
+.franchise-modal-logoWrap .franchise-modal-logo[src*="drhtown-logo-source-clean-v12.jpg"],
+.franchise-profile-logoWrap .franchise-profile-logo[src*="drhtown-logo-source-clean-v12.jpg"]{
+  transform: scale(1.42);
+  transform-origin: 50% 0%;
+}
+
+/* Champion image needs its own clipping because it is not dependent on the
+   same wrapper clipping. 35.22% × 1.42 ≈ 50%, preserving the visible circle. */
+#championTeam .champion-team-logo[src*="drhtown-logo-source-clean-v12.jpg"]{
+  transform: scale(1.42);
+  transform-origin: 50% 0%;
+  clip-path: circle(35.22% at 50% 35.22%);
 }
