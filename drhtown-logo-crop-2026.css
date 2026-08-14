@@ -1,0 +1,25 @@
+/* =====================
+   DR. H-TOWN LOGO DISPLAY CROP
+   The source portrait's lower scanlines are damaged. Keep the existing
+   team identity/file, but show only the clean upper ~70% as a tighter
+   sports headshot everywhere the logo appears.
+   ===================== */
+
+/* These logo containers already define the site's normal circular size.
+   Zoom only Dr. H-Town's artwork inside those unchanged circles. */
+.logo-dot .logo-img[src*="drhtown-logo-source-clean-v12.jpg"],
+.franchise-logoWrap .franchise-logo[src*="drhtown-logo-source-clean-v12.jpg"],
+.franchise-modal-logoWrap .franchise-modal-logo[src*="drhtown-logo-source-clean-v12.jpg"],
+.franchise-profile-logoWrap .franchise-profile-logo[src*="drhtown-logo-source-clean-v12.jpg"]{
+  transform: scale(1.42);
+  transform-origin: 50% 0%;
+}
+
+/* The champion image is not dependent on the same wrapper clipping.
+   Clip it after the same top-anchored zoom so its visible circle remains
+   the normal size while the damaged lower portion stays outside view. */
+#championTeam .champion-team-logo[src*="drhtown-logo-source-clean-v12.jpg"]{
+  transform: scale(1.42);
+  transform-origin: 50% 0%;
+  clip-path: circle(35.22% at 50% 35.22%);
+}
