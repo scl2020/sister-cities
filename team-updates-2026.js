@@ -3,6 +3,13 @@
 // Keeps historical team IDs intact while applying current names/logos site-wide.
 // =====================
 
+// Force browsers to fetch the current team-logo fit rules instead of reusing
+// an older cached copy after logo-specific framing adjustments.
+const logoFitStylesheet2026 = document.querySelector('link[href*="invincibles-logo-fit.css"]');
+if (logoFitStylesheet2026) {
+  logoFitStylesheet2026.href = "./invincibles-logo-fit.css?v=20260814-drhtown-crop";
+}
+
 Object.assign(TEAMS.svetunited, {
   name: "Trablos United",
   logo: "/sister-cities/assets/trablos-united-2026.jpg"
