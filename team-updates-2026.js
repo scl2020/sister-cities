@@ -19,7 +19,7 @@ Object.assign(TEAMS.miami, {
 });
 
 Object.assign(TEAMS.snorlax, {
-  logo: "https://raw.githubusercontent.com/scnfl2021/sister-cities/staging/snorlax-hq-import-2026-08-15/assets/snorlax-logo-hq-2026.jpg"
+  logo: "/sister-cities/assets/snorlax-hq-2026.webp"
 });
 
 Object.assign(TEAMS.maleksexcornflex, {
