@@ -1,0 +1,655 @@
+/* =========================
+   SISTER CITIES — H2H 2026
+   Interactive head-to-head comparison.
+   Scoped only to #tab-h2h.
+   ========================= */
+
+@property --h2h-left-share {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 50%;
+}
+
+#tab-h2h{
+  --h2h-navy:#070b2e;
+  --h2h-navy-2:#0b1245;
+  --h2h-blue:#2f6bff;
+  --h2h-red:#ef3f4f;
+  --h2h-white:#f8fbff;
+  --h2h-soft:#aeb9d8;
+}
+
+#tab-h2h .h2h-shell{
+  position:relative;
+  min-height:620px;
+  padding:30px 34px 42px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 20% 16%, rgba(47,107,255,.10), transparent 30%),
+    radial-gradient(circle at 82% 18%, rgba(239,63,79,.09), transparent 28%),
+    linear-gradient(180deg, var(--h2h-navy-2), var(--h2h-navy));
+  box-shadow:0 10px 30px rgba(7,16,31,.12);
+  color:var(--h2h-white);
+  overflow:visible;
+}
+
+#tab-h2h .h2h-brand{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin-bottom:34px;
+}
+
+#tab-h2h .h2h-brand-logo{
+  width:52px;
+  height:52px;
+  object-fit:contain;
+  display:block;
+}
+
+#tab-h2h .h2h-brand-lockup{
+  display:flex;
+  align-items:baseline;
+  gap:9px;
+  min-width:0;
+  font-family:"Barlow Condensed", Inter, sans-serif;
+  text-transform:uppercase;
+}
+
+#tab-h2h .h2h-brand-league{
+  color:#ffffff;
+  font-size:23px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.65px;
+}
+
+#tab-h2h .h2h-brand-title{
+  color:#dfe6ff;
+  font-size:22px;
+  line-height:1;
+  font-weight:500;
+  font-style:italic;
+  letter-spacing:.45px;
+}
+
+#tab-h2h .h2h-stage{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) minmax(210px, 270px) minmax(0, 1fr);
+  align-items:start;
+  gap:26px;
+  max-width:1120px;
+  margin:0 auto;
+}
+
+#tab-h2h .h2h-side{
+  position:relative;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+#tab-h2h .h2h-side-hero{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  min-height:210px;
+}
+
+#tab-h2h .h2h-logo-stage{
+  width:190px;
+  height:190px;
+  flex:0 0 190px;
+  display:grid;
+  place-items:center;
+  position:relative;
+  border-radius:50%;
+}
+
+#tab-h2h .h2h-logo-stage::before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:2px solid rgba(255,255,255,.12);
+  border-radius:50%;
+  background:rgba(255,255,255,.025);
+}
+
+#tab-h2h .h2h-logo-stage-left::after,
+#tab-h2h .h2h-logo-stage-right::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  pointer-events:none;
+}
+
+#tab-h2h .h2h-logo-stage-left::after{
+  border:2px solid rgba(47,107,255,.82);
+  box-shadow:0 0 34px rgba(47,107,255,.10);
+}
+
+#tab-h2h .h2h-logo-stage-right::after{
+  border:2px solid rgba(239,63,79,.82);
+  box-shadow:0 0 34px rgba(239,63,79,.10);
+}
+
+#tab-h2h .h2h-team-logo{
+  position:relative;
+  z-index:1;
+  width:82%;
+  height:82%;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 8px 12px rgba(0,0,0,.28));
+}
+
+#tab-h2h .h2h-logo-placeholder{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:72px;
+  height:72px;
+  border:1px dashed rgba(255,255,255,.25);
+  border-radius:50%;
+  color:rgba(255,255,255,.32);
+  font-family:Inter, sans-serif;
+  font-size:34px;
+  font-weight:500;
+}
+
+#tab-h2h .h2h-win-number{
+  min-width:72px;
+  color:#ffffff;
+  font-family:"Barlow Condensed", Inter, sans-serif;
+  font-size:86px;
+  line-height:.9;
+  font-weight:800;
+  letter-spacing:-1.5px;
+  text-align:center;
+  text-shadow:0 4px 20px rgba(0,0,0,.24);
+}
+
+#tab-h2h .h2h-team-name{
+  width:min(330px, 100%);
+  min-height:34px;
+  margin:10px 0 14px;
+  color:#ffffff;
+  font-family:Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:20px;
+  line-height:1.2;
+  font-weight:650;
+  letter-spacing:-.15px;
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+
+#tab-h2h .h2h-picker{
+  position:relative;
+  width:min(330px, 100%);
+  z-index:20;
+}
+
+#tab-h2h .h2h-search{
+  width:100%;
+  height:54px;
+  padding:0 18px 0 52px;
+  border:1px solid transparent;
+  border-radius:999px;
+  outline:none;
+  color:#ffffff;
+  font-family:Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:15px;
+  line-height:1;
+  font-weight:600;
+  transition:border-color .16s ease, box-shadow .16s ease, background .16s ease;
+  -webkit-appearance:none;
+  appearance:none;
+}
+
+#tab-h2h .h2h-search::-webkit-search-cancel-button{
+  display:none;
+}
+
+#tab-h2h .h2h-picker-left .h2h-search{
+  border-color:rgba(47,107,255,.70);
+  background:rgba(47,107,255,.26);
+}
+
+#tab-h2h .h2h-picker-right .h2h-search{
+  border-color:rgba(239,63,79,.72);
+  background:rgba(239,63,79,.24);
+}
+
+#tab-h2h .h2h-picker-left .h2h-search:focus{
+  border-color:#6d94ff;
+  background:rgba(47,107,255,.34);
+  box-shadow:0 0 0 3px rgba(47,107,255,.15);
+}
+
+#tab-h2h .h2h-picker-right .h2h-search:focus{
+  border-color:#ff7180;
+  background:rgba(239,63,79,.32);
+  box-shadow:0 0 0 3px rgba(239,63,79,.14);
+}
+
+#tab-h2h .h2h-search::placeholder{
+  color:rgba(255,255,255,.76);
+  font-weight:500;
+}
+
+#tab-h2h .h2h-picker-icon{
+  position:absolute;
+  left:17px;
+  top:50%;
+  z-index:2;
+  width:24px;
+  height:24px;
+  transform:translateY(-50%);
+  pointer-events:none;
+  color:#ffffff;
+}
+
+#tab-h2h .h2h-picker-icon svg{
+  width:100%;
+  height:100%;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+}
+
+#tab-h2h .h2h-options{
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  width:100%;
+  max-height:330px;
+  display:none;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:7px;
+  border:1px solid #d9dee8;
+  border-radius:13px;
+  background:#ffffff;
+  box-shadow:0 18px 42px rgba(0,0,0,.28);
+}
+
+#tab-h2h .h2h-options.is-open{
+  display:block;
+}
+
+#tab-h2h .h2h-option{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 9px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#0b1220;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+
+#tab-h2h .h2h-option:hover,
+#tab-h2h .h2h-option.is-active{
+  background:#f1f4f8;
+}
+
+#tab-h2h .h2h-picker-left .h2h-option.is-selected{
+  background:rgba(47,107,255,.09);
+}
+
+#tab-h2h .h2h-picker-right .h2h-option.is-selected{
+  background:rgba(239,63,79,.09);
+}
+
+#tab-h2h .h2h-option-logo{
+  width:38px;
+  height:38px;
+  flex:0 0 38px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border:1px solid #e2e6ec;
+  border-radius:50%;
+  background:#ffffff;
+}
+
+#tab-h2h .h2h-option-logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+#tab-h2h .h2h-option-copy{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+#tab-h2h .h2h-option-name{
+  color:#0b1220;
+  font-family:Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:13px;
+  line-height:1.18;
+  font-weight:650;
+  overflow-wrap:anywhere;
+}
+
+#tab-h2h .h2h-option-owner{
+  color:#7a8494;
+  font-family:Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:10px;
+  line-height:1.1;
+  font-weight:500;
+}
+
+#tab-h2h .h2h-no-results{
+  padding:16px 12px;
+  color:#7a8494;
+  font-family:Inter, sans-serif;
+  font-size:12px;
+  text-align:center;
+}
+
+#tab-h2h .h2h-center{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding-top:34px;
+}
+
+#tab-h2h .h2h-ring{
+  --h2h-left-share:50%;
+  position:relative;
+  width:250px;
+  height:250px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:
+    conic-gradient(
+      from -90deg,
+      var(--h2h-blue) 0 var(--h2h-left-share),
+      var(--h2h-red) var(--h2h-left-share) 100%
+    );
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05),
+    0 16px 45px rgba(0,0,0,.20);
+  transition:--h2h-left-share .9s cubic-bezier(.2,.8,.2,1);
+}
+
+#tab-h2h .h2h-ring::after{
+  content:"";
+  position:absolute;
+  inset:11px;
+  border-radius:50%;
+  background:linear-gradient(180deg, #0c1246, #080d35);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+#tab-h2h .h2h-ring.is-empty{
+  opacity:.58;
+}
+
+#tab-h2h .h2h-ring-core{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+}
+
+#tab-h2h .h2h-ring-core span{
+  color:#f3f6ff;
+  font-family:"Barlow Condensed", Inter, sans-serif;
+  font-size:34px;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+}
+
+#tab-h2h .h2h-meeting-note{
+  min-height:18px;
+  margin-top:15px;
+  color:#9eabd1;
+  font-family:Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:12px;
+  line-height:1.2;
+  font-weight:500;
+  text-align:center;
+}
+
+@media (max-width:980px){
+  #tab-h2h .h2h-shell{
+    padding-left:22px;
+    padding-right:22px;
+  }
+
+  #tab-h2h .h2h-stage{
+    grid-template-columns:minmax(0, 1fr) minmax(170px, 210px) minmax(0, 1fr);
+    gap:15px;
+  }
+
+  #tab-h2h .h2h-side-hero{
+    gap:16px;
+  }
+
+  #tab-h2h .h2h-logo-stage{
+    width:150px;
+    height:150px;
+    flex-basis:150px;
+  }
+
+  #tab-h2h .h2h-win-number{
+    min-width:54px;
+    font-size:68px;
+  }
+
+  #tab-h2h .h2h-ring{
+    width:195px;
+    height:195px;
+  }
+}
+
+@media (max-width:720px) and (orientation:portrait){
+  #tab-h2h .h2h-shell{
+    min-height:540px;
+    padding:20px 10px 28px;
+    border-radius:11px;
+  }
+
+  #tab-h2h .h2h-brand{
+    gap:8px;
+    margin-bottom:22px;
+  }
+
+  #tab-h2h .h2h-brand-logo{
+    width:40px;
+    height:40px;
+  }
+
+  #tab-h2h .h2h-brand-lockup{
+    gap:6px;
+  }
+
+  #tab-h2h .h2h-brand-league{
+    font-size:18px;
+  }
+
+  #tab-h2h .h2h-brand-title{
+    font-size:17px;
+  }
+
+  #tab-h2h .h2h-stage{
+    grid-template-columns:minmax(0, 1fr) 104px minmax(0, 1fr);
+    gap:6px;
+  }
+
+  #tab-h2h .h2h-side-hero,
+  #tab-h2h .h2h-side-hero-right{
+    min-height:145px;
+    flex-direction:column;
+    gap:5px;
+  }
+
+  #tab-h2h .h2h-logo-stage{
+    width:88px;
+    height:88px;
+    flex:0 0 88px;
+  }
+
+  #tab-h2h .h2h-logo-stage::before{
+    inset:3px;
+    border-width:1px;
+  }
+
+  #tab-h2h .h2h-logo-stage-left::after,
+  #tab-h2h .h2h-logo-stage-right::after{
+    border-width:1.5px;
+  }
+
+  #tab-h2h .h2h-team-logo{
+    width:82%;
+    height:82%;
+  }
+
+  #tab-h2h .h2h-logo-placeholder{
+    width:42px;
+    height:42px;
+    font-size:22px;
+  }
+
+  #tab-h2h .h2h-win-number{
+    min-width:0;
+    font-size:45px;
+    line-height:.95;
+  }
+
+  #tab-h2h .h2h-team-name{
+    min-height:38px;
+    margin:7px 0 9px;
+    font-size:13px;
+    line-height:1.18;
+  }
+
+  #tab-h2h .h2h-picker{
+    width:100%;
+  }
+
+  #tab-h2h .h2h-search{
+    height:43px;
+    padding:0 10px 0 34px;
+    font-size:11px;
+  }
+
+  #tab-h2h .h2h-picker-icon{
+    left:10px;
+    width:17px;
+    height:17px;
+  }
+
+  #tab-h2h .h2h-options{
+    width:min(245px, 78vw);
+    max-height:285px;
+    padding:6px;
+  }
+
+  #tab-h2h .h2h-picker-right .h2h-options{
+    left:auto;
+    right:0;
+  }
+
+  #tab-h2h .h2h-option{
+    gap:8px;
+    padding:7px 8px;
+  }
+
+  #tab-h2h .h2h-option-logo{
+    width:34px;
+    height:34px;
+    flex-basis:34px;
+  }
+
+  #tab-h2h .h2h-option-name{
+    font-size:12px;
+  }
+
+  #tab-h2h .h2h-option-owner{
+    font-size:9px;
+  }
+
+  #tab-h2h .h2h-center{
+    padding-top:30px;
+  }
+
+  #tab-h2h .h2h-ring{
+    width:104px;
+    height:104px;
+  }
+
+  #tab-h2h .h2h-ring::after{
+    inset:6px;
+  }
+
+  #tab-h2h .h2h-ring-core span{
+    font-size:22px;
+  }
+
+  #tab-h2h .h2h-meeting-note{
+    width:104px;
+    min-height:27px;
+    margin-top:10px;
+    font-size:9px;
+  }
+}
+
+@media (max-width:390px) and (orientation:portrait){
+  #tab-h2h .h2h-stage{
+    grid-template-columns:minmax(0, 1fr) 92px minmax(0, 1fr);
+    gap:4px;
+  }
+
+  #tab-h2h .h2h-logo-stage{
+    width:78px;
+    height:78px;
+    flex-basis:78px;
+  }
+
+  #tab-h2h .h2h-ring{
+    width:92px;
+    height:92px;
+  }
+
+  #tab-h2h .h2h-center{
+    padding-top:35px;
+  }
+
+  #tab-h2h .h2h-meeting-note{
+    width:92px;
+  }
+
+  #tab-h2h .h2h-search{
+    padding-left:31px;
+    font-size:10.5px;
+  }
+
+  #tab-h2h .h2h-picker-icon{
+    left:9px;
+  }
+}
