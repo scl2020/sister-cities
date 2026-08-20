@@ -19,20 +19,26 @@
   box-shadow:var(--shadow);
 }
 
-/* Match the main Sister Cities header typography. */
+/* Match the main Sister Cities header typography, at a stronger H2H feature scale. */
 #tab-h2h .h2h-brand{
+  gap:14px;
   margin-bottom:34px;
 }
 
+#tab-h2h .h2h-brand-logo{
+  width:66px;
+  height:66px;
+}
+
 #tab-h2h .h2h-brand-lockup{
-  gap:10px;
+  gap:11px;
   text-transform:none;
 }
 
 #tab-h2h .h2h-brand-league{
   color:var(--h2h-text);
   font-family:"Barlow Condensed", Inter, sans-serif;
-  font-size:28px;
+  font-size:34px;
   line-height:1;
   font-weight:800;
   letter-spacing:.35px;
@@ -41,11 +47,11 @@
 #tab-h2h .h2h-brand-title{
   color:var(--h2h-muted);
   font-family:"Barlow Condensed", Inter, sans-serif;
-  font-size:12px;
+  font-size:15px;
   line-height:1;
   font-weight:700;
   font-style:normal;
-  letter-spacing:1.4px;
+  letter-spacing:1.5px;
   text-transform:uppercase;
 }
 
@@ -152,6 +158,15 @@
   color:#425066;
 }
 
+/* Dropdown is team identity only — no owner line. */
+#tab-h2h .h2h-option-owner{
+  display:none !important;
+}
+
+#tab-h2h .h2h-option-copy{
+  justify-content:center;
+}
+
 /* Ring stays live/animated, with a white center on the light page. */
 #tab-h2h .h2h-ring{
   box-shadow:0 10px 28px rgba(7,16,31,.08);
@@ -187,17 +202,42 @@
     background:#ffffff;
   }
 
+  #tab-h2h .h2h-brand{
+    gap:9px;
+    margin-bottom:28px;
+  }
+
+  #tab-h2h .h2h-brand-logo{
+    width:54px;
+    height:54px;
+  }
+
+  #tab-h2h .h2h-brand-lockup{
+    gap:7px;
+  }
+
   #tab-h2h .h2h-brand-league{
-    font-size:24px;
+    font-size:29px;
   }
 
   #tab-h2h .h2h-brand-title{
-    font-size:10px;
-    letter-spacing:1.2px;
+    font-size:11px;
+    letter-spacing:1.25px;
   }
 
-  #tab-h2h .h2h-side-hero{
-    min-height:154px;
+  #tab-h2h .h2h-side-hero,
+  #tab-h2h .h2h-side-hero-right{
+    min-height:172px;
+    justify-content:flex-start;
+  }
+
+  /* Mirror the desktop relationship but keep both mobile logos on one horizontal line. */
+  #tab-h2h .h2h-side-hero-right .h2h-team-identity{
+    order:0;
+  }
+
+  #tab-h2h .h2h-side-hero-right .h2h-win-number{
+    order:1;
   }
 
   #tab-h2h .h2h-logo-stage{
@@ -215,5 +255,6 @@
 
   #tab-h2h .h2h-win-number{
     color:var(--h2h-text);
+    margin-top:5px;
   }
 }
