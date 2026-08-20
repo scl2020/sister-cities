@@ -92,10 +92,10 @@
 
 #seasonStats .stat-alltime{
   padding:4px 7px;
-  border:1px solid rgba(177,138,0,.26);
+  border:1px solid #b18a00;
   border-radius:7px;
-  background:rgba(177,138,0,.10);
-  color:#6e5700;
+  background:#b18a00;
+  color:#111;
 }
 
 #seasonStats .stat-detail{
