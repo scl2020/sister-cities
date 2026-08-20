@@ -42,7 +42,6 @@
       <div class="h2h-brand">
         <img class="h2h-brand-logo" src="/sister-cities/assets/league-logo.png" alt="Sister Cities league logo">
         <div class="h2h-brand-lockup">
-          <span class="h2h-brand-league">Sister Cities</span>
           <span class="h2h-brand-title">HEAD2HEAD</span>
         </div>
       </div>
@@ -329,10 +328,11 @@
     });
   });
 
-  panel.addEventListener("pointerdown", event => {
+  // Select only after a completed tap/click. Using pointerdown here made mobile
+  // scrolling impossible because the first finger contact selected a team.
+  panel.addEventListener("click", event => {
     const option = event.target.closest("[data-option-team]");
     if (!option) return;
-    event.preventDefault();
     selectTeam(option.dataset.optionSide, option.dataset.optionTeam);
   });
 
