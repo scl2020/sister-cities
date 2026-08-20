@@ -214,3 +214,244 @@
     font-size:11px;
   }
 }
+
+/* =========================
+   2026 FRESHER HOLDERS + READABILITY LIFT
+   Loaded last so this remains a reversible presentation-only layer.
+   Header / masthead / navigation sizing is intentionally untouched.
+   ========================= */
+
+/* Remove the extra inner rectangles around team holders in Season Stats. */
+#seasonStats .stat-detail:has(.team-pill){
+  gap:12px;
+}
+
+#seasonStats .stat-detail:has(.team-pill) .team-pill{
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+
+/* Remove the extra inner rectangles around team holders in All Time Records. */
+#tab-records #allTimeRecordsContainer .record-teams{
+  gap:12px;
+}
+
+#tab-records #allTimeRecordsContainer .record-teams .team-pill{
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+
+/* Years remain readable labels, but no longer sit inside boxes. */
+#tab-records #allTimeRecordsContainer .record-year{
+  min-height:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:#6f7a8b;
+}
+
+/* Slight content-only type lift. Overall layout dimensions remain unchanged. */
+.season-year-button{
+  font-size:17px;
+}
+
+#seasonStandings .table tbody td{
+  font-size:15px;
+}
+
+#seasonStandings .table tbody td:first-child{
+  font-size:21px;
+}
+
+#seasonStandings .team-pill-text{
+  font-size:15px;
+}
+
+#seasonStats .stat-label{
+  font-size:15px;
+}
+
+#seasonStats .stat-value{
+  font-size:19px;
+}
+
+#seasonStats .stat-detail{
+  font-size:13px;
+}
+
+#seasonStats .stat-detail:has(.team-pill) .team-pill-text{
+  font-size:13px;
+}
+
+#tab-records #allTimeRecordsContainer .record-title{
+  font-size:15px;
+}
+
+#tab-records #allTimeRecordsContainer .record-value{
+  font-size:19px;
+}
+
+#tab-records #allTimeRecordsContainer .record-holders{
+  font-size:13px;
+}
+
+#tab-records #allTimeRecordsContainer .record-year{
+  font-size:11px;
+}
+
+#tab-records #allTimeRecordsContainer .record-teams .team-pill-text{
+  font-size:13px;
+}
+
+#tab-franchise .franchise-name{
+  font-size:14px;
+  line-height:1.2;
+}
+
+#tab-franchise .franchise-years{
+  font-size:13px;
+}
+
+.franchise-profile-owner{
+  font-size:16px;
+}
+
+.franchise-profile-years{
+  font-size:13px;
+}
+
+.franchise-profile-stat-label{
+  font-size:13px;
+}
+
+.franchise-profile-stat-value{
+  font-size:22px;
+}
+
+.franchise-profile-stat-years{
+  font-size:13px;
+}
+
+.gallery-caption{
+  font-size:15px;
+}
+
+.footer{
+  font-size:13px;
+}
+
+@media (max-width:720px) and (orientation:portrait){
+  .season-year-button{
+    font-size:14px;
+  }
+
+  #seasonStandings .table tbody td{
+    font-size:13px;
+  }
+
+  #seasonStandings .table tbody td:first-child{
+    font-size:19px;
+  }
+
+  #seasonStandings .team-pill-text{
+    font-size:12px;
+  }
+
+  #seasonStats .stat-label{
+    font-size:14px;
+  }
+
+  #seasonStats .stat-value{
+    font-size:17px;
+  }
+
+  #seasonStats .stat-detail{
+    font-size:12px;
+  }
+
+  #seasonStats .stat-detail:has(.team-pill){
+    gap:10px;
+  }
+
+  #seasonStats .stat-detail:has(.team-pill) .team-pill{
+    padding:0;
+    border:0;
+    border-radius:0;
+    background:transparent;
+  }
+
+  #seasonStats .stat-detail:has(.team-pill) .team-pill-text{
+    font-size:12px;
+  }
+
+  #tab-records #allTimeRecordsContainer .record-title{
+    font-size:14px;
+  }
+
+  #tab-records #allTimeRecordsContainer .record-value{
+    font-size:17px;
+  }
+
+  #tab-records #allTimeRecordsContainer .record-holders{
+    font-size:12px;
+  }
+
+  #tab-records #allTimeRecordsContainer .record-year{
+    min-height:0;
+    padding:0;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    font-size:10px;
+  }
+
+  #tab-records #allTimeRecordsContainer .record-teams{
+    gap:10px;
+  }
+
+  #tab-records #allTimeRecordsContainer .record-teams .team-pill{
+    padding:0;
+    border:0;
+    border-radius:0;
+    background:transparent;
+  }
+
+  #tab-records #allTimeRecordsContainer .record-teams .team-pill-text{
+    font-size:12px;
+  }
+
+  #tab-franchise .franchise-name{
+    font-size:13px;
+  }
+
+  #tab-franchise .franchise-years{
+    font-size:12px;
+  }
+
+  .franchise-profile-owner{
+    font-size:15px;
+  }
+
+  .franchise-profile-years,
+  .franchise-profile-stat-label,
+  .franchise-profile-stat-years{
+    font-size:13px;
+  }
+
+  .franchise-profile-stat-value{
+    font-size:20px;
+  }
+
+  .gallery-caption{
+    font-size:14px;
+  }
+
+  .footer{
+    font-size:13px;
+  }
+}
