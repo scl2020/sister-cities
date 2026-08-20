@@ -3,21 +3,22 @@
 // Source: user-supplied Sleeper matchups, 2021-2025.
 // Rule: the first score under each team name is the actual score;
 // projected scores are ignored.
-// 2024 Week 15 is included as an official meeting.
+// H2H counts Weeks 1-14 only for every season.
 // In 2025, ArShamaa/Team 9 scheduled "-" scores count as losses.
 // =====================
 
 window.SISTER_CITIES_H2H_DATA = {
   throughSeason: 2025,
-  gamesCount: 340,
-  includes2024Week15: true,
+  maxWeek: 14,
+  gamesCount: 336,
+  includesWeek15: false,
   arshamaa2025DashRule: "scheduled-loss",
   wins: {
     abethe3arab: {
       angolarookie: 4,
       arshamaa: 3,
       barjalona: 4,
-      drhtown: 5,
+      drhtown: 4,
       maleksexcornflex: 2,
       miami: 3,
       sixowls: 3,
@@ -30,7 +31,7 @@ window.SISTER_CITIES_H2H_DATA = {
       daddytate: 4,
       drhtown: 4,
       maleksexcornflex: 6,
-      miami: 5,
+      miami: 4,
       sixowls: 2,
       snorlax: 3,
       svetunited: 1
@@ -38,7 +39,7 @@ window.SISTER_CITIES_H2H_DATA = {
     arshamaa: {
       abethe3arab: 3,
       angolarookie: 4,
-      barjalona: 4,
+      barjalona: 3,
       daddytate: 1,
       drhtown: 2,
       maleksexcornflex: 2,
@@ -106,7 +107,7 @@ window.SISTER_CITIES_H2H_DATA = {
       angolarookie: 8,
       arshamaa: 2,
       barjalona: 4,
-      daddytate: 5,
+      daddytate: 4,
       drhtown: 1,
       maleksexcornflex: 3,
       miami: 3,
