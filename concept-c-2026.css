@@ -167,12 +167,7 @@ body{
 }
 
 .stats-title,
-.record-title,
-.franchise-name,
-.franchise-modal-name,
-.franchise-profile-name,
-.franchise-profile-section-title,
-.franchise-profile-stat-label{
+.franchise-profile-section-title{
   font-family: "Barlow Condensed", Inter, sans-serif;
 }
 
@@ -180,6 +175,72 @@ body{
 .record-card,
 .franchise-item{
   border-color: var(--border);
+}
+
+/* =========================
+   READABILITY BALANCE
+   Keep the sports display face for hierarchy, not long-form reading.
+   ========================= */
+
+.stat-label{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+}
+
+.stat-value{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 700;
+}
+
+#tab-records .record-title{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+#tab-records .record-value{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+#tab-records .record-year{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+}
+
+#tab-records .record-holders,
+#tab-records .team-pill-text{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 400 !important;
+  letter-spacing: 0;
+}
+
+#tab-franchise .franchise-name{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.franchise-modal-name,
+.franchise-profile-name{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.franchise-profile-stat-label{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.franchise-profile-stat-value,
+.franchise-profile-stat-years,
+.franchise-profile-owner,
+.franchise-profile-years{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 400;
 }
 
 .footer{
