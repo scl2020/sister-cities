@@ -1,6 +1,7 @@
 // =====================
 // SISTER CITIES H2H — TEAM IDENTITY LAYOUT REFINEMENT
 // Moves each team name directly beneath its logo without changing search/state logic.
+// Keeps the hidden placeholder node in the DOM because the base H2H state code references it.
 // =====================
 
 (function refineSisterCitiesH2HLayout(){
@@ -11,11 +12,8 @@
     const hero = panel.querySelector(`.h2h-side-${side} .h2h-side-hero`);
     const logoStage = panel.querySelector(`.h2h-side-${side} .h2h-logo-stage`);
     const teamName = panel.querySelector(`.h2h-side-${side} .h2h-team-name`);
-    const placeholder = panel.querySelector(`.h2h-side-${side} .h2h-logo-placeholder`);
 
     if (!hero || !logoStage || !teamName) return;
-
-    if (placeholder) placeholder.remove();
 
     const identity = document.createElement('div');
     identity.className = 'h2h-team-identity';
