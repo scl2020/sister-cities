@@ -181,7 +181,6 @@
             </span>
             <span class="h2h-option-copy">
               <span class="h2h-option-name">${team.name || teamId}</span>
-              ${team.owner ? `<span class="h2h-option-owner">${team.owner}</span>` : ""}
             </span>
           </button>
         `;
@@ -220,7 +219,7 @@
       logoEl.hidden = true;
       logoEl.removeAttribute("src");
       logoEl.alt = "";
-      placeholderEl.hidden = false;
+      if (placeholderEl) placeholderEl.hidden = false;
       input.value = "";
       return;
     }
@@ -232,10 +231,10 @@
       logoEl.src = team.logo;
       logoEl.alt = `${team.name || teamId} logo`;
       logoEl.hidden = false;
-      placeholderEl.hidden = true;
+      if (placeholderEl) placeholderEl.hidden = true;
     } else {
       logoEl.hidden = true;
-      placeholderEl.hidden = false;
+      if (placeholderEl) placeholderEl.hidden = false;
     }
   }
 
