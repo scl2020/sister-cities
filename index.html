@@ -73,7 +73,7 @@
   <link rel="stylesheet" href="./season-stats-2026.css?v=20260820" />
   <link rel="stylesheet" href="./h2h-2026.css?v=20260820" />
   <link rel="stylesheet" href="./h2h-refine-2026.css?v=20260820c" />
-  <link rel="stylesheet" href="./top-tabs-2026.css?v=20260820" />
+  <link rel="stylesheet" href="./top-tabs-2026.css?v=20260820b" />
 </head>
 
 <body>
@@ -104,17 +104,19 @@
 
     </div>
 
-    <!-- Tabs -->
+  </div>
+</header>
+
+<nav class="site-tab-nav" aria-label="Primary">
+  <div class="container">
     <div class="tabs">
       <button class="tab active" data-tab="season">Season</button>
-      <button class="tab" data-tab="gallery">Gallery</button>
       <button class="tab" data-tab="records">All Time Records</button>
       <button class="tab" data-tab="franchise">Franchise Hub</button>
       <button class="tab" data-tab="h2h">H2H</button>
     </div>
-
   </div>
-</header>
+</nav>
 
 <main class="container page">
 
@@ -160,31 +162,6 @@
       </div>
     </div>
   </section>
-
-  <!-- GALLERY TAB -->
-  <section id="tab-gallery" class="tabpanel">
-    <div class="card">
-      <div class="card-title">Gallery</div>
-
-      <div class="gallery-grid">
-        <div class="gallery-item">
-          <img
-            src="/sister-cities/assets/playoffs-championship-2025.png"
-            alt="Playoffs Championship 2025"
-            class="gallery-thumb"
-          />
-          <div class="gallery-caption">Playoffs Championship 2025</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FULLSCREEN IMAGE MODAL -->
-  <div id="galleryModal" class="gallery-modal">
-    <span class="gallery-close">&times;</span>
-    <img class="gallery-modal-img" id="galleryModalImg" alt="">
-    <div class="gallery-modal-caption" id="galleryModalCaption"></div>
-  </div>
 
   <!-- ALL TIME RECORDS TAB -->
   <section id="tab-records" class="tabpanel">
