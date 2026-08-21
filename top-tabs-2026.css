@@ -1,40 +1,66 @@
 /* =========================
-   SISTER CITIES — FLAT TOP NAV 2026
-   Presentation-only refinement for the five primary tabs.
+   SISTER CITIES — STICKY PRIMARY NAV 2026
+   League masthead scrolls naturally; primary tabs remain fixed at the top.
    ========================= */
 
-.header .tabs{
-  margin-top:8px;
-  display:flex;
-  align-items:stretch;
-  justify-content:center;
-  gap:0;
-  flex-wrap:nowrap;
+/* The league logo/title masthead should scroll away with the page. */
+.header{
+  position:static !important;
+  top:auto !important;
 }
 
-.header .tab{
+/* Dedicated NFL-style sticky navigation row. */
+.site-tab-nav{
+  position:sticky;
+  top:0;
+  z-index:60;
+  width:100%;
+  background:#08090c;
+  border-bottom:1px solid rgba(255,255,255,.09);
+  box-shadow:0 2px 8px rgba(7,16,31,.12);
+}
+
+.site-tab-nav > .container{
+  max-width:1080px;
+  margin:0 auto;
+  padding:0 18px;
+}
+
+.site-tab-nav .tabs{
+  width:100%;
+  margin:0;
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  align-items:stretch;
+  gap:0;
+}
+
+.site-tab-nav .tab{
   position:relative;
-  flex:0 0 auto;
+  width:100%;
+  min-width:0;
   border:0;
   border-radius:0;
   background:transparent;
   color:rgba(255,255,255,.78);
-  padding:12px 18px 13px;
+  padding:14px 8px 15px;
   font-family:"Barlow Condensed", Inter, sans-serif;
   font-size:16px;
   font-weight:700;
   line-height:1;
   letter-spacing:.15px;
+  text-align:center;
+  white-space:nowrap;
   cursor:pointer;
   box-shadow:none;
   transition:color .16s ease, background-color .16s ease;
 }
 
-.header .tab::after{
+.site-tab-nav .tab::after{
   content:"";
   position:absolute;
-  left:14px;
-  right:14px;
+  left:16%;
+  right:16%;
   bottom:0;
   height:3px;
   border-radius:3px 3px 0 0;
@@ -45,55 +71,55 @@
   transition:transform .18s ease, opacity .18s ease, background-color .18s ease;
 }
 
-.header .tab:hover{
+.site-tab-nav .tab:hover{
   background:transparent;
   color:#ffffff;
 }
 
-.header .tab.active{
+.site-tab-nav .tab.active{
   border:0;
   background:transparent;
   color:#ffffff;
   box-shadow:none;
 }
 
-.header .tab.active::after{
+.site-tab-nav .tab.active::after{
   background:var(--gold, #b18a00);
   transform:scaleX(1);
   opacity:1;
 }
 
-.header .tab:focus-visible{
+.site-tab-nav .tab:focus-visible{
   outline:2px solid rgba(177,138,0,.75);
-  outline-offset:-2px;
+  outline-offset:-3px;
 }
 
 @media (max-width:720px) and (orientation:portrait){
-  .header .tabs{
-    width:100%;
-    margin-top:9px;
-    justify-content:flex-start;
-    overflow-x:auto;
-    overflow-y:hidden;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    overscroll-behavior-x:contain;
-    padding:0 2px;
+  .site-tab-nav > .container{
+    padding:0 4px;
   }
 
-  .header .tabs::-webkit-scrollbar{
-    display:none;
+  .site-tab-nav .tabs{
+    grid-template-columns:repeat(4, minmax(0, 1fr));
   }
 
-  .header .tab{
-    padding:11px 12px 12px;
-    font-size:15px;
-    white-space:nowrap;
+  .site-tab-nav .tab{
+    padding:12px 3px 13px;
+    font-size:13px;
+    letter-spacing:0;
   }
 
-  .header .tab::after{
-    left:9px;
-    right:9px;
+  .site-tab-nav .tab::after{
+    left:10%;
+    right:10%;
     height:3px;
+  }
+}
+
+@media (max-width:390px) and (orientation:portrait){
+  .site-tab-nav .tab{
+    font-size:12px;
+    padding-left:2px;
+    padding-right:2px;
   }
 }
