@@ -52,7 +52,7 @@ function franchiseMetric2026(label, value, yearsMarkup = "") {
   return `
     <div class="franchise-profile-stat">
       <div class="franchise-profile-stat-label">${label}</div>
-      <div class="franchise-profile-stat-value">${value} ${yearsMarkup}</div>
+      <div class="franchise-profile-stat-value"><span class="franchise-profile-stat-main">${value}</span> ${yearsMarkup}</div>
     </div>
   `;
 }
