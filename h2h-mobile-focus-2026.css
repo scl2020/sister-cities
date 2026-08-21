@@ -9,8 +9,20 @@
     font-size:16px;
     line-height:1.2;
     letter-spacing:-.2px;
-    padding-left:34px;
-    padding-right:6px;
+    padding-left:30px;
+    padding-right:4px;
+  }
+
+  /* Keep the neutral placeholder readable without making the field wider. */
+  #tab-h2h .h2h-search::placeholder{
+    font-size:14px;
+    letter-spacing:-.35px;
+  }
+
+  #tab-h2h .h2h-picker-icon{
+    left:8px;
+    width:16px;
+    height:16px;
   }
 
   /* Keep the active picker/dropdown above neighboring H2H elements. */
@@ -27,8 +39,19 @@
 @media (max-width:390px) and (orientation:portrait){
   #tab-h2h .h2h-search{
     font-size:16px;
-    padding-left:31px;
-    padding-right:4px;
+    padding-left:28px;
+    padding-right:3px;
     letter-spacing:-.3px;
+  }
+
+  #tab-h2h .h2h-search::placeholder{
+    font-size:13.5px;
+    letter-spacing:-.45px;
+  }
+
+  #tab-h2h .h2h-picker-icon{
+    left:7px;
+    width:15px;
+    height:15px;
   }
 }
