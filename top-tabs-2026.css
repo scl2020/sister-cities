@@ -1,0 +1,99 @@
+/* =========================
+   SISTER CITIES — FLAT TOP NAV 2026
+   Presentation-only refinement for the five primary tabs.
+   ========================= */
+
+.header .tabs{
+  margin-top:8px;
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  gap:0;
+  flex-wrap:nowrap;
+}
+
+.header .tab{
+  position:relative;
+  flex:0 0 auto;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:rgba(255,255,255,.78);
+  padding:12px 18px 13px;
+  font-family:"Barlow Condensed", Inter, sans-serif;
+  font-size:16px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.15px;
+  cursor:pointer;
+  box-shadow:none;
+  transition:color .16s ease, background-color .16s ease;
+}
+
+.header .tab::after{
+  content:"";
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:0;
+  height:3px;
+  border-radius:3px 3px 0 0;
+  background:transparent;
+  transform:scaleX(.45);
+  transform-origin:center;
+  opacity:0;
+  transition:transform .18s ease, opacity .18s ease, background-color .18s ease;
+}
+
+.header .tab:hover{
+  background:transparent;
+  color:#ffffff;
+}
+
+.header .tab.active{
+  border:0;
+  background:transparent;
+  color:#ffffff;
+  box-shadow:none;
+}
+
+.header .tab.active::after{
+  background:var(--gold, #b18a00);
+  transform:scaleX(1);
+  opacity:1;
+}
+
+.header .tab:focus-visible{
+  outline:2px solid rgba(177,138,0,.75);
+  outline-offset:-2px;
+}
+
+@media (max-width:720px) and (orientation:portrait){
+  .header .tabs{
+    width:100%;
+    margin-top:9px;
+    justify-content:flex-start;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    overscroll-behavior-x:contain;
+    padding:0 2px;
+  }
+
+  .header .tabs::-webkit-scrollbar{
+    display:none;
+  }
+
+  .header .tab{
+    padding:11px 12px 12px;
+    font-size:15px;
+    white-space:nowrap;
+  }
+
+  .header .tab::after{
+    left:9px;
+    right:9px;
+    height:3px;
+  }
+}
