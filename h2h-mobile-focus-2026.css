@@ -1,0 +1,34 @@
+/* =========================
+   SISTER CITIES H2H — MOBILE FOCUS FIT
+   Prevent iPhone Safari input-focus auto-zoom while preserving normal pinch zoom.
+   ========================= */
+
+@media (max-width:720px) and (orientation:portrait){
+  /* iOS Safari auto-zooms focused form controls below 16px. */
+  #tab-h2h .h2h-search{
+    font-size:16px;
+    line-height:1.2;
+    letter-spacing:-.2px;
+    padding-left:34px;
+    padding-right:6px;
+  }
+
+  /* Keep the active picker/dropdown above neighboring H2H elements. */
+  #tab-h2h .h2h-picker:focus-within{
+    z-index:90;
+  }
+
+  /* Use the available mobile viewport more gracefully when the keyboard is open. */
+  #tab-h2h .h2h-options{
+    max-height:min(285px, 38dvh);
+  }
+}
+
+@media (max-width:390px) and (orientation:portrait){
+  #tab-h2h .h2h-search{
+    font-size:16px;
+    padding-left:31px;
+    padding-right:4px;
+    letter-spacing:-.3px;
+  }
+}
