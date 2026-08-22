@@ -1,6 +1,6 @@
 // =====================
 // SISTER CITIES H2H — V2 POLISH
-// Approved motion + mobile focus behavior layered over the existing H2H engine.
+// Stable motion + mobile focus behavior layered over the existing H2H engine.
 // =====================
 
 (function polishSisterCitiesH2H(){
@@ -22,7 +22,6 @@
     const replay = () => {
       if (logo.hidden || !logo.getAttribute('src')) return;
       logo.classList.remove('h2h-logo-enter');
-      // Force animation restart when swapping directly from one team to another.
       void logo.offsetWidth;
       logo.classList.add('h2h-logo-enter');
     };
@@ -33,7 +32,8 @@
     });
   });
 
-  /* Count win totals up from zero whenever a completed matchup updates. */
+  /* Count win totals up from zero whenever a completed matchup updates.
+     Empty-side dash placeholders are suppressed completely. */
   panel.querySelectorAll('.h2h-win-number').forEach(el => {
     let frame = 0;
     let internalValue = null;
@@ -43,11 +43,24 @@
       el.textContent = internalValue;
     };
 
+    const normalizeEmpty = () => {
+      const raw = el.textContent.trim();
+      if (raw === '—' || raw === '-') {
+        el.textContent = '';
+        return true;
+      }
+      return false;
+    };
+
+    normalizeEmpty();
+
     const observer = new MutationObserver(() => {
+      if (normalizeEmpty()) return;
+
       const raw = el.textContent.trim();
 
-      // Ignore mutations created by this animation itself while still allowing a
-      // new external H2H selection to interrupt and start a fresh count-up.
+      /* Ignore mutations created by this animation itself while still allowing
+         a new external H2H selection to interrupt and start a fresh count-up. */
       if (internalValue !== null && raw === internalValue) {
         internalValue = null;
         return;
@@ -60,7 +73,7 @@
 
       if (reduceMotion.matches || target <= 0) return;
 
-      const duration = 420;
+      const duration = 380;
       const started = performance.now();
       writeInternal(0);
 
@@ -82,16 +95,16 @@
     observer.observe(el, { childList:true, characterData:true, subtree:true });
   });
 
-  /* On iPhone, keep the focused search control centered in the remaining visible
-     viewport after the keyboard opens. The core H2H focus handler still opens
-     the dropdown immediately, so users can either scroll the list or type. */
-  let activeSearch = null;
-  let centerTimer = 0;
+  /* iPhone focus handling:
+     The previous implementation listened continuously to visualViewport scroll/resize,
+     which caused Safari and the page to fight each other while the keyboard opened.
+     This version performs exactly one centering pass after the keyboard settles. */
+  let focusTimer = 0;
 
-  const centerActiveSearch = (behavior = 'smooth') => {
-    if (!activeSearch || document.activeElement !== activeSearch || !mobilePortrait.matches) return;
+  const centerSearchOnce = input => {
+    if (!mobilePortrait.matches || document.activeElement !== input) return;
 
-    const rect = activeSearch.getBoundingClientRect();
+    const rect = input.getBoundingClientRect();
     const viewport = window.visualViewport;
     const visibleTop = viewport ? viewport.offsetTop : 0;
     const visibleHeight = viewport ? viewport.height : window.innerHeight;
@@ -99,34 +112,20 @@
     const actualCenter = rect.top + (rect.height / 2);
     const delta = actualCenter - desiredCenter;
 
-    if (Math.abs(delta) > 8) {
-      window.scrollBy({ top: delta, left: 0, behavior });
+    if (Math.abs(delta) > 10) {
+      window.scrollBy({ top: delta, left: 0, behavior:'auto' });
     }
-  };
-
-  const scheduleCenter = () => {
-    clearTimeout(centerTimer);
-    centerTimer = window.setTimeout(() => centerActiveSearch('smooth'), 120);
   };
 
   panel.querySelectorAll('.h2h-search').forEach(input => {
     input.addEventListener('focus', () => {
       if (!mobilePortrait.matches) return;
-      activeSearch = input;
-
-      // One pass as focus starts, then another after iOS has resized for its keyboard.
-      requestAnimationFrame(() => centerActiveSearch('auto'));
-      window.setTimeout(() => centerActiveSearch('smooth'), 320);
+      clearTimeout(focusTimer);
+      focusTimer = window.setTimeout(() => centerSearchOnce(input), 420);
     });
 
     input.addEventListener('blur', () => {
-      if (activeSearch === input) activeSearch = null;
-      clearTimeout(centerTimer);
+      clearTimeout(focusTimer);
     });
   });
-
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', scheduleCenter);
-    window.visualViewport.addEventListener('scroll', scheduleCenter);
-  }
 })();
