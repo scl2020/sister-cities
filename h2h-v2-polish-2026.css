@@ -1,27 +1,57 @@
 /* =========================
    SISTER CITIES H2H — V2 POLISH
-   Approved refinement pass: matchup hierarchy, mobile alignment and subtle motion.
+   Stable matchup hierarchy + restrained motion.
    ========================= */
 
-/* The search controls already explain the empty state; keep the center graphic clean. */
+/* The search controls already explain the empty state. */
 #tab-h2h .h2h-meeting-note{
   display:none !important;
 }
 
+/* Make the selected franchise name easier to read. */
+#tab-h2h .h2h-team-name{
+  font-size:22px;
+  line-height:1.16;
+  font-weight:650;
+}
+
 /* Stable numeric width while the win values animate. */
 #tab-h2h .h2h-win-number{
+  min-width:58px;
   font-variant-numeric:tabular-nums;
+  text-align:center;
+}
+
+/* Pull the win count toward the visual midpoint between logo and VS ring. */
+#tab-h2h .h2h-side-left .h2h-side-hero{
+  justify-content:flex-end;
+  gap:30px;
+}
+
+#tab-h2h .h2h-side-right .h2h-side-hero{
+  justify-content:flex-start;
+  gap:30px;
+}
+
+/* The center ring now supports the matchup instead of competing with the logos. */
+#tab-h2h .h2h-ring{
+  width:215px;
+  height:215px;
+}
+
+#tab-h2h .h2h-ring::after{
+  inset:10px;
 }
 
 /* Selected logos get a short broadcast-style entrance without changing their size. */
 #tab-h2h .h2h-team-logo.h2h-logo-enter{
-  animation:h2h-logo-enter .42s cubic-bezier(.2,.8,.2,1) both;
+  animation:h2h-logo-enter .38s cubic-bezier(.2,.8,.2,1) both;
 }
 
 @keyframes h2h-logo-enter{
   from{
-    opacity:.28;
-    transform:scale(.94);
+    opacity:.34;
+    transform:scale(.96);
   }
   to{
     opacity:1;
@@ -29,60 +59,133 @@
   }
 }
 
+@media (max-width:980px){
+  #tab-h2h .h2h-ring{
+    width:170px;
+    height:170px;
+  }
+
+  #tab-h2h .h2h-team-name{
+    font-size:20px;
+  }
+
+  #tab-h2h .h2h-side-left .h2h-side-hero,
+  #tab-h2h .h2h-side-right .h2h-side-hero{
+    gap:18px;
+  }
+}
+
 @media (max-width:720px) and (orientation:portrait){
+  /* Smaller VS ring gives the win values a real lane between each logo and center. */
+  #tab-h2h .h2h-stage{
+    grid-template-columns:minmax(0, 1fr) 84px minmax(0, 1fr);
+    gap:6px;
+  }
+
+  #tab-h2h .h2h-ring{
+    width:84px;
+    height:84px;
+  }
+
+  #tab-h2h .h2h-ring::after{
+    inset:5px;
+  }
+
+  #tab-h2h .h2h-ring-core span{
+    font-size:20px;
+  }
+
   /* Keep both sides on the same fixed hero row so selecting one team cannot
-     push its search box lower than the untouched side. */
+     push the untouched search box lower than the selected side. */
   #tab-h2h .h2h-side-hero,
   #tab-h2h .h2h-side-hero-right{
     height:172px;
     min-height:172px;
-    flex-direction:row !important;
+    display:grid !important;
     align-items:center !important;
-    justify-content:center !important;
-    gap:7px !important;
+    gap:4px !important;
   }
 
-  /* Broadcast relationship:
-     LEFT  = logo/name, then wins toward the center.
-     RIGHT = wins toward the center, then logo/name. */
+  /* LEFT: logo/name | wins | VS */
+  #tab-h2h .h2h-side-left .h2h-side-hero{
+    grid-template-columns:minmax(0, 1fr) 32px;
+  }
+
+  /* RIGHT: VS | wins | logo/name */
+  #tab-h2h .h2h-side-right .h2h-side-hero{
+    grid-template-columns:32px minmax(0, 1fr);
+  }
+
   #tab-h2h .h2h-side-left .h2h-team-identity{
-    order:0 !important;
+    grid-column:1;
+    grid-row:1;
   }
 
   #tab-h2h .h2h-side-left .h2h-win-number{
-    order:1 !important;
+    grid-column:2;
+    grid-row:1;
   }
 
-  #tab-h2h .h2h-side-hero-right .h2h-win-number{
-    order:0 !important;
+  #tab-h2h .h2h-side-right .h2h-win-number{
+    grid-column:1;
+    grid-row:1;
   }
 
-  #tab-h2h .h2h-side-hero-right .h2h-team-identity{
-    order:1 !important;
+  #tab-h2h .h2h-side-right .h2h-team-identity{
+    grid-column:2;
+    grid-row:1;
   }
 
   #tab-h2h .h2h-win-number{
+    min-width:0;
+    width:32px;
     margin:0 !important;
-    flex:0 0 auto;
+    font-size:43px;
+    line-height:1;
+    align-self:center;
+    justify-self:center;
   }
 
-  /* Reserve the same name slot on selected and unselected sides. */
   #tab-h2h .h2h-team-name{
-    min-height:34px !important;
+    min-height:36px !important;
+    margin-top:8px;
     display:flex;
     align-items:flex-start;
     justify-content:center;
+    font-size:17px;
+    line-height:1.12;
+    font-weight:650;
   }
 
   #tab-h2h .h2h-team-identity{
     min-width:0;
-    flex:0 1 auto;
+    width:100%;
+  }
+
+  /* Slightly reduce the side logos only enough to guarantee room for the
+     centered win column on narrow mobile screens. */
+  #tab-h2h .h2h-logo-stage{
+    width:104px;
+    height:104px;
+    flex-basis:104px;
+  }
+
+  #tab-h2h .h2h-team-name{
+    width:104px;
   }
 }
 
-/* Very narrow phones need a slightly smaller team logo to preserve the same
-   side-by-side relationship. The VS ring is intentionally unchanged. */
 @media (max-width:390px) and (orientation:portrait){
+  #tab-h2h .h2h-stage{
+    grid-template-columns:minmax(0, 1fr) 78px minmax(0, 1fr);
+    gap:4px;
+  }
+
+  #tab-h2h .h2h-ring{
+    width:78px;
+    height:78px;
+  }
+
   #tab-h2h .h2h-logo-stage{
     width:90px;
     height:90px;
@@ -91,6 +194,11 @@
 
   #tab-h2h .h2h-team-name{
     width:90px;
+    font-size:16px;
+  }
+
+  #tab-h2h .h2h-win-number{
+    font-size:39px;
   }
 }
 
