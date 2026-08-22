@@ -36,37 +36,43 @@
   /* Count win totals up from zero whenever a completed matchup updates. */
   panel.querySelectorAll('.h2h-win-number').forEach(el => {
     let frame = 0;
-    let animating = false;
+    let internalValue = null;
+
+    const writeInternal = value => {
+      internalValue = String(value);
+      el.textContent = internalValue;
+    };
 
     const observer = new MutationObserver(() => {
-      if (animating) return;
-
       const raw = el.textContent.trim();
+
+      // Ignore mutations created by this animation itself while still allowing a
+      // new external H2H selection to interrupt and start a fresh count-up.
+      if (internalValue !== null && raw === internalValue) {
+        internalValue = null;
+        return;
+      }
+
       if (!/^\d+$/.test(raw)) return;
 
       const target = Number(raw);
       cancelAnimationFrame(frame);
 
-      if (reduceMotion.matches || target <= 0) {
-        el.textContent = String(target);
-        return;
-      }
+      if (reduceMotion.matches || target <= 0) return;
 
-      animating = true;
       const duration = 420;
       const started = performance.now();
-      el.textContent = '0';
+      writeInternal(0);
 
       const tick = now => {
         const progress = Math.min(1, (now - started) / duration);
         const eased = 1 - Math.pow(1 - progress, 3);
-        el.textContent = String(Math.round(target * eased));
+        writeInternal(Math.round(target * eased));
 
         if (progress < 1) {
           frame = requestAnimationFrame(tick);
         } else {
-          el.textContent = String(target);
-          animating = false;
+          writeInternal(target);
         }
       };
 
