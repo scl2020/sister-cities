@@ -1,0 +1,101 @@
+/* =========================
+   SISTER CITIES H2H — V2 POLISH
+   Approved refinement pass: matchup hierarchy, mobile alignment and subtle motion.
+   ========================= */
+
+/* The search controls already explain the empty state; keep the center graphic clean. */
+#tab-h2h .h2h-meeting-note{
+  display:none !important;
+}
+
+/* Stable numeric width while the win values animate. */
+#tab-h2h .h2h-win-number{
+  font-variant-numeric:tabular-nums;
+}
+
+/* Selected logos get a short broadcast-style entrance without changing their size. */
+#tab-h2h .h2h-team-logo.h2h-logo-enter{
+  animation:h2h-logo-enter .42s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes h2h-logo-enter{
+  from{
+    opacity:.28;
+    transform:scale(.94);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+@media (max-width:720px) and (orientation:portrait){
+  /* Keep both sides on the same fixed hero row so selecting one team cannot
+     push its search box lower than the untouched side. */
+  #tab-h2h .h2h-side-hero,
+  #tab-h2h .h2h-side-hero-right{
+    height:172px;
+    min-height:172px;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:7px !important;
+  }
+
+  /* Broadcast relationship:
+     LEFT  = logo/name, then wins toward the center.
+     RIGHT = wins toward the center, then logo/name. */
+  #tab-h2h .h2h-side-left .h2h-team-identity{
+    order:0 !important;
+  }
+
+  #tab-h2h .h2h-side-left .h2h-win-number{
+    order:1 !important;
+  }
+
+  #tab-h2h .h2h-side-hero-right .h2h-win-number{
+    order:0 !important;
+  }
+
+  #tab-h2h .h2h-side-hero-right .h2h-team-identity{
+    order:1 !important;
+  }
+
+  #tab-h2h .h2h-win-number{
+    margin:0 !important;
+    flex:0 0 auto;
+  }
+
+  /* Reserve the same name slot on selected and unselected sides. */
+  #tab-h2h .h2h-team-name{
+    min-height:34px !important;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+  }
+
+  #tab-h2h .h2h-team-identity{
+    min-width:0;
+    flex:0 1 auto;
+  }
+}
+
+/* Very narrow phones need a slightly smaller team logo to preserve the same
+   side-by-side relationship. The VS ring is intentionally unchanged. */
+@media (max-width:390px) and (orientation:portrait){
+  #tab-h2h .h2h-logo-stage{
+    width:90px;
+    height:90px;
+    flex-basis:90px;
+  }
+
+  #tab-h2h .h2h-team-name{
+    width:90px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  #tab-h2h .h2h-team-logo.h2h-logo-enter{
+    animation:none;
+  }
+}
