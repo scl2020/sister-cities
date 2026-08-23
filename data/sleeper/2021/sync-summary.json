@@ -1,0 +1,30 @@
+{
+  "season": "2021",
+  "league_id": "706540132538331136",
+  "previous_league_id": null,
+  "name": "Sister Cities",
+  "roster_count": 8,
+  "user_count": 8,
+  "weeks_synced": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ],
+  "source": "Sleeper public read-only API",
+  "warning": "Raw Sleeper roster_id/owner_id continuity is NOT authoritative for SCL franchise history. Apply data/sleeper/identity-policy.json before publishing historical records."
+}
