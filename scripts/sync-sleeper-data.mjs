@@ -51,9 +51,11 @@ async function syncLeague(leagueId) {
   const seasonDir = path.join(OUTPUT_ROOT, season);
   await mkdir(seasonDir, { recursive: true });
 
-  const [users, rosters] = await Promise.all([
+  const [users, rosters, winnersBracket, losersBracket] = await Promise.all([
     fetchJson(`${API}/league/${leagueId}/users`),
-    fetchJson(`${API}/league/${leagueId}/rosters`)
+    fetchJson(`${API}/league/${leagueId}/rosters`),
+    fetchJson(`${API}/league/${leagueId}/winners_bracket`),
+    fetchJson(`${API}/league/${leagueId}/losers_bracket`)
   ]);
 
   for (const week of WEEKS) {
@@ -65,7 +67,9 @@ async function syncLeague(leagueId) {
   await Promise.all([
     writeJson(path.join(seasonDir, 'league.json'), league),
     writeJson(path.join(seasonDir, 'users.json'), users),
-    writeJson(path.join(seasonDir, 'rosters.json'), rosters)
+    writeJson(path.join(seasonDir, 'rosters.json'), rosters),
+    writeJson(path.join(seasonDir, 'winners-bracket.json'), winnersBracket),
+    writeJson(path.join(seasonDir, 'losers-bracket.json'), losersBracket)
   ]);
 
   const summary = {
@@ -76,6 +80,7 @@ async function syncLeague(leagueId) {
     roster_count: Array.isArray(rosters) ? rosters.length : 0,
     user_count: Array.isArray(users) ? users.length : 0,
     weeks_synced: WEEKS,
+    playoff_brackets_synced: true,
     source: 'Sleeper public read-only API',
     warning: 'Raw Sleeper roster_id/owner_id continuity is NOT authoritative for SCL franchise history. Apply data/sleeper/identity-policy.json before publishing historical records.'
   };
