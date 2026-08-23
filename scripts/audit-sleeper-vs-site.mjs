@@ -553,7 +553,7 @@ async function main() {
     '- Current weekly API scores are still compared for closest game, blowout, high week and low week, but a difference is classified as historical snapshot variance rather than automatically rewriting league history.',
     '- 2025 ArShamaa remains mapped for scheduled H2H/history but is intentionally excluded from the published 2025 standings and season-stat eligibility.',
     '- 2020 is not auditable through Sleeper because it is archived on ESPN.',
-    '- “Most Best Team Sleeper reports” is verified by counting the highest mapped franchise score in each Week 1–14, matching the league's stated Sleeper-report rule.'
+    '- “Most Best Team Sleeper reports” is verified by counting the highest mapped franchise score in each Week 1–14, matching the league\'s stated Sleeper-report rule.'
   ].join('\n');
   await writeFile(path.join(AUDIT_ROOT, 'sleeper-vs-site.md'), `${md}\n`, 'utf8');
   console.log(JSON.stringify(report.summary));
