@@ -1,6 +1,7 @@
 {
-  "generated_at_utc": "2026-08-23T05:19:37.786Z",
+  "generated_at_utc": "2026-08-23T05:24:29.682Z",
   "scope": "SCL published 2021-2025 regular-season standings/stats, H2H Weeks 1-14, All Time Records derived from season stats, Franchise Hub regular-season metrics, and champions where Sleeper winner bracket is available.",
+  "scoring_source": "Official Sleeper effective score: custom_points when present, otherwise points.",
   "policies": {
     "regular_season_weeks": "Weeks 1-14",
     "arshamaa_2025": "Roster 9 maps to ArShamaa for H2H/history; intentionally excluded from published 2025 standings and season-stat eligibility.",

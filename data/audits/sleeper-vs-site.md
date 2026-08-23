@@ -2,6 +2,8 @@
 
 Overall: **REVIEW_REQUIRED**
 
+Scoring basis: **custom_points override when present; otherwise points**
+
 - Standings: 28/47 rows match
 - Season stats: 39/60 API-verifiable cards match; 5 not API-verifiable
 - H2H: 108/110 directed cells match; games 336/336
