@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: sleeper-data-sync
@@ -53,3 +54,13 @@ jobs:
           git add data/sleeper
           git commit -m "Sync Sleeper league data"
           git push
+
+      - name: Report manual refresh result
+        if: always() && github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ job.status }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          gh issue comment 2 --body "Sleeper refresh finished: **${JOB_STATUS}**. Run: ${RUN_URL}"
