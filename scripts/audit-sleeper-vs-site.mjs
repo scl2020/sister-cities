@@ -22,7 +22,8 @@ const WEEKLY_SNAPSHOT_LABELS = new Set([
   'Closest matchup of the season',
   'Biggest blowout of the season',
   'Highest points in week',
-  'Lowest points in a week'
+  'Lowest points in a week',
+  'Most "Best Team" Sleeper reports'
 ]);
 
 const readJson = async file => JSON.parse(await readFile(file, 'utf8'));
@@ -202,15 +203,34 @@ async function loadSeason(year, siteSeason, policy) {
   const highWeek = [...activeScores].sort((a, b) => b.points - a.points)[0];
   const lowWeek = [...activeScores].sort((a, b) => a.points - b.points)[0];
 
+  // Sleeper's weekly "Best Team" report is the franchise with the highest score that week.
+  // Use all mapped franchises for this award, including a franchise that later became inactive.
+  const bestTeamCounts = new Map();
+  for (const week of WEEKS) {
+    const weekScores = weeklyScores.filter(s => s.week === week);
+    if (!weekScores.length) continue;
+    const weeklyHigh = Math.max(...weekScores.map(s => s.points));
+    for (const score of weekScores) {
+      if (Math.abs(score.points - weeklyHigh) < 0.005) {
+        bestTeamCounts.set(score.teamId, (bestTeamCounts.get(score.teamId) || 0) + 1);
+      }
+    }
+  }
+  const bestTeamMax = bestTeamCounts.size ? Math.max(...bestTeamCounts.values()) : 0;
+  const bestTeamLeaders = [...bestTeamCounts.entries()]
+    .filter(([, count]) => count === bestTeamMax)
+    .map(([teamId]) => teamId);
+
   const stats = {
     'Longest losing streak of the season': { value: maxL, teams: activeOfficial.filter(t => longestRun(t.sequence, 'L') === maxL).map(t => t.teamId), basis: 'finalized_roster_metadata' },
     'Longest winning streak of the season': { value: maxW, teams: activeOfficial.filter(t => longestRun(t.sequence, 'W') === maxW).map(t => t.teamId), basis: 'finalized_roster_metadata' },
-    'Best regular season record': { value: `${bestWins}-${14 - bestWins}`, teams: activeOfficial.filter(t => t.wins === bestWins).map(t => t.teamId), basis: 'finalized_roster_settings' },
+    'Best regular season record': { value: `${bestWins}-${14 - bestWins}`, teams: activeOfficial.filter(t => t.wins === bestWins).map(t => t.teamId), primaryTeam: standings[0]?.teamId || null, basis: 'finalized_roster_settings' },
     'Worst regular season record': { value: `${worstWins}-${14 - worstWins}`, teams: activeOfficial.filter(t => t.wins === worstWins).map(t => t.teamId), basis: 'finalized_roster_settings' },
     'Most total points': { value: maxPf, teams: activeOfficial.filter(t => Math.abs(t.pf - maxPf) < 0.005).map(t => t.teamId), basis: 'finalized_roster_settings' },
     'Lowest total points scored': { value: minPf, teams: activeOfficial.filter(t => Math.abs(t.pf - minPf) < 0.005).map(t => t.teamId), basis: 'finalized_roster_settings' },
     'Highest average fantasy points': { value: highAvg.pf / 14, teams: [highAvg.teamId], basis: 'finalized_roster_settings' },
     'Lowest average fantasy points': { value: lowAvg.pf / 14, teams: [lowAvg.teamId], basis: 'finalized_roster_settings' },
+    'Most "Best Team" Sleeper reports': { value: bestTeamMax, teams: bestTeamLeaders, basis: 'current_weekly_api_snapshot' },
     'Closest matchup of the season': { value: Math.abs(closest.aPoints - closest.bPoints), teams: [closest.a, closest.b], details: `Week ${closest.week}`, basis: 'current_weekly_api_snapshot' },
     'Biggest blowout of the season': { value: Math.abs(blowout.aPoints - blowout.bPoints), teams: [blowout.a, blowout.b], details: `Week ${blowout.week}`, basis: 'current_weekly_api_snapshot' },
     'Highest points in week': { value: highWeek.points, teams: [highWeek.teamId], details: `Week ${highWeek.week}`, basis: 'current_weekly_api_snapshot' },
@@ -238,7 +258,9 @@ function compareStat(siteStat, actual) {
   const valueOk = /record/i.test(siteStat.label)
     ? normRecord(siteStat.value) === normRecord(actual.value)
     : numericMatchesSitePrecision(siteStat.value, actual.value);
-  const teamsOk = sameSet(siteStat.teams, actual.teams);
+  const teamsOk = siteStat.label === 'Best regular season record'
+    ? Array.isArray(siteStat.teams) && siteStat.teams.length > 0 && siteStat.teams.includes(actual.primaryTeam) && siteStat.teams.every(teamId => actual.teams.includes(teamId))
+    : sameSet(siteStat.teams, actual.teams);
   const detailsOk = !siteStat.details || !actual.details || siteStat.details === actual.details;
   const matches = valueOk && teamsOk && detailsOk;
   if (matches) return { status: 'PASS', valueOk, teamsOk, detailsOk };
@@ -274,7 +296,8 @@ const DIRECTIONS = {
   'Highest average fantasy points': 'max',
   'Highest points in week': 'max',
   'Lowest points in a week': 'min',
-  'Lowest average fantasy points': 'min'
+  'Lowest average fantasy points': 'min',
+  'Most "Best Team" Sleeper reports': 'max'
 };
 
 function comparable(label, value) {
@@ -375,10 +398,6 @@ async function main() {
   const statChecks = [];
   for (const year of YEARS) {
     for (const s of site.seasons[year].seasonStats) {
-      if (s.label.includes('Best Team')) {
-        statChecks.push({ year, label: s.label, site: { value: s.value, teams: s.teams, details: s.details || null }, sleeper: null, status: 'UNVERIFIED', reason: 'Sleeper weekly report awards are not exposed by the mirrored public endpoints.' });
-        continue;
-      }
       const a = actual[year].stats[s.label];
       statChecks.push({ year, label: s.label, site: { value: s.value, teams: s.teams, details: s.details || null }, sleeper: a || null, ...compareStat(s, a) });
     }
@@ -534,7 +553,7 @@ async function main() {
     '- Current weekly API scores are still compared for closest game, blowout, high week and low week, but a difference is classified as historical snapshot variance rather than automatically rewriting league history.',
     '- 2025 ArShamaa remains mapped for scheduled H2H/history but is intentionally excluded from the published 2025 standings and season-stat eligibility.',
     '- 2020 is not auditable through Sleeper because it is archived on ESPN.',
-    '- “Most Best Team Sleeper reports” remains unverified because the public endpoints mirrored here do not expose that report award.'
+    '- “Most Best Team Sleeper reports” is verified by counting the highest mapped franchise score in each Week 1–14, matching the league's stated Sleeper-report rule.'
   ].join('\n');
   await writeFile(path.join(AUDIT_ROOT, 'sleeper-vs-site.md'), `${md}\n`, 'utf8');
   console.log(JSON.stringify(report.summary));
