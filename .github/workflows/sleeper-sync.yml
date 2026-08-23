@@ -9,6 +9,8 @@ on:
       - '.github/workflows/sleeper-sync.yml'
       - 'scripts/sync-sleeper-data.mjs'
       - 'data/sleeper/identity-policy.json'
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: write
@@ -19,11 +21,13 @@ concurrency:
 
 jobs:
   sync:
+    if: github.event_name != 'issue_comment' || (github.event.issue.number == 2 && startsWith(github.event.comment.body, '/sync-sleeper'))
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 1
 
       - name: Set up Node
