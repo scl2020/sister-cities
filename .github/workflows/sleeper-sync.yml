@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 */6 * * *'
+  push:
+    paths:
+      - '.github/workflows/sleeper-sync.yml'
+      - 'scripts/sync-sleeper-data.mjs'
+      - 'data/sleeper/identity-policy.json'
 
 permissions:
   contents: write
