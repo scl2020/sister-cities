@@ -1,3 +1,4 @@
+// Raw Sleeper ingestion only. Publishing to the visible SCL site remains supervised.
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
