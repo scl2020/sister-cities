@@ -1,5 +1,6 @@
 name: Audit SCL data against Sleeper
 
+# Includes finalized-record checks plus weekly Best Team verification.
 on:
   workflow_dispatch:
   push:
