@@ -55,10 +55,8 @@ async function syncLeague(leagueId) {
     fetchJson(`${API}/league/${leagueId}/rosters`)
   ]);
 
-  const matchups = {};
   for (const week of WEEKS) {
     const weekData = await fetchJson(`${API}/league/${leagueId}/matchups/${week}`);
-    matchups[week] = weekData;
     await writeJson(path.join(seasonDir, `week-${week}.json`), weekData);
     await sleep(125);
   }
@@ -70,7 +68,6 @@ async function syncLeague(leagueId) {
   ]);
 
   const summary = {
-    synced_at_utc: new Date().toISOString(),
     season,
     league_id: String(league.league_id),
     previous_league_id: league.previous_league_id ? String(league.previous_league_id) : null,
@@ -107,7 +104,6 @@ async function main() {
   }
 
   await writeJson(path.join(OUTPUT_ROOT, 'index.json'), {
-    generated_at_utc: new Date().toISOString(),
     root_league_id: ROOT_LEAGUE_ID,
     seasons,
     identity_policy: 'data/sleeper/identity-policy.json'
