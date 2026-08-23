@@ -1,0 +1,36 @@
+name: Fix SCL audit quote
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-scl-audit-quote.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fix audit script quote
+        run: node scripts/fix-scl-audit-quote.mjs
+
+      - name: Commit audit script fix
+        shell: bash
+        run: |
+          git config user.name "scl-data-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/audit-sleeper-vs-site.mjs
+          git commit -m "Fix Best Team audit note syntax"
+          git push
