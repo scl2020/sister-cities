@@ -28,6 +28,7 @@
         17,
         18
       ],
+      "playoff_brackets_synced": true,
       "source": "Sleeper public read-only API",
       "warning": "Raw Sleeper roster_id/owner_id continuity is NOT authoritative for SCL franchise history. Apply data/sleeper/identity-policy.json before publishing historical records."
     },
@@ -58,6 +59,7 @@
         17,
         18
       ],
+      "playoff_brackets_synced": true,
       "source": "Sleeper public read-only API",
       "warning": "Raw Sleeper roster_id/owner_id continuity is NOT authoritative for SCL franchise history. Apply data/sleeper/identity-policy.json before publishing historical records."
     },
@@ -88,6 +90,7 @@
         17,
         18
       ],
+      "playoff_brackets_synced": true,
       "source": "Sleeper public read-only API",
       "warning": "Raw Sleeper roster_id/owner_id continuity is NOT authoritative for SCL franchise history. Apply data/sleeper/identity-policy.json before publishing historical records."
     },
@@ -118,6 +121,7 @@
         17,
         18
       ],
+      "playoff_brackets_synced": true,
       "source": "Sleeper public read-only API",
       "warning": "Raw Sleeper roster_id/owner_id continuity is NOT authoritative for SCL franchise history. Apply data/sleeper/identity-policy.json before publishing historical records."
     },
@@ -148,6 +152,7 @@
         17,
         18
       ],
+      "playoff_brackets_synced": true,
       "source": "Sleeper public read-only API",
       "warning": "Raw Sleeper roster_id/owner_id continuity is NOT authoritative for SCL franchise history. Apply data/sleeper/identity-policy.json before publishing historical records."
     },
@@ -178,6 +183,7 @@
         17,
         18
       ],
+      "playoff_brackets_synced": true,
       "source": "Sleeper public read-only API",
       "warning": "Raw Sleeper roster_id/owner_id continuity is NOT authoritative for SCL franchise history. Apply data/sleeper/identity-policy.json before publishing historical records."
     }
