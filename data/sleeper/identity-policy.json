@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "purpose": "SCL franchise identity guardrails for Sleeper imports",
   "authority": "SCL stable franchise IDs are authoritative. Sleeper roster_id and owner_id continuity are raw source metadata only and must never automatically merge franchise history.",
   "hard_rules": [
@@ -28,7 +28,8 @@
       "8": "abethe3arab"
     },
     "2025": {
-      "8": "svetunited"
+      "8": "svetunited",
+      "9": "arshamaa"
     }
   },
   "franchises": {
@@ -46,40 +47,49 @@
     },
     "daddytate": {
       "current_name": "Spidey",
-      "aliases": ["Daddy Tate", "Spidey", "MoeK"]
+      "aliases": ["Daddy Tate", "Spidey", "Team Spidey", "MoeK", "moekoubaissi"],
+      "sleeper_user_ids": ["860758130177454080"]
     },
     "angolarookie": {
       "current_name": "Angola Rookie",
-      "aliases": ["Angola Rookie"]
+      "aliases": ["Angola Rookie", "wadihelk"],
+      "sleeper_user_ids": ["728131622876073984"]
     },
     "drhtown": {
       "current_name": "Dr. H-Town",
-      "aliases": ["Dr. H-Town", "Dr H-Town"]
+      "aliases": ["Dr. H-Town", "Dr H-Town", "mkassim94"],
+      "sleeper_user_ids": ["685243469911900160"]
     },
     "sixowls": {
       "current_name": "6ixOwls",
-      "aliases": ["6ixOwls", "Team 6ixOwls"]
+      "aliases": ["6ixOwls", "Team 6ixOwls"],
+      "sleeper_user_ids": ["706542310820765696"]
     },
     "miami": {
       "current_name": "Buy the Dip-hins",
-      "aliases": ["1", "A TEAM", "Miami", "Miami Dolphins", "Buy the Dip-hins", "Dip-hins"]
+      "aliases": ["1", "A TEAM", "Miami", "Miami Dolphins", "Miami 🐬", "Buy the Dip-hins", "Dip-hins", "Abe1993"],
+      "sleeper_user_ids": ["728365690406440960"]
     },
     "snorlax": {
       "current_name": "Snorlax",
-      "aliases": ["Mahomies", "Deez Nuts", "Snorlax"]
+      "aliases": ["Mahomies", "Deez Nuts", "Snorlax", "Snorrlax"],
+      "sleeper_user_ids": ["865687565754347520"]
     },
     "barjalona": {
       "current_name": "Barjalona",
-      "aliases": ["Barjalona", "Team Barjalona"]
+      "aliases": ["Barjalona", "Team Barjalona"],
+      "sleeper_user_ids": ["728371296236384256"]
     },
     "maleksexcornflex": {
       "current_name": "Invincibles",
-      "aliases": ["Malek Sex & Cornflex", "Malek sex w cornflex", "Invincibles"]
+      "aliases": ["Malek Sex & Cornflex", "Malek sex w cornflex", "Invincibles", "samerkoneiber"],
+      "sleeper_user_ids": ["709458333353963520"]
     },
     "arshamaa": {
       "current_name": "ArShamaa",
       "aliases": ["ArShamaa", "Team Shammaa", "Team 9"],
-      "historical_note": "2025 scheduled matchups still count even when Sleeper displays a dash/no submitted lineup score; preserve the scheduled game in SCL history."
+      "sleeper_user_ids": ["860959176627695616"],
+      "historical_note": "ArShamaa left during 2025. Roster 9 remains attributable to ArShamaa for every scheduled 2025 matchup. Scheduled games after departure still count in historical H2H; ArShamaa remains intentionally omitted from the published 2025 standings."
     }
   }
 }
