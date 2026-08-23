@@ -44,7 +44,7 @@ jobs:
       - name: Commit changed Sleeper snapshots
         shell: bash
         run: |
-          if git diff --quiet -- data/sleeper; then
+          if [ -z "$(git status --porcelain -- data/sleeper)" ]; then
             echo "No Sleeper data changes."
             exit 0
           fi
