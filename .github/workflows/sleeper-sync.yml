@@ -1,0 +1,46 @@
+name: Sync Sleeper league data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sleeper-data-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch Sleeper data
+        env:
+          SLEEPER_LEAGUE_ID: '1388938049026535424'
+        run: node scripts/sync-sleeper-data.mjs
+
+      - name: Commit changed Sleeper snapshots
+        shell: bash
+        run: |
+          if git diff --quiet -- data/sleeper; then
+            echo "No Sleeper data changes."
+            exit 0
+          fi
+
+          git config user.name "scl-sleeper-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/sleeper
+          git commit -m "Sync Sleeper league data"
+          git push
