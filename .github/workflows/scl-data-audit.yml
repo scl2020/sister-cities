@@ -1,0 +1,49 @@
+name: Audit SCL data against Sleeper
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'data/sleeper/**'
+      - 'script.js'
+      - 'h2h-data-2026.js'
+      - 'scripts/audit-sleeper-vs-site.mjs'
+      - '.github/workflows/scl-data-audit.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scl-data-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Recompute SCL data from Sleeper snapshots
+        run: node scripts/audit-sleeper-vs-site.mjs
+
+      - name: Commit audit report when changed
+        shell: bash
+        run: |
+          git add data/audits/sleeper-vs-site.json data/audits/sleeper-vs-site.md
+          if git diff --cached --quiet; then
+            echo "Audit report unchanged."
+            exit 0
+          fi
+          git config user.name "scl-audit-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Audit SCL site data against Sleeper"
+          git push
