@@ -24,6 +24,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Fix audit note quoting
+        run: node scripts/fix-audit-best-team-quote.mjs
+
       - name: Run audit and capture result
         id: run_audit
         shell: bash
@@ -35,18 +38,18 @@ jobs:
           cat /tmp/scl-audit.log
           exit 0
 
-      - name: Commit updated audit report
+      - name: Commit audit fix and updated report
         if: steps.run_audit.outputs.exit_code == '0'
         shell: bash
         run: |
-          git add data/audits/sleeper-vs-site.json data/audits/sleeper-vs-site.md
+          git add scripts/audit-sleeper-vs-site.mjs data/audits/sleeper-vs-site.json data/audits/sleeper-vs-site.md
           if git diff --cached --quiet; then
-            echo "Audit report unchanged."
+            echo "Audit outputs unchanged."
             exit 0
           fi
           git config user.name "scl-audit-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Audit SCL site data against Sleeper"
+          git commit -m "Verify corrected SCL data against Sleeper"
           git push
 
       - name: Report audit status
