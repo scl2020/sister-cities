@@ -3,23 +3,39 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const YEARS = [2021, 2022, 2023, 2024, 2025];
-const REGULAR_WEEKS = Array.from({ length: 14 }, (_, i) => i + 1);
+const WEEKS = Array.from({ length: 14 }, (_, i) => i + 1);
 const ROOT = process.cwd();
 const SLEEPER_ROOT = path.join(ROOT, 'data', 'sleeper');
 const AUDIT_ROOT = path.join(ROOT, 'data', 'audits');
 
+const DEFINITIVE_LABELS = new Set([
+  'Longest losing streak of the season',
+  'Longest winning streak of the season',
+  'Best regular season record',
+  'Worst regular season record',
+  'Most total points',
+  'Lowest total points scored',
+  'Highest average fantasy points',
+  'Lowest average fantasy points'
+]);
+const WEEKLY_SNAPSHOT_LABELS = new Set([
+  'Closest matchup of the season',
+  'Biggest blowout of the season',
+  'Highest points in week',
+  'Lowest points in a week'
+]);
+
 const readJson = async file => JSON.parse(await readFile(file, 'utf8'));
-const round2 = n => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
-const sorted = values => [...values].sort();
-const sameSet = (a, b) => JSON.stringify(sorted(a || [])) === JSON.stringify(sorted(b || []));
+const sorted = values => [...(values || [])].sort();
+const sameSet = (a, b) => JSON.stringify(sorted(a)) === JSON.stringify(sorted(b));
 const normRecord = value => String(value ?? '').replace(/–/g, '-').replace(/\s/g, '');
 const effectivePoints = entry => Number(entry.custom_points ?? entry.points ?? 0);
+const scoreFromSettings = (whole, decimal) => Number(whole || 0) + (Number(decimal || 0) / 100);
 
 function extractBalancedObject(source, marker) {
   const markerIndex = source.indexOf(marker);
-  if (markerIndex < 0) throw new Error(`Could not find marker: ${marker}`);
+  if (markerIndex < 0) throw new Error(`Missing marker: ${marker}`);
   const start = source.indexOf('{', markerIndex + marker.length);
-  if (start < 0) throw new Error(`Could not find object after: ${marker}`);
   let depth = 0, quote = null, escaped = false, lineComment = false, blockComment = false;
   for (let i = start; i < source.length; i += 1) {
     const ch = source[i], next = source[i + 1];
@@ -37,12 +53,12 @@ function extractBalancedObject(source, marker) {
     if (ch === '{') depth += 1;
     if (ch === '}' && --depth === 0) return source.slice(start, i + 1);
   }
-  throw new Error(`Unbalanced object after marker: ${marker}`);
+  throw new Error(`Unbalanced object after ${marker}`);
 }
 
 const evalObject = text => vm.runInNewContext(`(${text})`, Object.create(null), { timeout: 1000 });
 
-async function loadSiteData() {
+async function loadSite() {
   const source = await readFile(path.join(ROOT, 'script.js'), 'utf8');
   const seasons = {};
   for (const year of YEARS) seasons[year] = evalObject(extractBalancedObject(source, `seasons[${year}] =`));
@@ -51,31 +67,27 @@ async function loadSiteData() {
   return { seasons, h2h };
 }
 
-function userIdMapFromPolicy(policy) {
-  const map = new Map();
-  for (const [franchiseId, franchise] of Object.entries(policy.franchises || {})) {
-    for (const userId of franchise.sleeper_user_ids || []) map.set(String(userId), franchiseId);
-  }
-  return map;
-}
-
-function aliasMapFromPolicy(policy) {
-  const map = new Map();
+function makeIdentityMaps(policy) {
+  const byUserId = new Map();
+  const byAlias = new Map();
   const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   for (const [franchiseId, franchise] of Object.entries(policy.franchises || {})) {
+    for (const userId of franchise.sleeper_user_ids || []) byUserId.set(String(userId), franchiseId);
     for (const alias of [franchise.current_name, ...(franchise.aliases || [])]) {
-      const key = normalize(alias); if (key) map.set(key, franchiseId);
+      const key = normalize(alias);
+      if (key) byAlias.set(key, franchiseId);
     }
   }
-  return { map, normalize };
+  return { byUserId, byAlias, normalize };
 }
 
 function buildRosterMap(year, rosters, users, policy) {
-  const byUserId = userIdMapFromPolicy(policy);
-  const { map: byAlias, normalize } = aliasMapFromPolicy(policy);
+  const { byUserId, byAlias, normalize } = makeIdentityMaps(policy);
   const usersById = new Map(users.map(u => [String(u.user_id), u]));
   const overrides = policy.season_roster_overrides?.[String(year)] || {};
-  const rosterMap = new Map(), unresolved = [];
+  const rosterMap = new Map();
+  const unresolved = [];
+
   for (const roster of rosters) {
     const rid = String(roster.roster_id);
     let franchiseId = overrides[rid] || null;
@@ -83,7 +95,8 @@ function buildRosterMap(year, rosters, users, policy) {
     if (!franchiseId && roster.owner_id) {
       const user = usersById.get(String(roster.owner_id));
       for (const candidate of [user?.display_name, user?.metadata?.team_name]) {
-        const hit = byAlias.get(normalize(candidate)); if (hit) { franchiseId = hit; break; }
+        const hit = byAlias.get(normalize(candidate));
+        if (hit) { franchiseId = hit; break; }
       }
     }
     if (franchiseId) rosterMap.set(Number(roster.roster_id), franchiseId);
@@ -92,146 +105,229 @@ function buildRosterMap(year, rosters, users, policy) {
   return { rosterMap, unresolved };
 }
 
-const initTeam = () => ({ wins: 0, losses: 0, ties: 0, pf: 0, pa: 0, sequence: [] });
 function longestRun(sequence, symbol) {
   let best = 0, current = 0;
-  for (const item of sequence) { if (item === symbol) { current += 1; best = Math.max(best, current); } else current = 0; }
+  for (const ch of sequence) {
+    if (ch === symbol) { current += 1; best = Math.max(best, current); }
+    else current = 0;
+  }
   return best;
 }
 
-async function computeSleeperSeason(year, siteSeason, policy) {
-  const dir = path.join(SLEEPER_ROOT, String(year));
-  const [users, rosters] = await Promise.all([readJson(path.join(dir, 'users.json')), readJson(path.join(dir, 'rosters.json'))]);
-  const { rosterMap, unresolved } = buildRosterMap(year, rosters, users, policy);
-  const teams = new Map(), games = [], weeklyScores = [];
-  for (const franchiseId of new Set(rosterMap.values())) teams.set(franchiseId, initTeam());
+function officialTeamFromRoster(roster, teamId) {
+  const sequence = String(roster.metadata?.record || '').slice(0, 14).split('');
+  return {
+    teamId,
+    rosterId: Number(roster.roster_id),
+    wins: Number(roster.settings?.wins || 0),
+    losses: Number(roster.settings?.losses || 0),
+    ties: Number(roster.settings?.ties || 0),
+    pf: scoreFromSettings(roster.settings?.fpts, roster.settings?.fpts_decimal),
+    pa: scoreFromSettings(roster.settings?.fpts_against, roster.settings?.fpts_against_decimal),
+    sequence
+  };
+}
 
-  for (const week of REGULAR_WEEKS) {
+async function loadSeason(year, siteSeason, policy) {
+  const dir = path.join(SLEEPER_ROOT, String(year));
+  const [users, rosters] = await Promise.all([
+    readJson(path.join(dir, 'users.json')),
+    readJson(path.join(dir, 'rosters.json'))
+  ]);
+  const { rosterMap, unresolved } = buildRosterMap(year, rosters, users, policy);
+  const officialByTeam = new Map();
+  const rosterToOfficial = new Map();
+  for (const roster of rosters) {
+    const teamId = rosterMap.get(Number(roster.roster_id));
+    if (!teamId) continue;
+    const official = officialTeamFromRoster(roster, teamId);
+    officialByTeam.set(teamId, official);
+    rosterToOfficial.set(Number(roster.roster_id), official);
+  }
+
+  const games = [];
+  const weeklyScores = [];
+  const resultConflicts = [];
+  for (const week of WEEKS) {
     const entries = await readJson(path.join(dir, `week-${week}.json`));
     const groups = new Map();
     for (const entry of entries) {
-      const franchiseId = rosterMap.get(Number(entry.roster_id));
-      if (!franchiseId) continue;
-      if (!teams.has(franchiseId)) teams.set(franchiseId, initTeam());
+      const teamId = rosterMap.get(Number(entry.roster_id));
+      if (!teamId) continue;
       const points = effectivePoints(entry);
-      weeklyScores.push({ week, franchiseId, points, rosterId: entry.roster_id, usedCustomPoints: entry.custom_points != null });
-      const key = entry.matchup_id == null ? `null-${entry.roster_id}` : String(entry.matchup_id);
+      weeklyScores.push({ week, teamId, points, rosterId: Number(entry.roster_id) });
+      const key = entry.matchup_id == null ? `solo-${entry.roster_id}` : String(entry.matchup_id);
       if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push({ ...entry, franchiseId, points });
+      groups.get(key).push({ teamId, rosterId: Number(entry.roster_id), points });
     }
     for (const group of groups.values()) {
       if (group.length !== 2) continue;
-      const [a, b] = group, ta = teams.get(a.franchiseId), tb = teams.get(b.franchiseId);
-      ta.pf += a.points; ta.pa += b.points; tb.pf += b.points; tb.pa += a.points;
-      if (a.points > b.points) { ta.wins += 1; tb.losses += 1; ta.sequence.push('W'); tb.sequence.push('L'); }
-      else if (b.points > a.points) { tb.wins += 1; ta.losses += 1; tb.sequence.push('W'); ta.sequence.push('L'); }
-      else { ta.ties += 1; tb.ties += 1; ta.sequence.push('T'); tb.sequence.push('T'); }
-      games.push({ week, a: a.franchiseId, b: b.franchiseId, aPoints: a.points, bPoints: b.points });
+      const [a, b] = group;
+      const aOfficial = rosterToOfficial.get(a.rosterId), bOfficial = rosterToOfficial.get(b.rosterId);
+      const aResult = aOfficial?.sequence?.[week - 1] || null;
+      const bResult = bOfficial?.sequence?.[week - 1] || null;
+      let winner = null, loser = null;
+      if (aResult === 'W' && bResult === 'L') { winner = a.teamId; loser = b.teamId; }
+      else if (bResult === 'W' && aResult === 'L') { winner = b.teamId; loser = a.teamId; }
+      else if (a.points !== b.points) { winner = a.points > b.points ? a.teamId : b.teamId; loser = a.points > b.points ? b.teamId : a.teamId; }
+
+      const rawWinner = a.points === b.points ? null : (a.points > b.points ? a.teamId : b.teamId);
+      if (winner && rawWinner && winner !== rawWinner) {
+        resultConflicts.push({ week, a: a.teamId, b: b.teamId, officialWinner: winner, currentRawWinner: rawWinner, aPoints: a.points, bPoints: b.points });
+      }
+      games.push({ week, a: a.teamId, b: b.teamId, aPoints: a.points, bPoints: b.points, winner, loser });
     }
   }
-  for (const team of teams.values()) { team.pf = round2(team.pf); team.pa = round2(team.pa); }
 
-  const activeIds = new Set(siteSeason.standings.map(row => row.teamId));
-  const activeTeams = [...teams.entries()].filter(([id]) => activeIds.has(id));
-  const standings = activeTeams.map(([teamId, t]) => ({ teamId, ...t }))
+  const activeIds = new Set(siteSeason.standings.map(r => r.teamId));
+  const standings = [...officialByTeam.values()]
+    .filter(t => activeIds.has(t.teamId))
     .sort((a, b) => b.wins - a.wins || b.ties - a.ties || b.pf - a.pf || a.teamId.localeCompare(b.teamId))
-    .map((row, index) => ({ ...row, seed: index + 1 }));
+    .map((t, index) => ({ ...t, seed: index + 1 }));
+  const activeOfficial = standings;
   const activeGames = games.filter(g => activeIds.has(g.a) && activeIds.has(g.b));
-  const activeWeeklyScores = weeklyScores.filter(s => activeIds.has(s.franchiseId));
+  const activeScores = weeklyScores.filter(s => activeIds.has(s.teamId));
 
-  const maxWinStreak = Math.max(...activeTeams.map(([, t]) => longestRun(t.sequence, 'W')));
-  const maxLossStreak = Math.max(...activeTeams.map(([, t]) => longestRun(t.sequence, 'L')));
-  const winStreakTeams = activeTeams.filter(([, t]) => longestRun(t.sequence, 'W') === maxWinStreak).map(([id]) => id);
-  const lossStreakTeams = activeTeams.filter(([, t]) => longestRun(t.sequence, 'L') === maxLossStreak).map(([id]) => id);
-  const bestWins = Math.max(...standings.map(t => t.wins)), worstWins = Math.min(...standings.map(t => t.wins));
-  const bestRecordTeams = standings.filter(t => t.wins === bestWins).map(t => t.teamId);
-  const worstRecordTeams = standings.filter(t => t.wins === worstWins).map(t => t.teamId);
-  const maxPf = Math.max(...standings.map(t => t.pf)), minPf = Math.min(...standings.map(t => t.pf));
-  const maxPfTeams = standings.filter(t => Math.abs(t.pf - maxPf) < 0.005).map(t => t.teamId);
-  const minPfTeams = standings.filter(t => Math.abs(t.pf - minPf) < 0.005).map(t => t.teamId);
+  const maxW = Math.max(...activeOfficial.map(t => longestRun(t.sequence, 'W')));
+  const maxL = Math.max(...activeOfficial.map(t => longestRun(t.sequence, 'L')));
+  const bestWins = Math.max(...activeOfficial.map(t => t.wins));
+  const worstWins = Math.min(...activeOfficial.map(t => t.wins));
+  const maxPf = Math.max(...activeOfficial.map(t => t.pf));
+  const minPf = Math.min(...activeOfficial.map(t => t.pf));
+  const highAvg = [...activeOfficial].sort((a, b) => b.pf - a.pf)[0];
+  const lowAvg = [...activeOfficial].sort((a, b) => a.pf - b.pf)[0];
+
   const closest = [...activeGames].sort((x, y) => Math.abs(x.aPoints - x.bPoints) - Math.abs(y.aPoints - y.bPoints))[0];
   const blowout = [...activeGames].sort((x, y) => Math.abs(y.aPoints - y.bPoints) - Math.abs(x.aPoints - x.bPoints))[0];
-  const highWeek = [...activeWeeklyScores].sort((a, b) => b.points - a.points)[0];
-  const lowWeek = [...activeWeeklyScores].sort((a, b) => a.points - b.points)[0];
-  const highAvg = [...standings].sort((a, b) => b.pf - a.pf)[0], lowAvg = [...standings].sort((a, b) => a.pf - b.pf)[0];
+  const highWeek = [...activeScores].sort((a, b) => b.points - a.points)[0];
+  const lowWeek = [...activeScores].sort((a, b) => a.points - b.points)[0];
 
-  const statActual = {
-    'Longest losing streak of the season': { value: maxLossStreak, teams: lossStreakTeams },
-    'Longest winning streak of the season': { value: maxWinStreak, teams: winStreakTeams },
-    'Best regular season record': { value: `${bestWins}-${14 - bestWins}`, teams: bestRecordTeams },
-    'Worst regular season record': { value: `${worstWins}-${14 - worstWins}`, teams: worstRecordTeams },
-    'Most total points': { value: maxPf, teams: maxPfTeams },
-    'Lowest total points scored': { value: minPf, teams: minPfTeams },
-    'Closest matchup of the season': { value: Math.abs(closest.aPoints - closest.bPoints), teams: [closest.a, closest.b], details: `Week ${closest.week}` },
-    'Biggest blowout of the season': { value: Math.abs(blowout.aPoints - blowout.bPoints), teams: [blowout.a, blowout.b], details: `Week ${blowout.week}` },
-    'Highest average fantasy points': { value: highAvg.pf / 14, teams: [highAvg.teamId] },
-    'Highest points in week': { value: highWeek.points, teams: [highWeek.franchiseId], details: `Week ${highWeek.week}` },
-    'Lowest points in a week': { value: lowWeek.points, teams: [lowWeek.franchiseId], details: `Week ${lowWeek.week}` },
-    'Lowest average fantasy points': { value: lowAvg.pf / 14, teams: [lowAvg.teamId] }
+  const stats = {
+    'Longest losing streak of the season': { value: maxL, teams: activeOfficial.filter(t => longestRun(t.sequence, 'L') === maxL).map(t => t.teamId), basis: 'finalized_roster_metadata' },
+    'Longest winning streak of the season': { value: maxW, teams: activeOfficial.filter(t => longestRun(t.sequence, 'W') === maxW).map(t => t.teamId), basis: 'finalized_roster_metadata' },
+    'Best regular season record': { value: `${bestWins}-${14 - bestWins}`, teams: activeOfficial.filter(t => t.wins === bestWins).map(t => t.teamId), basis: 'finalized_roster_settings' },
+    'Worst regular season record': { value: `${worstWins}-${14 - worstWins}`, teams: activeOfficial.filter(t => t.wins === worstWins).map(t => t.teamId), basis: 'finalized_roster_settings' },
+    'Most total points': { value: maxPf, teams: activeOfficial.filter(t => Math.abs(t.pf - maxPf) < 0.005).map(t => t.teamId), basis: 'finalized_roster_settings' },
+    'Lowest total points scored': { value: minPf, teams: activeOfficial.filter(t => Math.abs(t.pf - minPf) < 0.005).map(t => t.teamId), basis: 'finalized_roster_settings' },
+    'Highest average fantasy points': { value: highAvg.pf / 14, teams: [highAvg.teamId], basis: 'finalized_roster_settings' },
+    'Lowest average fantasy points': { value: lowAvg.pf / 14, teams: [lowAvg.teamId], basis: 'finalized_roster_settings' },
+    'Closest matchup of the season': { value: Math.abs(closest.aPoints - closest.bPoints), teams: [closest.a, closest.b], details: `Week ${closest.week}`, basis: 'current_weekly_api_snapshot' },
+    'Biggest blowout of the season': { value: Math.abs(blowout.aPoints - blowout.bPoints), teams: [blowout.a, blowout.b], details: `Week ${blowout.week}`, basis: 'current_weekly_api_snapshot' },
+    'Highest points in week': { value: highWeek.points, teams: [highWeek.teamId], details: `Week ${highWeek.week}`, basis: 'current_weekly_api_snapshot' },
+    'Lowest points in a week': { value: lowWeek.points, teams: [lowWeek.teamId], details: `Week ${lowWeek.week}`, basis: 'current_weekly_api_snapshot' }
   };
-  return { rosterMap, unresolved, teams, standings, games, weeklyScores, statActual };
+
+  return { rosterMap, unresolved, officialByTeam, standings, games, weeklyScores, resultConflicts, stats };
 }
 
-function decimalPlaces(value) { const m = String(value).match(/\.(\d+)/); return m ? m[1].length : 0; }
+function decimalPlaces(value) {
+  const m = String(value).match(/\.(\d+)/);
+  return m ? m[1].length : 0;
+}
+
+function numericMatchesSitePrecision(siteValue, actualValue) {
+  const a = Number(siteValue), b = Number(actualValue);
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return false;
+  const decimals = decimalPlaces(siteValue);
+  const tolerance = decimals === 0 ? 0.500001 : (0.5 / (10 ** decimals)) + 1e-9;
+  return Math.abs(a - b) <= tolerance;
+}
+
 function compareStat(siteStat, actual) {
-  if (!actual) return { status: 'UNVERIFIED', reason: 'Not available from the public raw matchup/bracket data used by this audit.' };
-  const recordLike = /record/i.test(siteStat.label);
-  let valueOk;
-  if (recordLike) valueOk = normRecord(siteStat.value) === normRecord(actual.value);
-  else {
-    const siteNum = Number(siteStat.value), actualNum = Number(actual.value), decimals = decimalPlaces(siteStat.value);
-    const tolerance = decimals === 0 ? 0.500001 : (0.5 / (10 ** decimals)) + 1e-9;
-    valueOk = Number.isFinite(siteNum) && Number.isFinite(actualNum) && Math.abs(siteNum - actualNum) <= tolerance;
-  }
+  if (!actual) return { status: 'UNVERIFIED', reason: 'Not exposed by mirrored Sleeper sources.' };
+  const valueOk = /record/i.test(siteStat.label)
+    ? normRecord(siteStat.value) === normRecord(actual.value)
+    : numericMatchesSitePrecision(siteStat.value, actual.value);
   const teamsOk = sameSet(siteStat.teams, actual.teams);
   const detailsOk = !siteStat.details || !actual.details || siteStat.details === actual.details;
-  return { status: valueOk && teamsOk && detailsOk ? 'PASS' : 'MISMATCH', valueOk, teamsOk, detailsOk };
+  const matches = valueOk && teamsOk && detailsOk;
+  if (matches) return { status: 'PASS', valueOk, teamsOk, detailsOk };
+  if (WEEKLY_SNAPSHOT_LABELS.has(siteStat.label)) {
+    return { status: 'HISTORICAL_WEEKLY_VARIANCE', valueOk, teamsOk, detailsOk, reason: 'Current weekly API snapshot conflicts with or may have drifted from the season-finalized historical score state.' };
+  }
+  return { status: 'MISMATCH', valueOk, teamsOk, detailsOk };
 }
 
-function h2hWinsFromGames(allSeasons) {
-  const wins = {}; let gamesCount = 0;
-  const add = (winner, loser) => { wins[winner] ||= {}; wins[winner][loser] = (wins[winner][loser] || 0) + 1; };
-  for (const season of Object.values(allSeasons)) for (const g of season.games) {
-    gamesCount += 1; if (g.aPoints > g.bPoints) add(g.a, g.b); else if (g.bPoints > g.aPoints) add(g.b, g.a);
+function h2hFromOfficialGames(allSeasons) {
+  const wins = {};
+  let gamesCount = 0;
+  for (const season of Object.values(allSeasons)) {
+    for (const game of season.games) {
+      gamesCount += 1;
+      if (!game.winner || !game.loser) continue;
+      wins[game.winner] ||= {};
+      wins[game.winner][game.loser] = (wins[game.winner][game.loser] || 0) + 1;
+    }
   }
   return { wins, gamesCount };
 }
 
-function comparableStatValue(label, value) {
-  if (/record/i.test(label)) { const m = normRecord(value).match(/^(\d+)-(\d+)$/); return m ? Number(m[1]) : NaN; }
-  return Number(value);
-}
-
 const DIRECTIONS = {
-  'Longest losing streak of the season': 'max', 'Longest winning streak of the season': 'max',
-  'Best regular season record': 'max', 'Worst regular season record': 'min', 'Most total points': 'max',
-  'Lowest total points scored': 'min', 'Closest matchup of the season': 'min', 'Biggest blowout of the season': 'max',
-  'Highest average fantasy points': 'max', 'Highest points in week': 'max', 'Lowest points in a week': 'min',
+  'Longest losing streak of the season': 'max',
+  'Longest winning streak of the season': 'max',
+  'Best regular season record': 'max',
+  'Worst regular season record': 'min',
+  'Most total points': 'max',
+  'Lowest total points scored': 'min',
+  'Closest matchup of the season': 'min',
+  'Biggest blowout of the season': 'max',
+  'Highest average fantasy points': 'max',
+  'Highest points in week': 'max',
+  'Lowest points in a week': 'min',
   'Lowest average fantasy points': 'min'
 };
 
-function allTimeFromStats(getStat) {
+function comparable(label, value) {
+  if (/record/i.test(label)) {
+    const m = normRecord(value).match(/^(\d+)-(\d+)$/);
+    return m ? Number(m[1]) : NaN;
+  }
+  return Number(value);
+}
+
+function allTimeFrom(getStat) {
   const result = {};
   for (const [label, direction] of Object.entries(DIRECTIONS)) {
     let best = null;
     for (const year of YEARS) {
-      const stat = getStat(year, label); if (!stat) continue;
-      const n = comparableStatValue(label, stat.value); if (!Number.isFinite(n)) continue;
-      if (!best || (direction === 'max' ? n > best.n : n < best.n)) best = { n, value: stat.value, holders: [{ year, teams: stat.teams }] };
-      else if (Math.abs(n - best.n) < 1e-9) best.holders.push({ year, teams: stat.teams });
+      const stat = getStat(year, label);
+      if (!stat) continue;
+      const n = comparable(label, stat.value);
+      if (!Number.isFinite(n)) continue;
+      if (!best || (direction === 'max' ? n > best.n : n < best.n)) {
+        best = { n, value: stat.value, holders: [{ year, teams: stat.teams }] };
+      } else if (Math.abs(n - best.n) < 1e-9) {
+        best.holders.push({ year, teams: stat.teams });
+      }
     }
     result[label] = best;
   }
   return result;
 }
 
+function compareAllTime(label, siteEntry, actualEntry) {
+  const siteHolders = (siteEntry?.holders || []).flatMap(h => h.teams.map(teamId => `${h.year}:${teamId}`));
+  const actualHolders = (actualEntry?.holders || []).flatMap(h => h.teams.map(teamId => `${h.year}:${teamId}`));
+  const valueOk = /record/i.test(label)
+    ? normRecord(siteEntry?.value) === normRecord(actualEntry?.value)
+    : numericMatchesSitePrecision(siteEntry?.value, actualEntry?.value);
+  const holdersOk = sameSet(siteHolders, actualHolders);
+  if (valueOk && holdersOk) return { status: 'PASS', valueOk, holdersOk };
+  if (WEEKLY_SNAPSHOT_LABELS.has(label)) return { status: 'HISTORICAL_WEEKLY_VARIANCE', valueOk, holdersOk };
+  return { status: 'MISMATCH', valueOk, holdersOk };
+}
+
 function deriveFranchiseMetrics(standingsByYear) {
   const rows = {};
-  for (const year of YEARS) for (const row of standingsByYear[year]) { rows[row.teamId] ||= []; rows[row.teamId].push({ year, ...row }); }
+  for (const year of YEARS) for (const row of standingsByYear[year]) {
+    rows[row.teamId] ||= [];
+    rows[row.teamId].push({ year, ...row });
+  }
   const out = {};
   for (const [teamId, teamRows] of Object.entries(rows)) {
     const getWins = r => r.wins ?? Number(normRecord(r.record).split('-')[0]);
-    const bestWins = Math.max(...teamRows.map(getWins)), bestFinish = Math.min(...teamRows.map(r => r.seed));
+    const bestWins = Math.max(...teamRows.map(getWins));
+    const bestFinish = Math.min(...teamRows.map(r => r.seed));
     out[teamId] = {
       playoffYears: teamRows.filter(r => r.seed <= 6).map(r => r.year),
       firstSeedYears: teamRows.filter(r => r.seed === 1).map(r => r.year),
@@ -247,39 +343,54 @@ function deriveFranchiseMetrics(standingsByYear) {
 async function sleeperChampion(year, rosterMap) {
   try {
     const bracket = await readJson(path.join(SLEEPER_ROOT, String(year), 'winners-bracket.json'));
-    const p1 = bracket.find(node => Number(node.p) === 1 && node.w != null);
-    if (p1) return rosterMap.get(Number(p1.w)) || null;
-    const completed = bracket.filter(node => node.w != null), maxRound = Math.max(...completed.map(node => Number(node.r || 0)));
-    const finals = completed.filter(node => Number(node.r || 0) === maxRound);
-    return finals.length === 1 ? rosterMap.get(Number(finals[0].w)) || null : null;
-  } catch { return null; }
+    const firstPlace = bracket.find(node => Number(node.p) === 1 && node.w != null);
+    if (firstPlace) return rosterMap.get(Number(firstPlace.w)) || null;
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 async function main() {
   const policy = await readJson(path.join(SLEEPER_ROOT, 'identity-policy.json'));
-  const site = await loadSiteData(), actual = {};
-  for (const year of YEARS) actual[year] = await computeSleeperSeason(year, site.seasons[year], policy);
+  const site = await loadSite();
+  const actual = {};
+  for (const year of YEARS) actual[year] = await loadSeason(year, site.seasons[year], policy);
 
   const standingsChecks = [];
   for (const year of YEARS) {
-    const actualById = new Map(actual[year].standings.map(row => [row.teamId, row]));
-    for (const siteRow of site.seasons[year].standings) {
-      const a = actualById.get(siteRow.teamId), actualRecord = a ? `${a.wins}-${a.losses}` : null;
-      const checks = a ? { record: normRecord(siteRow.record) === actualRecord, pf: Math.abs(Number(siteRow.pf) - a.pf) < 0.005, pa: Math.abs(Number(siteRow.pa) - a.pa) < 0.005, seed: Number(siteRow.seed) === Number(a.seed) } : { record: false, pf: false, pa: false, seed: false };
-      standingsChecks.push({ year, teamId: siteRow.teamId, site: siteRow, actual: a ? { seed: a.seed, record: actualRecord, pf: a.pf, pa: a.pa } : null, status: Object.values(checks).every(Boolean) ? 'PASS' : 'MISMATCH', checks });
+    const byId = new Map(actual[year].standings.map(r => [r.teamId, r]));
+    for (const s of site.seasons[year].standings) {
+      const a = byId.get(s.teamId);
+      const checks = a ? {
+        record: normRecord(s.record) === `${a.wins}-${a.losses}`,
+        pf: Math.abs(Number(s.pf) - a.pf) < 0.005,
+        pa: Math.abs(Number(s.pa) - a.pa) < 0.005,
+        seed: Number(s.seed) === Number(a.seed)
+      } : { record: false, pf: false, pa: false, seed: false };
+      standingsChecks.push({ year, teamId: s.teamId, site: s, sleeper: a ? { seed: a.seed, record: `${a.wins}-${a.losses}`, pf: a.pf, pa: a.pa } : null, checks, status: Object.values(checks).every(Boolean) ? 'PASS' : 'MISMATCH' });
     }
   }
 
   const statChecks = [];
-  for (const year of YEARS) for (const siteStat of site.seasons[year].seasonStats) {
-    const actualStat = actual[year].statActual[siteStat.label], comparison = compareStat(siteStat, actualStat);
-    statChecks.push({ year, label: siteStat.label, site: { value: siteStat.value, teams: siteStat.teams, details: siteStat.details || null }, actual: actualStat || null, ...comparison });
+  for (const year of YEARS) {
+    for (const s of site.seasons[year].seasonStats) {
+      if (s.label.includes('Best Team')) {
+        statChecks.push({ year, label: s.label, site: { value: s.value, teams: s.teams, details: s.details || null }, sleeper: null, status: 'UNVERIFIED', reason: 'Sleeper weekly report awards are not exposed by the mirrored public endpoints.' });
+        continue;
+      }
+      const a = actual[year].stats[s.label];
+      statChecks.push({ year, label: s.label, site: { value: s.value, teams: s.teams, details: s.details || null }, sleeper: a || null, ...compareStat(s, a) });
+    }
   }
 
-  const actualH2H = h2hWinsFromGames(actual), allTeamIds = Object.keys(policy.franchises || {}), h2hChecks = [];
-  for (const a of allTeamIds) for (const b of allTeamIds) if (a !== b) {
-    const siteWins = Number(site.h2h.wins?.[a]?.[b] || 0), rawWins = Number(actualH2H.wins?.[a]?.[b] || 0);
-    h2hChecks.push({ a, b, siteWins, actualWins: rawWins, status: siteWins === rawWins ? 'PASS' : 'MISMATCH' });
+  const h2hActual = h2hFromOfficialGames(actual);
+  const teamIds = Object.keys(policy.franchises || {});
+  const h2hChecks = [];
+  for (const a of teamIds) for (const b of teamIds) if (a !== b) {
+    const siteWins = Number(site.h2h.wins?.[a]?.[b] || 0);
+    const sleeperWins = Number(h2hActual.wins?.[a]?.[b] || 0);
+    h2hChecks.push({ a, b, siteWins, sleeperWins, status: siteWins === sleeperWins ? 'PASS' : 'MISMATCH' });
   }
 
   const championChecks = [];
@@ -288,74 +399,142 @@ async function main() {
     championChecks.push({ year, siteChampion: site.seasons[year].championTeamId, sleeperChampion: champion, status: champion ? (champion === site.seasons[year].championTeamId ? 'PASS' : 'MISMATCH') : 'UNVERIFIED' });
   }
 
-  const actualAT = allTimeFromStats((year, label) => actual[year].statActual[label]);
-  const siteAT = allTimeFromStats((year, label) => site.seasons[year].seasonStats.find(s => s.label === label));
-  const allTimeChecks = Object.keys(actualAT).map(label => {
-    const a = actualAT[label], s = siteAT[label];
-    const siteHolders = (s?.holders || []).flatMap(h => h.teams.map(teamId => `${h.year}:${teamId}`));
-    const actualHolders = (a?.holders || []).flatMap(h => h.teams.map(teamId => `${h.year}:${teamId}`));
-    const valueOk = label.toLowerCase().includes('record') ? normRecord(s?.value) === normRecord(a?.value) : Math.abs(Number(s?.n) - Number(a?.n)) < 1e-6;
-    return { label, site: s, actual: a, status: valueOk && sameSet(siteHolders, actualHolders) ? 'PASS' : 'MISMATCH' };
-  });
+  const siteAT = allTimeFrom((year, label) => site.seasons[year].seasonStats.find(s => s.label === label));
+  const actualAT = allTimeFrom((year, label) => actual[year].stats[label]);
+  const allTimeChecks = Object.keys(DIRECTIONS).map(label => ({ label, site: siteAT[label], sleeper: actualAT[label], ...compareAllTime(label, siteAT[label], actualAT[label]) }));
 
-  const siteStandingsForFranchise = {}, actualStandingsForFranchise = {};
+  const siteStandings = {}, sleeperStandings = {};
   for (const year of YEARS) {
-    siteStandingsForFranchise[year] = site.seasons[year].standings.map(row => ({ ...row, wins: Number(normRecord(row.record).split('-')[0]) }));
-    actualStandingsForFranchise[year] = actual[year].standings;
+    siteStandings[year] = site.seasons[year].standings.map(r => ({ ...r, wins: Number(normRecord(r.record).split('-')[0]) }));
+    sleeperStandings[year] = actual[year].standings;
   }
-  const siteFranchise = deriveFranchiseMetrics(siteStandingsForFranchise), actualFranchise = deriveFranchiseMetrics(actualStandingsForFranchise), franchiseChecks = [];
-  for (const teamId of new Set([...Object.keys(siteFranchise), ...Object.keys(actualFranchise)])) {
-    const s = siteFranchise[teamId], a = actualFranchise[teamId];
-    const status = s && a && sameSet(s.playoffYears, a.playoffYears) && sameSet(s.firstSeedYears, a.firstSeedYears) && normRecord(s.bestRecord) === normRecord(a.bestRecord) && sameSet(s.bestRecordYears, a.bestRecordYears) && s.bestFinish === a.bestFinish && sameSet(s.bestFinishYears, a.bestFinishYears) ? 'PASS' : 'MISMATCH';
-    franchiseChecks.push({ teamId, site: s || null, actual: a || null, status });
+  const siteFranchise = deriveFranchiseMetrics(siteStandings);
+  const sleeperFranchise = deriveFranchiseMetrics(sleeperStandings);
+  const franchiseChecks = [];
+  for (const teamId of new Set([...Object.keys(siteFranchise), ...Object.keys(sleeperFranchise)])) {
+    const s = siteFranchise[teamId], a = sleeperFranchise[teamId];
+    const ok = s && a && sameSet(s.playoffYears, a.playoffYears) && sameSet(s.firstSeedYears, a.firstSeedYears) && normRecord(s.bestRecord) === normRecord(a.bestRecord) && sameSet(s.bestRecordYears, a.bestRecordYears) && s.bestFinish === a.bestFinish && sameSet(s.bestFinishYears, a.bestFinishYears);
+    franchiseChecks.push({ teamId, site: s || null, sleeper: a || null, status: ok ? 'PASS' : 'MISMATCH' });
   }
+
+  const conflicts = Object.fromEntries(YEARS.map(year => [year, actual[year].resultConflicts]));
+  const unresolved = Object.fromEntries(YEARS.map(year => [year, actual[year].unresolved]));
+  const count = (items, status) => items.filter(x => x.status === status).length;
+  const definitiveStatChecks = statChecks.filter(x => DEFINITIVE_LABELS.has(x.label));
+  const weeklyStatChecks = statChecks.filter(x => WEEKLY_SNAPSHOT_LABELS.has(x.label));
+  const definitiveAllTime = allTimeChecks.filter(x => DEFINITIVE_LABELS.has(x.label));
+  const weeklyAllTime = allTimeChecks.filter(x => WEEKLY_SNAPSHOT_LABELS.has(x.label));
 
   const report = {
     generated_at_utc: new Date().toISOString(),
-    scope: 'SCL published 2021-2025 regular-season standings/stats, H2H Weeks 1-14, All Time Records derived from season stats, Franchise Hub regular-season metrics, and champions where Sleeper winner bracket is available.',
-    scoring_source: 'Official Sleeper effective score: custom_points when present, otherwise points.',
-    policies: {
-      regular_season_weeks: 'Weeks 1-14',
-      arshamaa_2025: 'Roster 9 maps to ArShamaa for H2H/history; intentionally excluded from published 2025 standings and season-stat eligibility.',
-      trablos_abethe3arab: 'Roster 8 is Abethe3Arab in 2024 and Trablos United in 2025; never merged.',
-      season_2020: 'Not audited: archived on ESPN and outside the Sleeper renewal chain.',
-      best_team_reports: 'Not independently verifiable from the raw public matchup/bracket endpoints currently mirrored.'
+    methodology: {
+      standings_and_totals: 'Sleeper finalized roster settings (wins/losses/PF/PA).',
+      streaks_and_h2h_results: 'Sleeper finalized per-week W/L sequence in roster metadata, paired with weekly matchup IDs.',
+      weekly_score_records: 'Current Sleeper weekly matchup score snapshots. Historical recalculation can conflict with finalized W/L/PF, so mismatches are classified as variance rather than definitive errors.',
+      champions: 'Sleeper winners bracket.',
+      regular_season_scope: 'Weeks 1-14.',
+      arshamaa_2025: 'Roster 9 remains ArShamaa for scheduled H2H/history; intentionally omitted from 2025 standings/stat eligibility.',
+      trablos_identity: '2024 roster 8 = Abethe3Arab; 2025 roster 8 = Trablos United. No continuity is inferred.',
+      season_2020: 'Outside Sleeper chain; not audited.'
     },
-    identity_unresolved: Object.fromEntries(YEARS.map(year => [year, actual[year].unresolved])),
-    summary: {}, standings: standingsChecks, season_stats: statChecks,
-    h2h: { site_games_count: site.h2h.gamesCount, actual_games_count: actualH2H.gamesCount, game_count_status: Number(site.h2h.gamesCount) === actualH2H.gamesCount ? 'PASS' : 'MISMATCH', cells: h2hChecks },
-    champions: championChecks, all_time_records: allTimeChecks, franchise_hub_regular_season: franchiseChecks
+    summary: {},
+    unresolved_identity: unresolved,
+    historical_weekly_result_conflicts: conflicts,
+    standings: standingsChecks,
+    season_stats: statChecks,
+    h2h: { site_games_count: Number(site.h2h.gamesCount), sleeper_games_count: h2hActual.gamesCount, game_count_status: Number(site.h2h.gamesCount) === h2hActual.gamesCount ? 'PASS' : 'MISMATCH', cells: h2hChecks },
+    champions: championChecks,
+    all_time_records: allTimeChecks,
+    franchise_hub_regular_season: franchiseChecks
   };
-  const count = (items, status) => items.filter(x => x.status === status).length;
+
   report.summary = {
-    standings_rows_checked: standingsChecks.length, standings_mismatches: count(standingsChecks, 'MISMATCH'),
-    season_stats_checked: statChecks.length, season_stats_mismatches: count(statChecks, 'MISMATCH'), season_stats_unverified: count(statChecks, 'UNVERIFIED'),
-    h2h_cells_checked: h2hChecks.length, h2h_mismatches: count(h2hChecks, 'MISMATCH'), h2h_game_count_status: report.h2h.game_count_status,
-    champions_checked: championChecks.length, champion_mismatches: count(championChecks, 'MISMATCH'), champions_unverified: count(championChecks, 'UNVERIFIED'),
-    all_time_records_checked: allTimeChecks.length, all_time_mismatches: count(allTimeChecks, 'MISMATCH'),
-    franchise_profiles_checked: franchiseChecks.length, franchise_profile_mismatches: count(franchiseChecks, 'MISMATCH')
+    standings_rows_checked: standingsChecks.length,
+    standings_mismatches: count(standingsChecks, 'MISMATCH'),
+    definitive_season_stats_checked: definitiveStatChecks.length,
+    definitive_season_stat_mismatches: count(definitiveStatChecks, 'MISMATCH'),
+    weekly_score_cards_checked: weeklyStatChecks.length,
+    weekly_score_snapshot_variances: count(weeklyStatChecks, 'HISTORICAL_WEEKLY_VARIANCE'),
+    unverified_best_team_cards: count(statChecks, 'UNVERIFIED'),
+    h2h_cells_checked: h2hChecks.length,
+    h2h_mismatches: count(h2hChecks, 'MISMATCH'),
+    h2h_game_count_status: report.h2h.game_count_status,
+    champions_checked: championChecks.length,
+    champion_mismatches: count(championChecks, 'MISMATCH'),
+    champions_unverified: count(championChecks, 'UNVERIFIED'),
+    definitive_all_time_records_checked: definitiveAllTime.length,
+    definitive_all_time_mismatches: count(definitiveAllTime, 'MISMATCH'),
+    weekly_all_time_snapshot_variances: count(weeklyAllTime, 'HISTORICAL_WEEKLY_VARIANCE'),
+    franchise_profiles_checked: franchiseChecks.length,
+    franchise_profile_mismatches: count(franchiseChecks, 'MISMATCH'),
+    historical_weekly_result_conflicts: Object.values(conflicts).flat().length
   };
-  report.summary.overall_status = [report.summary.standings_mismatches, report.summary.season_stats_mismatches, report.summary.h2h_mismatches, report.summary.champion_mismatches, report.summary.all_time_mismatches, report.summary.franchise_profile_mismatches].some(Boolean) ? 'REVIEW_REQUIRED' : 'PASS';
+  report.summary.overall_definitive_status = [
+    report.summary.standings_mismatches,
+    report.summary.definitive_season_stat_mismatches,
+    report.summary.h2h_mismatches,
+    report.summary.champion_mismatches,
+    report.summary.definitive_all_time_mismatches,
+    report.summary.franchise_profile_mismatches
+  ].some(Boolean) ? 'REVIEW_REQUIRED' : 'PASS';
 
   await mkdir(AUDIT_ROOT, { recursive: true });
   await writeFile(path.join(AUDIT_ROOT, 'sleeper-vs-site.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  const mismatchStandings = standingsChecks.filter(x => x.status === 'MISMATCH'), mismatchStats = statChecks.filter(x => x.status === 'MISMATCH'), mismatchH2H = h2hChecks.filter(x => x.status === 'MISMATCH'), mismatchAT = allTimeChecks.filter(x => x.status === 'MISMATCH'), mismatchFranchise = franchiseChecks.filter(x => x.status === 'MISMATCH'), championIssues = championChecks.filter(x => x.status !== 'PASS');
+
+  const standBad = standingsChecks.filter(x => x.status === 'MISMATCH');
+  const statBad = definitiveStatChecks.filter(x => x.status === 'MISMATCH');
+  const weeklyVariance = weeklyStatChecks.filter(x => x.status === 'HISTORICAL_WEEKLY_VARIANCE');
+  const h2hBad = h2hChecks.filter(x => x.status === 'MISMATCH');
+  const champBad = championChecks.filter(x => x.status !== 'PASS');
+  const atBad = definitiveAllTime.filter(x => x.status === 'MISMATCH');
+  const atVariance = weeklyAllTime.filter(x => x.status === 'HISTORICAL_WEEKLY_VARIANCE');
+  const franchiseBad = franchiseChecks.filter(x => x.status === 'MISMATCH');
+
   const md = [
-    '# SCL Sleeper Integrity Audit', '', `Overall: **${report.summary.overall_status}**`, '',
-    `Scoring basis: **custom_points override when present; otherwise points**`, '',
-    `- Standings: ${standingsChecks.length - mismatchStandings.length}/${standingsChecks.length} rows match`,
-    `- Season stats: ${statChecks.length - mismatchStats.length - count(statChecks, 'UNVERIFIED')}/${statChecks.length - count(statChecks, 'UNVERIFIED')} API-verifiable cards match; ${count(statChecks, 'UNVERIFIED')} not API-verifiable`,
-    `- H2H: ${h2hChecks.length - mismatchH2H.length}/${h2hChecks.length} directed cells match; games ${site.h2h.gamesCount}/${actualH2H.gamesCount}`,
-    `- Champions: ${championChecks.length - championIssues.length}/${championChecks.length} confirmed from mirrored winner brackets`,
-    `- All Time Records: ${allTimeChecks.length - mismatchAT.length}/${allTimeChecks.length} match`,
-    `- Franchise Hub regular-season profiles: ${franchiseChecks.length - mismatchFranchise.length}/${franchiseChecks.length} match`, '',
-    '## Standings mismatches', ...(mismatchStandings.length ? mismatchStandings.map(x => `- ${x.year} ${x.teamId}: site ${x.site.record}, PF ${x.site.pf}, PA ${x.site.pa}, seed ${x.site.seed}; Sleeper ${x.actual?.record}, PF ${x.actual?.pf}, PA ${x.actual?.pa}, seed ${x.actual?.seed}`) : ['- None']), '',
-    '## Season-stat mismatches', ...(mismatchStats.length ? mismatchStats.map(x => `- ${x.year} ${x.label}: site=${JSON.stringify(x.site)}; Sleeper=${JSON.stringify(x.actual)}`) : ['- None']), '',
-    '## H2H mismatches', ...(mismatchH2H.length ? mismatchH2H.map(x => `- ${x.a} vs ${x.b}: site ${x.siteWins}, Sleeper ${x.actualWins}`) : ['- None']), '',
-    '## Champion issues', ...(championIssues.length ? championIssues.map(x => `- ${x.year}: site ${x.siteChampion}; Sleeper ${x.sleeperChampion || 'unverified'} (${x.status})`) : ['- None']), '',
-    '## All-Time mismatches', ...(mismatchAT.length ? mismatchAT.map(x => `- ${x.label}: site=${JSON.stringify(x.site)}; Sleeper=${JSON.stringify(x.actual)}`) : ['- None']), '',
-    '## Franchise Hub regular-season mismatches', ...(mismatchFranchise.length ? mismatchFranchise.map(x => `- ${x.teamId}: site=${JSON.stringify(x.site)}; Sleeper=${JSON.stringify(x.actual)}`) : ['- None']), '',
-    '## Audit notes', '- 2020 is not part of this Sleeper audit because that season is archived on ESPN.', '- 2025 ArShamaa scheduled games remain included in H2H/history but ArShamaa is intentionally excluded from the 2025 standings/stat-card eligibility.', '- “Most Best Team Sleeper reports” is not exposed by the raw public matchup/bracket endpoints used here and is reported as unverified rather than assumed correct.', '- This audit never edits visible website data.'
+    '# SCL Sleeper Integrity Audit — Finalized-Record Method',
+    '',
+    `Definitive status: **${report.summary.overall_definitive_status}**`,
+    '',
+    `- Standings: ${standingsChecks.length - standBad.length}/${standingsChecks.length} match finalized Sleeper records/PF/PA/seeds`,
+    `- Definitive season-stat cards: ${definitiveStatChecks.length - statBad.length}/${definitiveStatChecks.length} match`,
+    `- H2H: ${h2hChecks.length - h2hBad.length}/${h2hChecks.length} directed cells match; games ${site.h2h.gamesCount}/${h2hActual.gamesCount}`,
+    `- Champions: ${championChecks.length - champBad.length}/${championChecks.length} confirmed`,
+    `- Definitive All Time Records: ${definitiveAllTime.length - atBad.length}/${definitiveAllTime.length} match`,
+    `- Franchise Hub regular-season profiles: ${franchiseChecks.length - franchiseBad.length}/${franchiseChecks.length} match`,
+    `- Historical weekly-score cards: ${weeklyVariance.length} current-API variances (not automatically treated as site errors)`,
+    `- Historical games where current raw points disagree with Sleeper's finalized W/L: ${Object.values(conflicts).flat().length}`,
+    '',
+    '## Definitive standings mismatches',
+    ...(standBad.length ? standBad.map(x => `- ${x.year} ${x.teamId}: site=${JSON.stringify(x.site)} Sleeper=${JSON.stringify(x.sleeper)}`) : ['- None']),
+    '',
+    '## Definitive season-stat mismatches',
+    ...(statBad.length ? statBad.map(x => `- ${x.year} ${x.label}: site=${JSON.stringify(x.site)} Sleeper=${JSON.stringify(x.sleeper)}`) : ['- None']),
+    '',
+    '## H2H mismatches',
+    ...(h2hBad.length ? h2hBad.map(x => `- ${x.a} vs ${x.b}: site ${x.siteWins}; Sleeper ${x.sleeperWins}`) : ['- None']),
+    '',
+    '## Champion issues',
+    ...(champBad.length ? champBad.map(x => `- ${x.year}: site ${x.siteChampion}; Sleeper ${x.sleeperChampion || 'unverified'}`) : ['- None']),
+    '',
+    '## Definitive All-Time mismatches',
+    ...(atBad.length ? atBad.map(x => `- ${x.label}: site=${JSON.stringify(x.site)} Sleeper=${JSON.stringify(x.sleeper)}`) : ['- None']),
+    '',
+    '## Franchise Hub mismatches',
+    ...(franchiseBad.length ? franchiseBad.map(x => `- ${x.teamId}: site=${JSON.stringify(x.site)} Sleeper=${JSON.stringify(x.sleeper)}`) : ['- None']),
+    '',
+    '## Historical weekly-score snapshot variances',
+    ...(weeklyVariance.length ? weeklyVariance.map(x => `- ${x.year} ${x.label}: site=${JSON.stringify(x.site)} currentAPI=${JSON.stringify(x.sleeper)}`) : ['- None']),
+    '',
+    '## All-Time weekly-score snapshot variances',
+    ...(atVariance.length ? atVariance.map(x => `- ${x.label}: site=${JSON.stringify(x.site)} currentAPI=${JSON.stringify(x.sleeper)}`) : ['- None']),
+    '',
+    '## Method notes',
+    '- Finalized roster settings are used for W-L, PF and PA because Sleeper historical weekly points can later drift while final season totals remain preserved.',
+    '- Finalized roster metadata W/L sequence is used for historical game winners/H2H.',
+    '- Current weekly API scores are still compared for closest game, blowout, high week and low week, but a difference is classified as historical snapshot variance rather than automatically rewriting league history.',
+    '- 2025 ArShamaa remains mapped for scheduled H2H/history but is intentionally excluded from the published 2025 standings and season-stat eligibility.',
+    '- 2020 is not auditable through Sleeper because it is archived on ESPN.',
+    '- “Most Best Team Sleeper reports” remains unverified because the public endpoints mirrored here do not expose that report award.'
   ].join('\n');
   await writeFile(path.join(AUDIT_ROOT, 'sleeper-vs-site.md'), `${md}\n`, 'utf8');
   console.log(JSON.stringify(report.summary));
