@@ -1,0 +1,304 @@
+/* =========================
+   SISTER CITIES H2H — MATCHUP HISTORY
+   Collapsible, in-page historical series list.
+   ========================= */
+
+#tab-h2h .h2h-history{
+  width:min(880px, 100%);
+  margin:72px auto 0;
+}
+
+#tab-h2h .h2h-history-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  margin:0 auto;
+  padding:4px 2px;
+  border:0;
+  background:transparent;
+  color:#dfe6ff;
+  font-family:"Barlow Condensed", Inter, sans-serif;
+  font-size:19px;
+  line-height:1;
+  font-weight:600;
+  letter-spacing:.9px;
+  text-transform:uppercase;
+  cursor:default;
+  opacity:.42;
+  transition:opacity .18s ease, color .18s ease;
+}
+
+#tab-h2h .h2h-history-toggle.is-ready{
+  cursor:pointer;
+  opacity:.94;
+}
+
+#tab-h2h .h2h-history-toggle.is-ready:hover{
+  color:#ffffff;
+  opacity:1;
+}
+
+#tab-h2h .h2h-history-chevron{
+  width:16px;
+  height:16px;
+  flex:0 0 16px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  transition:transform .34s cubic-bezier(.2,.8,.2,1);
+}
+
+#tab-h2h .h2h-history.is-open .h2h-history-chevron{
+  transform:rotate(180deg);
+}
+
+/* Grid-height + clipping creates the downward newspaper-roll reveal without
+   forcing a fixed max-height or jumping the page layout. */
+#tab-h2h .h2h-history-roll{
+  display:grid;
+  grid-template-rows:0fr;
+  opacity:0;
+  clip-path:inset(0 0 100% 0);
+  transform:translateY(-8px) scaleY(.985);
+  transform-origin:top center;
+  transition:
+    grid-template-rows .52s cubic-bezier(.2,.8,.2,1),
+    clip-path .52s cubic-bezier(.2,.8,.2,1),
+    opacity .25s ease,
+    transform .52s cubic-bezier(.2,.8,.2,1);
+}
+
+#tab-h2h .h2h-history.is-open .h2h-history-roll{
+  grid-template-rows:1fr;
+  opacity:1;
+  clip-path:inset(0 0 0 0);
+  transform:translateY(0) scaleY(1);
+}
+
+#tab-h2h .h2h-history-roll-inner{
+  min-height:0;
+  overflow:hidden;
+}
+
+#tab-h2h .h2h-history-list{
+  margin-top:22px;
+  border-top:1px solid rgba(255,255,255,.10);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.012));
+}
+
+#tab-h2h .h2h-history-game{
+  --history-index:0;
+  padding:15px 16px 16px;
+  border-bottom:1px solid rgba(255,255,255,.075);
+  opacity:0;
+  transform:translateY(-5px);
+  transition:
+    opacity .24s ease calc(90ms + (var(--history-index) * 24ms)),
+    transform .28s ease calc(90ms + (var(--history-index) * 24ms));
+}
+
+#tab-h2h .h2h-history-game:last-child{
+  border-bottom:0;
+}
+
+#tab-h2h .h2h-history.is-open .h2h-history-game{
+  opacity:1;
+  transform:translateY(0);
+}
+
+#tab-h2h .h2h-history-meta{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  margin-bottom:9px;
+  color:#8f9bc1;
+  font-family:Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:10px;
+  line-height:1;
+  font-weight:600;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+}
+
+#tab-h2h .h2h-history-meta-dot{
+  opacity:.55;
+}
+
+#tab-h2h .h2h-history-match{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items:center;
+  gap:16px;
+}
+
+#tab-h2h .h2h-history-team{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:rgba(248,251,255,.66);
+  font-family:Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:13px;
+  line-height:1.15;
+  font-weight:550;
+}
+
+#tab-h2h .h2h-history-team-left{
+  justify-content:flex-end;
+  text-align:right;
+}
+
+#tab-h2h .h2h-history-team-right{
+  justify-content:flex-start;
+  text-align:left;
+}
+
+#tab-h2h .h2h-history-team.is-winner{
+  color:#ffffff;
+  font-weight:700;
+}
+
+#tab-h2h .h2h-history-logo{
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.22));
+}
+
+#tab-h2h .h2h-history-team-left .h2h-history-logo{
+  order:2;
+}
+
+#tab-h2h .h2h-history-team-name{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+#tab-h2h .h2h-history-scoreline{
+  min-width:136px;
+  display:grid;
+  grid-template-columns:52px 16px 52px;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-family:"Barlow Condensed", Inter, sans-serif;
+  font-variant-numeric:tabular-nums;
+}
+
+#tab-h2h .h2h-history-score{
+  color:rgba(248,251,255,.68);
+  font-size:20px;
+  line-height:1;
+  font-weight:650;
+  text-align:center;
+}
+
+#tab-h2h .h2h-history-score.is-left{
+  color:#8eabff;
+}
+
+#tab-h2h .h2h-history-score.is-right{
+  color:#ff909b;
+}
+
+#tab-h2h .h2h-history-score.is-winner{
+  color:#ffffff;
+  font-weight:850;
+}
+
+#tab-h2h .h2h-history-separator{
+  color:#66739a;
+  font-family:Inter, sans-serif;
+  font-size:12px;
+  line-height:1;
+  text-align:center;
+}
+
+#tab-h2h .h2h-history-empty{
+  padding:26px 14px;
+  color:#8f9bc1;
+  font-family:Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:12px;
+  font-weight:500;
+  text-align:center;
+}
+
+@media (max-width:720px) and (orientation:portrait){
+  #tab-h2h .h2h-history{
+    width:100%;
+    margin-top:58px;
+  }
+
+  #tab-h2h .h2h-history-toggle{
+    font-size:17px;
+  }
+
+  #tab-h2h .h2h-history-list{
+    margin-top:19px;
+  }
+
+  #tab-h2h .h2h-history-game{
+    padding:13px 5px 14px;
+  }
+
+  #tab-h2h .h2h-history-match{
+    grid-template-columns:minmax(0, 1fr) 104px minmax(0, 1fr);
+    gap:5px;
+  }
+
+  #tab-h2h .h2h-history-team{
+    gap:6px;
+    font-size:11px;
+    line-height:1.1;
+  }
+
+  #tab-h2h .h2h-history-logo{
+    width:27px;
+    height:27px;
+    flex-basis:27px;
+  }
+
+  #tab-h2h .h2h-history-scoreline{
+    min-width:104px;
+    grid-template-columns:40px 12px 40px;
+    gap:2px;
+  }
+
+  #tab-h2h .h2h-history-score{
+    font-size:17px;
+  }
+
+  #tab-h2h .h2h-history-meta{
+    margin-bottom:8px;
+    font-size:9px;
+  }
+}
+
+@media (max-width:390px) and (orientation:portrait){
+  #tab-h2h .h2h-history-match{
+    grid-template-columns:minmax(0, 1fr) 94px minmax(0, 1fr);
+  }
+
+  #tab-h2h .h2h-history-scoreline{
+    min-width:94px;
+    grid-template-columns:36px 10px 36px;
+  }
+
+  #tab-h2h .h2h-history-team{
+    font-size:10px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  #tab-h2h .h2h-history-roll,
+  #tab-h2h .h2h-history-game,
+  #tab-h2h .h2h-history-chevron{
+    transition:none;
+  }
+}
