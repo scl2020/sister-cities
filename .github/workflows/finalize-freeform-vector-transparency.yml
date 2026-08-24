@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Restore pristine vectors and remove only outside canvas shapes
         run: |
           git show a55ae92edd0b019ddf9a993b34e950ffae6ad69c:assets/buy-the-diphins-freeform.svg > assets/buy-the-diphins-freeform.svg
