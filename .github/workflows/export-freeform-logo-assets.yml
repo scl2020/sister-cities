@@ -1,0 +1,31 @@
+name: Export freeform logo assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/export-freeform-logo-assets.yml'
+
+permissions:
+  contents: read
+
+env:
+  EXPORT_NAME: freeform-logo-source-assets
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+
+      - name: Package source logos
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXPORT_NAME }}
+          path: |
+            assets/buy-the-diphins-2026.jpg
+            assets/barjalona.png
+            assets/invincibles-logo-2026-final.webp
+            assets/snorlax-hq-2026.webp
+          if-no-files-found: error
+          retention-days: 1
