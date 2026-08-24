@@ -1,0 +1,71 @@
+name: Finalize freeform vector transparency
+
+on:
+  push:
+    paths:
+      - '.github/workflows/finalize-freeform-vector-transparency.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore pristine vectors and remove only outside canvas shapes
+        run: |
+          git show a55ae92edd0b019ddf9a993b34e950ffae6ad69c:assets/buy-the-diphins-freeform.svg > assets/buy-the-diphins-freeform.svg
+          git show a55ae92edd0b019ddf9a993b34e950ffae6ad69c:assets/barjalona-freeform.svg > assets/barjalona-freeform.svg
+          git show a55ae92edd0b019ddf9a993b34e950ffae6ad69c:assets/invincibles-freeform.svg > assets/invincibles-freeform.svg
+          git show a55ae92edd0b019ddf9a993b34e950ffae6ad69c:assets/snorlax-freeform.svg > assets/snorlax-freeform.svg
+
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          # Buy the Dip-hins and Invincibles: Adobe combined the white canvas
+          # rectangle and legitimate white crest details into the first path.
+          # Remove only that first closed rectangle subpath; preserve the rest.
+          for filename in [
+              'assets/buy-the-diphins-freeform.svg',
+              'assets/invincibles-freeform.svg',
+          ]:
+              path = Path(filename)
+              text = path.read_text(encoding='utf-8')
+              cleaned, n = re.subn(
+                  r'(<path\s+d=")M0,[^Z]*?Z\s*(?=M)',
+                  r'\1',
+                  text,
+                  count=1,
+                  flags=re.S,
+              )
+              if n != 1:
+                  raise SystemExit(f'{filename}: outside canvas subpath not found')
+              path.write_text(cleaned, encoding='utf-8')
+
+          # Barjalona: the vectorizer emitted four independent white corner
+          # shapes before the actual crest. Remove exactly those four paths.
+          path = Path('assets/barjalona-freeform.svg')
+          text = path.read_text(encoding='utf-8')
+          cleaned, n = re.subn(r'<path\b[^>]*?/>\s*', '', text, count=4, flags=re.S)
+          if n != 4:
+              raise SystemExit(f'Barjalona: expected 4 outside corner paths, removed {n}')
+          path.write_text(cleaned, encoding='utf-8')
+          PY
+
+      - name: Verify SVG structure
+        run: |
+          for f in assets/buy-the-diphins-freeform.svg assets/barjalona-freeform.svg assets/snorlax-freeform.svg assets/invincibles-freeform.svg; do
+            grep -qi '<svg' "$f"
+            grep -qi '</svg>' "$f"
+          done
+
+      - name: Commit final vector crests
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/*-freeform.svg
+          git diff --cached --quiet && exit 0
+          git commit -m 'Finalize transparent freeform team crests'
+          git push
