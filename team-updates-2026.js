@@ -15,20 +15,20 @@ Object.assign(TEAMS.daddytate, {
 
 Object.assign(TEAMS.miami, {
   name: "Buy the Dip-hins",
-  logo: "/sister-cities/assets/buy-the-diphins-freeform.svg"
+  logo: "/sister-cities/assets/buy-the-diphins-crest-2026.webp"
 });
 
 Object.assign(TEAMS.barjalona, {
-  logo: "/sister-cities/assets/barjalona-freeform.svg"
+  logo: "/sister-cities/assets/barjalona-crest-2026.webp"
 });
 
 Object.assign(TEAMS.snorlax, {
-  logo: "/sister-cities/assets/snorlax-freeform.svg"
+  logo: "/sister-cities/assets/snorlax-crest-2026.webp"
 });
 
 Object.assign(TEAMS.maleksexcornflex, {
   name: "Invincibles",
-  logo: "/sister-cities/assets/invincibles-freeform.svg"
+  logo: "/sister-cities/assets/invincibles-crest-2026.webp"
 });
 
 Object.assign(TEAMS.drhtown, {
