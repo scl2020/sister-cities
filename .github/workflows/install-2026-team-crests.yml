@@ -1,0 +1,41 @@
+name: Install final 2026 team crests
+
+on:
+  push:
+    paths:
+      - '.github/workflows/install-2026-team-crests.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  install-crests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download verified full-resolution transparent PNG crests
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          curl -L --fail --retry 3 'https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:3967bfd7-f121-49f2-9d5f-538796fa7328' -o assets/snorlax-crest-2026.png
+          curl -L --fail --retry 3 'https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:cc8e238f-cd4d-4165-aa4c-5ad82904b737' -o assets/buy-the-diphins-crest-2026.png
+          curl -L --fail --retry 3 'https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:1f37436f-b3c1-4359-b196-d960588a9d37' -o assets/barjalona-crest-2026.png
+          curl -L --fail --retry 3 'https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:b7e798ae-a861-46e7-8b7d-62ba65785061' -o assets/invincibles-crest-2026.png
+          file assets/snorlax-crest-2026.png assets/buy-the-diphins-crest-2026.png assets/barjalona-crest-2026.png assets/invincibles-crest-2026.png
+
+      - name: Commit crest assets
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/snorlax-crest-2026.png assets/buy-the-diphins-crest-2026.png assets/barjalona-crest-2026.png assets/invincibles-crest-2026.png
+          if git diff --cached --quiet; then
+            echo 'No asset changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Install final 2026 team crest PNGs'
+          git push
