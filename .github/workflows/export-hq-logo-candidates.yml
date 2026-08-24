@@ -1,0 +1,28 @@
+name: Export HQ logo candidates
+
+on:
+  push:
+    paths:
+      - '.github/workflows/export-hq-logo-candidates.yml'
+
+permissions:
+  contents: read
+
+env:
+  EXPORT_NAME: hq-logo-candidates
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXPORT_NAME }}
+          path: |
+            assets/invincibles-logo-v2.jpg
+            assets/snorlax.png
+            assets/barjalona.png
+            assets/buy-the-diphins-2026.jpg
+          if-no-files-found: error
+          retention-days: 1
