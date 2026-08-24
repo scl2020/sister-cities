@@ -65,18 +65,10 @@
     );
   }
 
-  function orientedGame(game) {
-    const gameLeftMatchesSelectedLeft = game.left === selected.left;
-    return {
-      ...game,
-      selectedLeftScore: gameLeftMatchesSelectedLeft ? game.leftScore : game.rightScore,
-      selectedRightScore: gameLeftMatchesSelectedLeft ? game.rightScore : game.leftScore
-    };
-  }
-
-  function formatScore(value) {
-    const n = Number(value);
-    return Number.isFinite(n) ? n.toFixed(2) : '—';
+  function resultFor(teamId, game) {
+    if (game.winner === teamId) return 'W';
+    if (game.loser === teamId) return 'L';
+    return 'T';
   }
 
   function teamMarkup(side, teamId, winner) {
@@ -101,7 +93,6 @@
 
     const games = historyData.games
       .filter(game => samePair(game, selected.left, selected.right))
-      .map(orientedGame)
       .sort((a, b) => b.season - a.season || b.week - a.week);
 
     if (!games.length) {
@@ -112,23 +103,13 @@
     list.innerHTML = games.map((game, index) => {
       const leftWon = game.winner === selected.left;
       const rightWon = game.winner === selected.right;
-
-      // One old Sleeper weekly snapshot is known to have drifted enough to
-      // contradict Sleeper's finalized W/L record. Preserve the official result
-      // without printing a misleading numerical score for that game.
-      const leftScore = game.scoreConflict
-        ? (leftWon ? 'W' : rightWon ? 'L' : '—')
-        : formatScore(game.selectedLeftScore);
-      const rightScore = game.scoreConflict
-        ? (rightWon ? 'W' : leftWon ? 'L' : '—')
-        : formatScore(game.selectedRightScore);
-
-      const varianceTitle = game.scoreConflict
-        ? ' title="Official Sleeper result preserved; historical weekly score snapshot later changed."'
-        : '';
+      const leftResult = resultFor(selected.left, game);
+      const rightResult = resultFor(selected.right, game);
+      const leftName = TEAMS[selected.left]?.name || selected.left;
+      const rightName = TEAMS[selected.right]?.name || selected.right;
 
       return `
-        <article class="h2h-history-game" style="--history-index:${index}"${varianceTitle}>
+        <article class="h2h-history-game" style="--history-index:${index}">
           <div class="h2h-history-meta">
             <span>${game.season}</span>
             <span class="h2h-history-meta-dot">•</span>
@@ -136,10 +117,10 @@
           </div>
           <div class="h2h-history-match">
             ${teamMarkup('left', selected.left, leftWon)}
-            <div class="h2h-history-scoreline" aria-label="${leftScore} to ${rightScore}">
-              <span class="h2h-history-score is-left${leftWon ? ' is-winner' : ''}">${leftScore}</span>
-              <span class="h2h-history-separator">—</span>
-              <span class="h2h-history-score is-right${rightWon ? ' is-winner' : ''}">${rightScore}</span>
+            <div class="h2h-history-resultline" aria-label="${leftName} ${leftResult}, ${rightName} ${rightResult}">
+              <span class="h2h-history-result is-left">${leftResult}</span>
+              <span class="h2h-history-result-separator">–</span>
+              <span class="h2h-history-result is-right">${rightResult}</span>
             </div>
             ${teamMarkup('right', selected.right, rightWon)}
           </div>
