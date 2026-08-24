@@ -1,11 +1,11 @@
 /* =========================
    SISTER CITIES H2H — MATCHUP HISTORY
-   Collapsible, in-page historical series list.
+   Compact, collapsible historical series list.
    ========================= */
 
 #tab-h2h .h2h-history{
-  width:min(880px, 100%);
-  margin:72px auto 0;
+  width:min(760px, 100%);
+  margin:58px auto 0;
 }
 
 #tab-h2h .h2h-history-toggle{
@@ -14,38 +14,38 @@
   justify-content:center;
   gap:9px;
   margin:0 auto;
-  padding:4px 2px;
+  padding:5px 3px;
   border:0;
   background:transparent;
-  color:#dfe6ff;
+  color:#425066;
   font-family:"Barlow Condensed", Inter, sans-serif;
-  font-size:19px;
+  font-size:22px;
   line-height:1;
-  font-weight:600;
-  letter-spacing:.9px;
+  font-weight:800;
+  letter-spacing:1px;
   text-transform:uppercase;
   cursor:default;
-  opacity:.42;
+  opacity:.78;
   transition:opacity .18s ease, color .18s ease;
 }
 
 #tab-h2h .h2h-history-toggle.is-ready{
   cursor:pointer;
-  opacity:.94;
-}
-
-#tab-h2h .h2h-history-toggle.is-ready:hover{
-  color:#ffffff;
+  color:#172033;
   opacity:1;
 }
 
+#tab-h2h .h2h-history-toggle.is-ready:hover{
+  color:#07101f;
+}
+
 #tab-h2h .h2h-history-chevron{
-  width:16px;
-  height:16px;
-  flex:0 0 16px;
+  width:17px;
+  height:17px;
+  flex:0 0 17px;
   fill:none;
   stroke:currentColor;
-  stroke-width:1.8;
+  stroke-width:2.1;
   stroke-linecap:round;
   stroke-linejoin:round;
   transition:transform .34s cubic-bezier(.2,.8,.2,1);
@@ -62,13 +62,13 @@
   grid-template-rows:0fr;
   opacity:0;
   clip-path:inset(0 0 100% 0);
-  transform:translateY(-8px) scaleY(.985);
+  transform:translateY(-6px) scaleY(.99);
   transform-origin:top center;
   transition:
-    grid-template-rows .52s cubic-bezier(.2,.8,.2,1),
-    clip-path .52s cubic-bezier(.2,.8,.2,1),
-    opacity .25s ease,
-    transform .52s cubic-bezier(.2,.8,.2,1);
+    grid-template-rows .48s cubic-bezier(.2,.8,.2,1),
+    clip-path .48s cubic-bezier(.2,.8,.2,1),
+    opacity .22s ease,
+    transform .48s cubic-bezier(.2,.8,.2,1);
 }
 
 #tab-h2h .h2h-history.is-open .h2h-history-roll{
@@ -84,21 +84,21 @@
 }
 
 #tab-h2h .h2h-history-list{
-  margin-top:22px;
-  border-top:1px solid rgba(255,255,255,.10);
-  border-bottom:1px solid rgba(255,255,255,.08);
-  background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.012));
+  margin-top:14px;
+  border-top:1px solid #e4e8ee;
+  border-bottom:1px solid #e4e8ee;
+  background:#ffffff;
 }
 
 #tab-h2h .h2h-history-game{
   --history-index:0;
-  padding:15px 16px 16px;
-  border-bottom:1px solid rgba(255,255,255,.075);
+  padding:8px 12px 9px;
+  border-bottom:1px solid #edf0f4;
   opacity:0;
-  transform:translateY(-5px);
+  transform:translateY(-4px);
   transition:
-    opacity .24s ease calc(90ms + (var(--history-index) * 24ms)),
-    transform .28s ease calc(90ms + (var(--history-index) * 24ms));
+    opacity .22s ease calc(70ms + (var(--history-index) * 18ms)),
+    transform .25s ease calc(70ms + (var(--history-index) * 18ms));
 }
 
 #tab-h2h .h2h-history-game:last-child{
@@ -113,38 +113,38 @@
 #tab-h2h .h2h-history-meta{
   display:flex;
   justify-content:center;
-  gap:7px;
-  margin-bottom:9px;
-  color:#8f9bc1;
+  gap:6px;
+  margin-bottom:4px;
+  color:#7b879a;
   font-family:Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size:10px;
+  font-size:9px;
   line-height:1;
-  font-weight:600;
-  letter-spacing:.55px;
+  font-weight:700;
+  letter-spacing:.5px;
   text-transform:uppercase;
 }
 
 #tab-h2h .h2h-history-meta-dot{
-  opacity:.55;
+  opacity:.5;
 }
 
 #tab-h2h .h2h-history-match{
   display:grid;
-  grid-template-columns:minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns:minmax(0, 1fr) 88px minmax(0, 1fr);
   align-items:center;
-  gap:16px;
+  gap:9px;
 }
 
 #tab-h2h .h2h-history-team{
   min-width:0;
   display:flex;
   align-items:center;
-  gap:9px;
-  color:rgba(248,251,255,.66);
+  gap:7px;
+  color:#596579;
   font-family:Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size:13px;
-  line-height:1.15;
-  font-weight:550;
+  font-size:11px;
+  line-height:1.08;
+  font-weight:600;
 }
 
 #tab-h2h .h2h-history-team-left{
@@ -158,17 +158,17 @@
 }
 
 #tab-h2h .h2h-history-team.is-winner{
-  color:#ffffff;
-  font-weight:700;
+  color:#1c2535;
+  font-weight:750;
 }
 
 #tab-h2h .h2h-history-logo{
-  width:34px;
-  height:34px;
-  flex:0 0 34px;
+  width:28px;
+  height:28px;
+  flex:0 0 28px;
   object-fit:contain;
   display:block;
-  filter:drop-shadow(0 3px 6px rgba(0,0,0,.22));
+  filter:drop-shadow(0 2px 4px rgba(7,16,31,.12));
 }
 
 #tab-h2h .h2h-history-team-left .h2h-history-logo{
@@ -180,40 +180,33 @@
   overflow-wrap:anywhere;
 }
 
-#tab-h2h .h2h-history-scoreline{
-  min-width:136px;
+#tab-h2h .h2h-history-resultline{
+  min-width:88px;
   display:grid;
-  grid-template-columns:52px 16px 52px;
+  grid-template-columns:30px 12px 30px;
   align-items:center;
   justify-content:center;
-  gap:4px;
+  gap:3px;
   font-family:"Barlow Condensed", Inter, sans-serif;
-  font-variant-numeric:tabular-nums;
 }
 
-#tab-h2h .h2h-history-score{
-  color:rgba(248,251,255,.68);
-  font-size:20px;
+#tab-h2h .h2h-history-result{
+  font-size:22px;
   line-height:1;
-  font-weight:650;
+  font-weight:850;
   text-align:center;
 }
 
-#tab-h2h .h2h-history-score.is-left{
-  color:#8eabff;
+#tab-h2h .h2h-history-result.is-left{
+  color:var(--h2h-blue, #2f6bff);
 }
 
-#tab-h2h .h2h-history-score.is-right{
-  color:#ff909b;
+#tab-h2h .h2h-history-result.is-right{
+  color:var(--h2h-red, #ef3f4f);
 }
 
-#tab-h2h .h2h-history-score.is-winner{
-  color:#ffffff;
-  font-weight:850;
-}
-
-#tab-h2h .h2h-history-separator{
-  color:#66739a;
+#tab-h2h .h2h-history-result-separator{
+  color:#a3adba;
   font-family:Inter, sans-serif;
   font-size:12px;
   line-height:1;
@@ -221,77 +214,93 @@
 }
 
 #tab-h2h .h2h-history-empty{
-  padding:26px 14px;
-  color:#8f9bc1;
+  padding:18px 12px;
+  color:#7b879a;
   font-family:Inter, ui-sans-serif, system-ui, sans-serif;
   font-size:12px;
-  font-weight:500;
+  font-weight:600;
   text-align:center;
 }
 
 @media (max-width:720px) and (orientation:portrait){
   #tab-h2h .h2h-history{
     width:100%;
-    margin-top:58px;
+    margin-top:52px;
   }
 
   #tab-h2h .h2h-history-toggle{
-    font-size:17px;
+    font-size:20px;
   }
 
   #tab-h2h .h2h-history-list{
-    margin-top:19px;
+    margin-top:12px;
   }
 
   #tab-h2h .h2h-history-game{
-    padding:13px 5px 14px;
+    padding:7px 2px 8px;
   }
 
   #tab-h2h .h2h-history-match{
-    grid-template-columns:minmax(0, 1fr) 104px minmax(0, 1fr);
-    gap:5px;
+    grid-template-columns:minmax(0, 1fr) 72px minmax(0, 1fr);
+    gap:4px;
   }
 
   #tab-h2h .h2h-history-team{
-    gap:6px;
-    font-size:11px;
-    line-height:1.1;
+    gap:5px;
+    font-size:10px;
+    line-height:1.05;
   }
 
   #tab-h2h .h2h-history-logo{
-    width:27px;
-    height:27px;
-    flex-basis:27px;
+    width:24px;
+    height:24px;
+    flex-basis:24px;
   }
 
-  #tab-h2h .h2h-history-scoreline{
-    min-width:104px;
-    grid-template-columns:40px 12px 40px;
+  #tab-h2h .h2h-history-resultline{
+    min-width:72px;
+    grid-template-columns:25px 10px 25px;
     gap:2px;
   }
 
-  #tab-h2h .h2h-history-score{
-    font-size:17px;
+  #tab-h2h .h2h-history-result{
+    font-size:20px;
+  }
+
+  #tab-h2h .h2h-history-result-separator{
+    font-size:10px;
   }
 
   #tab-h2h .h2h-history-meta{
-    margin-bottom:8px;
-    font-size:9px;
+    margin-bottom:3px;
+    font-size:8px;
   }
 }
 
 @media (max-width:390px) and (orientation:portrait){
-  #tab-h2h .h2h-history-match{
-    grid-template-columns:minmax(0, 1fr) 94px minmax(0, 1fr);
+  #tab-h2h .h2h-history-game{
+    padding-left:0;
+    padding-right:0;
   }
 
-  #tab-h2h .h2h-history-scoreline{
-    min-width:94px;
-    grid-template-columns:36px 10px 36px;
+  #tab-h2h .h2h-history-match{
+    grid-template-columns:minmax(0, 1fr) 66px minmax(0, 1fr);
+    gap:3px;
+  }
+
+  #tab-h2h .h2h-history-resultline{
+    min-width:66px;
+    grid-template-columns:23px 8px 23px;
   }
 
   #tab-h2h .h2h-history-team{
-    font-size:10px;
+    font-size:9.5px;
+  }
+
+  #tab-h2h .h2h-history-logo{
+    width:22px;
+    height:22px;
+    flex-basis:22px;
   }
 }
 
