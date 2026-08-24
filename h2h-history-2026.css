@@ -162,12 +162,18 @@
   font-weight:750;
 }
 
+/* Match the standing/franchise logo treatment: circular crop, same internal
+   scale behavior, and no size change to the compact history row. */
 #tab-h2h .h2h-history-logo{
   width:28px;
   height:28px;
   flex:0 0 28px;
   object-fit:contain;
   display:block;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.10);
+  background:transparent;
+  overflow:hidden;
   filter:drop-shadow(0 2px 4px rgba(7,16,31,.12));
 }
 
