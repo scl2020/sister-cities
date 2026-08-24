@@ -1,0 +1,59 @@
+/* =====================
+   SISTER CITIES — TEAM LOGO PRESENTATION POLICY
+   Natural circular badges keep the site's established circular treatment.
+   Free-form crests are never forced into a circle or square frame.
+   The JS companion stamps data-scl-logo-shape on every rendered team logo
+   and its presentation wrapper, including dynamically rendered views.
+   ===================== */
+
+/* The crest itself keeps its native silhouette and aspect ratio. */
+img[data-scl-logo-shape="freeform"]{
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  clip-path:none !important;
+  object-fit:contain !important;
+}
+
+/* Remove only the forced badge frame. Keep the existing footprint/layout size
+   so standings, Franchise Hub, H2H, stats and records do not shift. */
+.logo-dot[data-scl-logo-shape="freeform"],
+.franchise-logoWrap[data-scl-logo-shape="freeform"],
+.franchise-modal-logoWrap[data-scl-logo-shape="freeform"],
+.franchise-profile-logoWrap[data-scl-logo-shape="freeform"],
+.h2h-logo-stage[data-scl-logo-shape="freeform"],
+.h2h-option-logo[data-scl-logo-shape="freeform"]{
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+}
+
+/* H2H's selected-team image normally inherits a circular cover crop.
+   Free-form clubs must always show the full crest instead. */
+.h2h-logo-stage[data-scl-logo-shape="freeform"] .h2h-team-logo{
+  width:100% !important;
+  height:100% !important;
+  border-radius:0 !important;
+  object-fit:contain !important;
+  filter:none !important;
+}
+
+/* Dropdown and matchup-history crests also remain unframed. */
+.h2h-option-logo[data-scl-logo-shape="freeform"] img,
+.h2h-history-logo[data-scl-logo-shape="freeform"]{
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  filter:none !important;
+  object-fit:contain !important;
+}
+
+/* Champion presentation has no wrapper, so the image itself is authoritative. */
+#championTeam .champion-team-logo[data-scl-logo-shape="freeform"]{
+  border-radius:0 !important;
+  object-fit:contain !important;
+}
