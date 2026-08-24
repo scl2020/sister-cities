@@ -1,0 +1,45 @@
+name: Build H2H matchup history
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-h2h-history.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scl-h2h-history-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build H2H history from mirrored Sleeper data
+        run: node scripts/build-h2h-history.mjs
+
+      - name: Commit generated history when changed
+        shell: bash
+        run: |
+          git add h2h-history-data-2026.js
+          if git diff --cached --quiet; then
+            echo "H2H history unchanged."
+            exit 0
+          fi
+          git config user.name "scl-h2h-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Build Sleeper-backed H2H matchup history"
+          git push
