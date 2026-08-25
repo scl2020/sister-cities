@@ -145,8 +145,6 @@
   "bracket_id": 828016637239279600,
   "bracket_overrides_id": null,
   "group_id": null,
-  "loser_bracket_id": 828016637272834000,
-  "loser_bracket_overrides_id": null,
   "roster_positions": [
     "QB",
     "RB",
@@ -164,5 +162,7 @@
     "BN",
     "BN"
   ],
+  "loser_bracket_id": 828016637272834000,
+  "loser_bracket_overrides_id": null,
   "total_rosters": 8
 }
