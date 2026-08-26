@@ -67,11 +67,13 @@ img[data-scl-team-id="maleksexcornflex"]{
   transform-origin:center center !important;
 }
 
-/* Dr. H-Town's HQ bull image has a tiny transparent/white sliver at the bottom
-   of its circular source. Slightly overscan the image inside circular frames so
-   the artwork reaches the circle edge everywhere without changing the logo art. */
-img[data-scl-team-id="drhtown"]{
+/* Dr. H-Town: the HQ PNG has a small empty strip at the bottom of its canvas.
+   Overscan the image enough to crop that strip completely. The direct src selector
+   makes this work immediately even before the JS logo-policy observer stamps data attrs. */
+img[data-scl-team-id="drhtown"],
+img[src*="drhtown-logo-2026-hq.png"]{
   object-fit:cover !important;
-  transform:scale(1.045) !important;
+  object-position:center center !important;
+  transform:translateY(2px) scale(1.12) !important;
   transform-origin:center center !important;
 }
