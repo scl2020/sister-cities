@@ -32,9 +32,9 @@ Object.assign(TEAMS.maleksexcornflex, {
 });
 
 Object.assign(TEAMS.drhtown, {
-  // Clean square source cropped from the supplied circular bull artwork.
-  // The circle now reaches the image bounds, so no white strip can appear below it.
-  logo: "/sister-cities/assets/drhtown-bull-2026-clean.jpg"
+  // Clean 512x512 crop from the supplied circular bull artwork.
+  // The artwork reaches the circular frame, removing the old white strip at 6 o'clock.
+  logo: "/sister-cities/assets/drhtown-bull-2026-clean.jpg?v=20260826h"
 });
 
 // =====================
