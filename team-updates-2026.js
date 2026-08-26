@@ -32,7 +32,9 @@ Object.assign(TEAMS.maleksexcornflex, {
 });
 
 Object.assign(TEAMS.drhtown, {
-  logo: "/sister-cities/assets/drhtown-logo-2026.jpg?v=20260826b"
+  // Known-good circular bull artwork. The newer drhtown-logo-2026.jpg asset
+  // is corrupted on iOS/Safari, so keep the verified bull source authoritative.
+  logo: "/sister-cities/assets/drhtown-clean-reference-2026.jpg?v=20260826c"
 });
 
 // =====================
