@@ -293,6 +293,7 @@
     "league_id": "1388938049026535424",
     "metadata": {
       "allow_pn": "on",
+      "allow_sms": "on",
       "mention_pn": "on"
     },
     "settings": null,
