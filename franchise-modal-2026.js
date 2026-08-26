@@ -38,8 +38,13 @@ function franchiseYearsLabel2026(years) {
   const first = years[0];
   const last = years[years.length - 1];
 
+  // A franchise that appears in the latest archived season is still active.
+  // This also handles a current identity that began in that latest season,
+  // so Trablos United correctly reads "2025-present" instead of only "2025".
+  if (last === latestYear && first === last) return `${first}-present`;
+  if (last === latestYear) return `${first}–Present`;
   if (first === last) return String(first);
-  return last === latestYear ? `${first}–Present` : `${first}–${last}`;
+  return `${first}–${last}`;
 }
 
 function franchiseInlineYears2026(years) {
@@ -83,20 +88,14 @@ openFranchiseModal = function(teamId) {
 
   const bestRecord = profile.bestRecord || "—";
   const bestFinish = profile.bestFinish ? ordinal(profile.bestFinish) : "—";
-
-  // Trablos United is the current identity beginning in 2025, so show its active
-  // franchise era directly instead of letting the historical participation helper
-  // collapse a one-season array to only "2025".
-  const identityYearsLabel = teamId === "svetunited"
-    ? "2025-present"
-    : (t.franchiseYearsLabel || franchiseYearsLabel2026(participationYears));
+  const identityYearsLabel = franchiseYearsLabel2026(participationYears);
 
   card.innerHTML = `
     <div class="franchise-profile-shell">
       <div class="franchise-profile-identity">
         <div class="franchise-profile-stars">${stars || "&nbsp;"}</div>
         <div class="franchise-profile-logoWrap">
-          <img class="franchise-profile-logo" data-scl-team-id="${teamId}" src="${t.logo}" alt="${t.name} logo">
+          <img class="franchise-profile-logo" src="${t.logo}" alt="${t.name} logo">
         </div>
         <div class="franchise-profile-name">${t.name}</div>
         <div class="franchise-profile-owner">${t.owner ? `Owner: ${t.owner}` : ""}</div>

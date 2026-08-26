@@ -66,14 +66,3 @@ img[data-scl-team-id="maleksexcornflex"]{
   transform:scale(1.12) !important;
   transform-origin:center center !important;
 }
-
-/* Dr. H-Town: the HQ PNG has a small empty strip at the bottom of its canvas.
-   Overscan the image enough to crop that strip completely. The direct src selector
-   makes this work immediately even before the JS logo-policy observer stamps data attrs. */
-img[data-scl-team-id="drhtown"],
-img[src*="drhtown-logo-2026-hq.png"]{
-  object-fit:cover !important;
-  object-position:center center !important;
-  transform:translateY(2px) scale(1.12) !important;
-  transform-origin:center center !important;
-}

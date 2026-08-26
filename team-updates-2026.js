@@ -5,8 +5,7 @@
 
 Object.assign(TEAMS.svetunited, {
   name: "Trablos United",
-  logo: "/sister-cities/assets/trablos-united-2026.jpg",
-  franchiseYearsLabel: "2025–Present"
+  logo: "/sister-cities/assets/trablos-united-2026.jpg"
 });
 
 Object.assign(TEAMS.daddytate, {
@@ -33,7 +32,9 @@ Object.assign(TEAMS.maleksexcornflex, {
 });
 
 Object.assign(TEAMS.drhtown, {
-  logo: "/sister-cities/assets/drhtown-logo-2026-hq.png?v=20260826d"
+  // Clean square source cropped from the supplied circular bull artwork.
+  // The circle now reaches the image bounds, so no white strip can appear below it.
+  logo: "/sister-cities/assets/drhtown-bull-2026-clean.jpg"
 });
 
 // =====================
