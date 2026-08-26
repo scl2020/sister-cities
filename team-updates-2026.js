@@ -32,9 +32,9 @@ Object.assign(TEAMS.maleksexcornflex, {
 });
 
 Object.assign(TEAMS.drhtown, {
-  // Clean 512x512 crop from the supplied circular bull artwork.
-  // The artwork reaches the circular frame, removing the old white strip at 6 o'clock.
-  logo: "/sister-cities/assets/drhtown-bull-2026-clean.jpg?v=20260826h"
+  // Verified valid HQ PNG. Presentation CSS crops the tiny bottom sliver while
+  // preserving the circular bull artwork and normal team-logo footprint.
+  logo: "/sister-cities/assets/drhtown-logo-2026-hq.png?v=20260826i"
 });
 
 // =====================

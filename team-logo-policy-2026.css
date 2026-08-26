@@ -66,3 +66,15 @@ img[data-scl-team-id="maleksexcornflex"]{
   transform:scale(1.12) !important;
   transform-origin:center center !important;
 }
+
+/* Dr. H-Town uses a verified HQ circular PNG. Slight overscan removes the tiny
+   white strip at the bottom without changing the logo design or its layout size. */
+img[data-scl-team-id="drhtown"],
+img[src*="drhtown-logo-2026-hq.png"]{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  object-position:center center !important;
+  transform:scale(1.06) !important;
+  transform-origin:center center !important;
+}

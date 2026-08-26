@@ -38,8 +38,9 @@ function franchiseYearsLabel2026(years) {
   const first = years[0];
   const last = years[years.length - 1];
 
+  if (last === latestYear) return `${first}-Present`;
   if (first === last) return String(first);
-  return last === latestYear ? `${first}–Present` : `${first}–${last}`;
+  return `${first}–${last}`;
 }
 
 function franchiseInlineYears2026(years) {
@@ -85,9 +86,9 @@ openFranchiseModal = function(teamId) {
   const bestFinish = profile.bestFinish ? ordinal(profile.bestFinish) : "—";
 
   // Trablos United is the current identity beginning in 2025.
-  // Keep this exact current-era label independent from historical franchise seasons.
+  // Match the capitalization/style used by every other active franchise.
   const identityYearsLabel = teamId === "svetunited"
-    ? "2025-present"
+    ? "2025-Present"
     : franchiseYearsLabel2026(participationYears);
 
   card.innerHTML = `
