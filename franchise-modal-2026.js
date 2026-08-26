@@ -83,6 +83,7 @@ openFranchiseModal = function(teamId) {
 
   const bestRecord = profile.bestRecord || "—";
   const bestFinish = profile.bestFinish ? ordinal(profile.bestFinish) : "—";
+  const identityYearsLabel = t.franchiseYearsLabel || franchiseYearsLabel2026(participationYears);
 
   card.innerHTML = `
     <div class="franchise-profile-shell">
@@ -93,7 +94,7 @@ openFranchiseModal = function(teamId) {
         </div>
         <div class="franchise-profile-name">${t.name}</div>
         <div class="franchise-profile-owner">${t.owner ? `Owner: ${t.owner}` : ""}</div>
-        <div class="franchise-profile-years">${franchiseYearsLabel2026(participationYears)}</div>
+        <div class="franchise-profile-years">${identityYearsLabel}</div>
       </div>
 
       <div class="franchise-profile-columns">
