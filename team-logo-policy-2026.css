@@ -57,3 +57,12 @@ img[data-scl-logo-shape="freeform"]{
   border-radius:0 !important;
   object-fit:contain !important;
 }
+
+/* Barjalona and Invincibles have narrower/taller free-form silhouettes than the
+   circular club badges, so make only their rendered artwork slightly larger.
+   The layout footprint stays unchanged and the original crest artwork is untouched. */
+img[data-scl-team-id="barjalona"],
+img[data-scl-team-id="maleksexcornflex"]{
+  transform:scale(1.12) !important;
+  transform-origin:center center !important;
+}
