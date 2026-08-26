@@ -5,7 +5,8 @@
 
 Object.assign(TEAMS.svetunited, {
   name: "Trablos United",
-  logo: "/sister-cities/assets/trablos-united-2026.jpg"
+  logo: "/sister-cities/assets/trablos-united-2026.jpg",
+  franchiseYearsLabel: "2025–Present"
 });
 
 Object.assign(TEAMS.daddytate, {
