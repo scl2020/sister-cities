@@ -1,0 +1,29 @@
+name: Import Dr H-Town HQ logo
+
+on:
+  push:
+    paths:
+      - '.github/workflows/drhtown-logo-import.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download exact processed Dr H-Town logo
+        run: |
+          curl -L --fail --retry 3 'https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:5f90578f-b259-4078-87c8-b58a86e7e406' -o assets/drhtown-logo-2026-hq.png
+          file assets/drhtown-logo-2026-hq.png
+          test -s assets/drhtown-logo-2026-hq.png
+      - name: Commit logo asset
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/drhtown-logo-2026-hq.png
+          git diff --cached --quiet || git commit -m 'Import Dr H-Town high-resolution bull logo'
+          git push
