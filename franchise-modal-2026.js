@@ -201,14 +201,14 @@ openFranchiseModal = function(teamId) {
 
       <div class="franchise-profile-columns">
         <section class="franchise-profile-section franchise-profile-playoffs">
-          <div class="franchise-profile-section-title">PLAYOFFS (${franchiseRecordLabel2026(playoffRecord)})</div>
+          <div class="franchise-profile-section-title">PLAYOFFS <span style="font-weight:400">(${franchiseRecordLabel2026(playoffRecord)})</span></div>
           ${franchiseMetric2026("Championships", championshipCount, titleYears)}
           ${franchiseMetric2026("Appearances", profile.playoffCount, playoffYears)}
           ${franchiseMetric2026("Rate", `${playoffRate}%`, `<span class="franchise-profile-stat-years">(${profile.playoffCount} out of ${seasonCount})</span>`)}
         </section>
 
         <section class="franchise-profile-section franchise-profile-regular">
-          <div class="franchise-profile-section-title">REGULAR SEASON (${franchiseRecordLabel2026(regularSeasonRecord)})</div>
+          <div class="franchise-profile-section-title">REGULAR SEASON <span style="font-weight:400">(${franchiseRecordLabel2026(regularSeasonRecord)})</span></div>
           ${franchiseMetric2026("#1 Seed", profile.firstSeedCount, firstSeedYears)}
           ${franchiseMetric2026("Best Season Record", bestRecord, bestRecordYears)}
           ${franchiseMetric2026("Best Finish in the Season", bestFinish, bestFinishYears)}
