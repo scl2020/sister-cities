@@ -58,6 +58,100 @@ function franchiseMetric2026(label, value, yearsMarkup = "") {
   `;
 }
 
+// =====================
+// ALL-TIME W-L RECORDS
+// Regular season: validated Sleeper H2H matrix, Weeks 1-14, 2021-2025.
+// Playoffs: user-verified Weeks 15-17 results, 2021-2025. First-round byes
+// are not games and therefore do not count as a win or a loss.
+// Historical identities are mapped to their current franchise IDs.
+// =====================
+
+const FRANCHISE_PLAYOFF_GAMES_2021_2025 = [
+  // 2025
+  { season: 2025, winner: "daddytate", loser: "angolarookie" },
+  { season: 2025, winner: "drhtown", loser: "snorlax" },
+  { season: 2025, winner: "svetunited", loser: "drhtown" },
+  { season: 2025, winner: "daddytate", loser: "maleksexcornflex" },
+  { season: 2025, winner: "svetunited", loser: "daddytate" },
+
+  // 2024
+  { season: 2024, winner: "sixowls", loser: "daddytate" },
+  { season: 2024, winner: "abethe3arab", loser: "drhtown" },
+  { season: 2024, winner: "abethe3arab", loser: "maleksexcornflex" },
+  { season: 2024, winner: "sixowls", loser: "snorlax" },
+  { season: 2024, winner: "sixowls", loser: "abethe3arab" },
+
+  // 2023 — Abe1993 / A TEAM is the Miami franchise.
+  { season: 2023, winner: "daddytate", loser: "arshamaa" },
+  { season: 2023, winner: "sixowls", loser: "abethe3arab" },
+  { season: 2023, winner: "sixowls", loser: "angolarookie" },
+  { season: 2023, winner: "miami", loser: "daddytate" },
+  { season: 2023, winner: "sixowls", loser: "miami" },
+
+  // 2022 — Abe1993 / A TEAM is the Miami franchise.
+  { season: 2022, winner: "drhtown", loser: "angolarookie" },
+  { season: 2022, winner: "arshamaa", loser: "barjalona" },
+  { season: 2022, winner: "arshamaa", loser: "snorlax" },
+  { season: 2022, winner: "miami", loser: "drhtown" },
+  { season: 2022, winner: "arshamaa", loser: "miami" },
+
+  // 2021 — Abe1993 / A TEAM is the Miami franchise.
+  { season: 2021, winner: "miami", loser: "sixowls" },
+  { season: 2021, winner: "maleksexcornflex", loser: "angolarookie" },
+  { season: 2021, winner: "drhtown", loser: "miami" },
+  { season: 2021, winner: "maleksexcornflex", loser: "barjalona" },
+  { season: 2021, winner: "maleksexcornflex", loser: "drhtown" }
+];
+
+function franchiseRegularSeasonRecord2026(teamId) {
+  const matrix = window.SISTER_CITIES_H2H_DATA?.wins;
+
+  // Primary source: validated Sleeper Weeks 1-14 matrix already used by H2H.
+  if (matrix && matrix[teamId]) {
+    const wins = Object.values(matrix[teamId]).reduce((sum, value) => sum + Number(value || 0), 0);
+    const losses = Object.keys(matrix).reduce((sum, opponentId) => {
+      if (opponentId === teamId) return sum;
+      return sum + Number(matrix[opponentId]?.[teamId] || 0);
+    }, 0);
+
+    return { wins, losses };
+  }
+
+  // Safe fallback if the H2H data file ever fails to load: sum archived season records.
+  let wins = 0;
+  let losses = 0;
+
+  Object.keys(seasons).map(Number).forEach(year => {
+    if (year < 2021 || year > 2025) return;
+    const row = seasons[year]?.standings?.find(entry => entry.teamId === teamId);
+    if (!row || !row.record) return;
+
+    const parts = String(row.record).split(/[-–]/).map(part => Number(part.trim()));
+    if (parts.length >= 2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1])) {
+      wins += parts[0];
+      losses += parts[1];
+    }
+  });
+
+  return { wins, losses };
+}
+
+function franchisePlayoffRecord2026(teamId) {
+  let wins = 0;
+  let losses = 0;
+
+  FRANCHISE_PLAYOFF_GAMES_2021_2025.forEach(game => {
+    if (game.winner === teamId) wins += 1;
+    if (game.loser === teamId) losses += 1;
+  });
+
+  return { wins, losses };
+}
+
+function franchiseRecordLabel2026(record) {
+  return `${record.wins}-${record.losses}`;
+}
+
 openFranchiseModal = function(teamId) {
   const modal = document.getElementById("franchiseModal");
   const card = modal ? modal.querySelector(".franchise-modal-card") : null;
@@ -84,6 +178,8 @@ openFranchiseModal = function(teamId) {
 
   const bestRecord = profile.bestRecord || "—";
   const bestFinish = profile.bestFinish ? ordinal(profile.bestFinish) : "—";
+  const regularSeasonRecord = franchiseRegularSeasonRecord2026(teamId);
+  const playoffRecord = franchisePlayoffRecord2026(teamId);
 
   // Trablos United is the current identity beginning in 2025.
   // Match the capitalization/style used by every other active franchise.
@@ -105,14 +201,14 @@ openFranchiseModal = function(teamId) {
 
       <div class="franchise-profile-columns">
         <section class="franchise-profile-section franchise-profile-playoffs">
-          <div class="franchise-profile-section-title">PLAYOFFS</div>
+          <div class="franchise-profile-section-title">PLAYOFFS (${franchiseRecordLabel2026(playoffRecord)})</div>
           ${franchiseMetric2026("Championships", championshipCount, titleYears)}
           ${franchiseMetric2026("Appearances", profile.playoffCount, playoffYears)}
           ${franchiseMetric2026("Rate", `${playoffRate}%`, `<span class="franchise-profile-stat-years">(${profile.playoffCount} out of ${seasonCount})</span>`)}
         </section>
 
         <section class="franchise-profile-section franchise-profile-regular">
-          <div class="franchise-profile-section-title">REGULAR SEASON</div>
+          <div class="franchise-profile-section-title">REGULAR SEASON (${franchiseRecordLabel2026(regularSeasonRecord)})</div>
           ${franchiseMetric2026("#1 Seed", profile.firstSeedCount, firstSeedYears)}
           ${franchiseMetric2026("Best Season Record", bestRecord, bestRecordYears)}
           ${franchiseMetric2026("Best Finish in the Season", bestFinish, bestFinishYears)}
