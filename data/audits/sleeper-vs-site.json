@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-23T06:09:21.230Z",
+  "generated_at_utc": "2026-08-28T20:32:52.440Z",
   "methodology": {
     "standings_and_totals": "Sleeper finalized roster settings (wins/losses/PF/PA).",
     "streaks_and_h2h_results": "Sleeper finalized per-week W/L sequence in roster metadata, paired with weekly matchup IDs.",
@@ -18,7 +18,7 @@
     "weekly_score_cards_checked": 25,
     "weekly_score_snapshot_variances": 10,
     "unverified_best_team_cards": 0,
-    "h2h_cells_checked": 110,
+    "h2h_cells_checked": 132,
     "h2h_mismatches": 0,
     "h2h_game_count_status": "PASS",
     "champions_checked": 5,
@@ -2789,6 +2789,13 @@
         "status": "PASS"
       },
       {
+        "a": "svetunited",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
         "a": "abethe3arab",
         "b": "svetunited",
         "siteWins": 0,
@@ -2856,6 +2863,13 @@
         "b": "arshamaa",
         "siteWins": 3,
         "sleeperWins": 3,
+        "status": "PASS"
+      },
+      {
+        "a": "abethe3arab",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
         "status": "PASS"
       },
       {
@@ -2929,6 +2943,13 @@
         "status": "PASS"
       },
       {
+        "a": "daddytate",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
         "a": "angolarookie",
         "b": "svetunited",
         "siteWins": 1,
@@ -2999,6 +3020,13 @@
         "status": "PASS"
       },
       {
+        "a": "angolarookie",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
         "a": "drhtown",
         "b": "svetunited",
         "siteWins": 0,
@@ -3066,6 +3094,13 @@
         "b": "arshamaa",
         "siteWins": 6,
         "sleeperWins": 6,
+        "status": "PASS"
+      },
+      {
+        "a": "drhtown",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
         "status": "PASS"
       },
       {
@@ -3136,6 +3171,13 @@
         "b": "arshamaa",
         "siteWins": 2,
         "sleeperWins": 2,
+        "status": "PASS"
+      },
+      {
+        "a": "sixowls",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
         "status": "PASS"
       },
       {
@@ -3209,6 +3251,13 @@
         "status": "PASS"
       },
       {
+        "a": "miami",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
         "a": "snorlax",
         "b": "svetunited",
         "siteWins": 0,
@@ -3279,6 +3328,13 @@
         "status": "PASS"
       },
       {
+        "a": "snorlax",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
         "a": "barjalona",
         "b": "svetunited",
         "siteWins": 0,
@@ -3346,6 +3402,13 @@
         "b": "arshamaa",
         "siteWins": 5,
         "sleeperWins": 5,
+        "status": "PASS"
+      },
+      {
+        "a": "barjalona",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
         "status": "PASS"
       },
       {
@@ -3419,6 +3482,13 @@
         "status": "PASS"
       },
       {
+        "a": "maleksexcornflex",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
         "a": "arshamaa",
         "b": "svetunited",
         "siteWins": 0,
@@ -3486,6 +3556,90 @@
         "b": "maleksexcornflex",
         "siteWins": 2,
         "sleeperWins": 2,
+        "status": "PASS"
+      },
+      {
+        "a": "arshamaa",
+        "b": "deeznutterz",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "svetunited",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "abethe3arab",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "daddytate",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "angolarookie",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "drhtown",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "sixowls",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "miami",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "snorlax",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "barjalona",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "maleksexcornflex",
+        "siteWins": 0,
+        "sleeperWins": 0,
+        "status": "PASS"
+      },
+      {
+        "a": "deeznutterz",
+        "b": "arshamaa",
+        "siteWins": 0,
+        "sleeperWins": 0,
         "status": "PASS"
       }
     ]

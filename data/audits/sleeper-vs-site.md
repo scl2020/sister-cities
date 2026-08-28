@@ -4,7 +4,7 @@ Definitive status: **PASS**
 
 - Standings: 47/47 match finalized Sleeper records/PF/PA/seeds
 - Definitive season-stat cards: 40/40 match
-- H2H: 110/110 directed cells match; games 336/336
+- H2H: 132/132 directed cells match; games 336/336
 - Champions: 5/5 confirmed
 - Definitive All Time Records: 8/8 match
 - Franchise Hub regular-season profiles: 11/11 match
