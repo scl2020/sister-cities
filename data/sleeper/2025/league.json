@@ -68,10 +68,6 @@
   },
   "avatar": "3a49adee54d1b04c9f3762386357a2e0",
   "company_id": null,
-  "shard": 674,
-  "season": "2025",
-  "season_type": "regular",
-  "sport": "nfl",
   "scoring_settings": {
     "sack": 1,
     "fgm_40_49": 4,
@@ -136,6 +132,10 @@
     "pts_allow_7_13": 6,
     "st_ff": 0.5
   },
+  "season": "2025",
+  "season_type": "regular",
+  "shard": 674,
+  "sport": "nfl",
   "last_message_id": "1388691307710406656",
   "last_author_avatar": null,
   "last_author_display_name": "sys",
@@ -149,7 +149,6 @@
   "draft_id": "1257104280452599809",
   "league_id": "1257104280452599808",
   "previous_league_id": "1124816318139219968",
-  "group_id": null,
   "roster_positions": [
     "QB",
     "RB",
@@ -167,6 +166,7 @@
     "BN",
     "BN"
   ],
+  "group_id": null,
   "bracket_id": 1304399950796296200,
   "bracket_overrides_id": null,
   "loser_bracket_id": 1304399950800490500,
