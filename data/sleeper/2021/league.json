@@ -130,7 +130,6 @@
   "sport": "nfl",
   "shard": 556,
   "last_message_id": "828016639248351232",
-  "draft_id": "706540133930827776",
   "last_author_avatar": null,
   "last_author_display_name": "sys",
   "last_author_id": "166666666666666666",
@@ -139,12 +138,15 @@
   "last_message_text_map": null,
   "last_message_time": 1651777059906,
   "last_pinned_message_id": null,
+  "draft_id": "706540133930827776",
   "last_read_id": null,
   "league_id": "706540132538331136",
   "previous_league_id": null,
-  "group_id": null,
   "bracket_id": 828016637239279600,
   "bracket_overrides_id": null,
+  "group_id": null,
+  "loser_bracket_id": 828016637272834000,
+  "loser_bracket_overrides_id": null,
   "roster_positions": [
     "QB",
     "RB",
@@ -162,7 +164,5 @@
     "BN",
     "BN"
   ],
-  "loser_bracket_id": 828016637272834000,
-  "loser_bracket_overrides_id": null,
   "total_rosters": 8
 }
