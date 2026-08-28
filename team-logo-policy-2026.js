@@ -11,7 +11,8 @@
     'miami',
     'barjalona',
     'maleksexcornflex',
-    'snorlax'
+    'snorlax',
+    'deeznutterz'
   ]);
 
   const WRAPPER_SELECTORS = [

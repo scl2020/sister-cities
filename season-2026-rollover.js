@@ -12,7 +12,7 @@
   TEAMS.deeznutterz = {
     name: "Deez Nutterz",
     owner: "IbrahimA",
-    logo: "/sister-cities/assets/deez-nutterz-2026.webp?v=20260828a"
+    logo: "/sister-cities/assets/deez-nutterz-2026.webp?v=20260828b"
   };
 
   // 2026 begins with the nine returning franchises from 2025 plus Deez Nutterz.
