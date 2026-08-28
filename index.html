@@ -81,11 +81,16 @@
       object-fit:cover !important;
     }
 
-    /* Deez Nutterz profile logo has free-floating feet/cane below its badge.
-       Lift only this profile artwork enough to create visible separation from
-       the team name. Keep the size and artwork unchanged. */
+    /* Deez Nutterz: its feet/cane hang lower than the badge body. Give the
+       artwork extra breathing room above the team name in BOTH Hub views.
+       Size/artwork stay untouched; only vertical positioning/spacing changes. */
+    .franchise-item[data-teamid="deeznutterz"] .franchise-logoWrap{
+      transform:translateY(-14px) !important;
+      margin-bottom:8px !important;
+    }
     .franchise-profile-logoWrap[data-scl-team-id="deeznutterz"]{
-      transform:translateY(-26px) !important;
+      transform:translateY(-34px) !important;
+      margin-bottom:4px !important;
     }
   </style>
   <link rel="stylesheet" href="./franchise-modal-2026.css?v=20260826d" />
@@ -97,7 +102,7 @@
   <link rel="stylesheet" href="./h2h-v2-polish-2026.css?v=20260821b" />
   <link rel="stylesheet" href="./h2h-history-2026.css?v=20260824c" />
   <link rel="stylesheet" href="./top-tabs-2026.css?v=20260820d" />
-  <link rel="stylesheet" href="./team-logo-policy-2026.css?v=20260828j" />
+  <link rel="stylesheet" href="./team-logo-policy-2026.css?v=20260828k" />
 </head>
 
 <body>
