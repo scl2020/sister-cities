@@ -67,6 +67,13 @@ img[data-scl-team-id="maleksexcornflex"]{
   transform-origin:center center !important;
 }
 
+/* Deez Nutterz has feet/cane that hang below the circular body of the artwork.
+   In the Franchise Profile only, lift the logo slightly so the free-floating
+   feet no longer crowd the team name. Do not resize, crop, frame, or alter it. */
+.franchise-profile-logoWrap[data-scl-team-id="deeznutterz"]{
+  transform:translateY(-10px) !important;
+}
+
 /* Dr. H-Town uses the verified HQ circular PNG. Keep each component's native
    dimensions (72px in the Champion card, 100% inside fixed logo wrappers) and
    only overscan the artwork enough to crop the tiny bottom white sliver. */
