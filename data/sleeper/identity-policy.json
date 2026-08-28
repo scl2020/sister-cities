@@ -1,9 +1,10 @@
 {
-  "version": 3,
+  "version": 4,
   "purpose": "SCL franchise identity guardrails for Sleeper imports",
   "authority": "SCL stable franchise IDs are authoritative. Sleeper roster_id and owner_id continuity are raw source metadata only and must never automatically merge franchise history.",
   "hard_rules": [
     "Never merge Trablos United / svetunited history with Abethe3Arab / abethe3arab history, even when Sleeper reused the same roster slot across seasons.",
+    "Never merge Deez Nutterz / deeznutterz history with ArShamaa / arshamaa history, even when Sleeper reused roster slot 9 across seasons.",
     "Never infer franchise continuity from roster_id alone across seasons.",
     "Never infer franchise continuity from draft slot, team name, or current owner metadata alone.",
     "All website standings, H2H, records, and franchise-history publication must map each season to an SCL stable franchise ID first.",
@@ -21,6 +22,18 @@
       "to_sleeper_user_id": "1263005518083928064",
       "to_display_name": "TrablosUnited",
       "rule": "This is a roster-slot reassignment, not franchise continuity. Pre-2025 roster-8 history belongs to Abethe3Arab; 2025+ roster-8 data belongs to Trablos United only when the season/user mapping confirms Trablos."
+    },
+    {
+      "roster_id": 9,
+      "from_season": "2025",
+      "from_franchise_id": "arshamaa",
+      "from_sleeper_user_id": "860959176627695616",
+      "from_display_name": "ArShamaa",
+      "to_season": "2026",
+      "to_franchise_id": "deeznutterz",
+      "to_sleeper_user_id": "1265547493844729856",
+      "to_display_name": "deeznutterz",
+      "rule": "This is a roster-slot reassignment, not franchise continuity. 2025 roster-9 history belongs to ArShamaa; 2026+ roster-9 data belongs to Deez Nutterz only when the season/user mapping confirms deeznutterz."
     }
   ],
   "season_roster_overrides": {
@@ -30,66 +43,164 @@
     "2025": {
       "8": "svetunited",
       "9": "arshamaa"
+    },
+    "2026": {
+      "1": "drhtown",
+      "2": "sixowls",
+      "3": "maleksexcornflex",
+      "4": "daddytate",
+      "5": "angolarookie",
+      "6": "miami",
+      "7": "barjalona",
+      "8": "svetunited",
+      "9": "deeznutterz",
+      "10": "snorlax"
     }
   },
   "franchises": {
     "svetunited": {
       "current_name": "Trablos United",
-      "aliases": ["Svet United", "Trablos United", "TrablosUnited", "MoD"],
-      "sleeper_user_ids": ["1263005518083928064"],
+      "aliases": [
+        "Svet United",
+        "Trablos United",
+        "TrablosUnited",
+        "MoD"
+      ],
+      "sleeper_user_ids": [
+        "1263005518083928064"
+      ],
       "historical_note": "Treat as a distinct SCL franchise. Do not inherit pre-2025 results from roster slot 8 or from Abethe3Arab."
     },
     "abethe3arab": {
       "current_name": "Abethe3arab",
-      "aliases": ["Abethe3arab", "Abethe3Arab", "Z-Lounge", "Newfie NFL"],
-      "sleeper_user_ids": ["734634628434010112"],
+      "aliases": [
+        "Abethe3arab",
+        "Abethe3Arab",
+        "Z-Lounge",
+        "Newfie NFL"
+      ],
+      "sleeper_user_ids": [
+        "734634628434010112"
+      ],
       "historical_note": "Treat as a distinct SCL franchise. Roster slot 8 in 2024 belongs here; do not merge with Trablos United after that slot was reassigned in 2025."
     },
     "daddytate": {
       "current_name": "Spidey",
-      "aliases": ["Daddy Tate", "Spidey", "Team Spidey", "MoeK", "moekoubaissi"],
-      "sleeper_user_ids": ["860758130177454080"]
+      "aliases": [
+        "Daddy Tate",
+        "Spidey",
+        "Team Spidey",
+        "MoeK",
+        "moekoubaissi"
+      ],
+      "sleeper_user_ids": [
+        "860758130177454080"
+      ]
     },
     "angolarookie": {
       "current_name": "Angola Rookie",
-      "aliases": ["Angola Rookie", "wadihelk"],
-      "sleeper_user_ids": ["728131622876073984"]
+      "aliases": [
+        "Angola Rookie",
+        "wadihelk"
+      ],
+      "sleeper_user_ids": [
+        "728131622876073984"
+      ]
     },
     "drhtown": {
       "current_name": "Dr. H-Town",
-      "aliases": ["Dr. H-Town", "Dr H-Town", "mkassim94"],
-      "sleeper_user_ids": ["685243469911900160"]
+      "aliases": [
+        "Dr. H-Town",
+        "Dr H-Town",
+        "mkassim94"
+      ],
+      "sleeper_user_ids": [
+        "685243469911900160"
+      ]
     },
     "sixowls": {
       "current_name": "6ixOwls",
-      "aliases": ["6ixOwls", "Team 6ixOwls"],
-      "sleeper_user_ids": ["706542310820765696"]
+      "aliases": [
+        "6ixOwls",
+        "Team 6ixOwls"
+      ],
+      "sleeper_user_ids": [
+        "706542310820765696"
+      ]
     },
     "miami": {
       "current_name": "Buy the Dip-hins",
-      "aliases": ["1", "A TEAM", "Miami", "Miami Dolphins", "Miami 🐬", "Buy the Dip-hins", "Dip-hins", "Abe1993"],
-      "sleeper_user_ids": ["728365690406440960"]
+      "aliases": [
+        "1",
+        "A TEAM",
+        "Miami",
+        "Miami Dolphins",
+        "Miami 🐬",
+        "Buy the Dip-hins",
+        "Dip-hins",
+        "Abe1993"
+      ],
+      "sleeper_user_ids": [
+        "728365690406440960"
+      ]
     },
     "snorlax": {
       "current_name": "Snorlax",
-      "aliases": ["Mahomies", "Deez Nuts", "Snorlax", "Snorrlax"],
-      "sleeper_user_ids": ["865687565754347520"]
+      "aliases": [
+        "Mahomies",
+        "Deez Nuts",
+        "Snorlax",
+        "Snorrlax"
+      ],
+      "sleeper_user_ids": [
+        "865687565754347520"
+      ]
     },
     "barjalona": {
       "current_name": "Barjalona",
-      "aliases": ["Barjalona", "Team Barjalona"],
-      "sleeper_user_ids": ["728371296236384256"]
+      "aliases": [
+        "Barjalona",
+        "Team Barjalona"
+      ],
+      "sleeper_user_ids": [
+        "728371296236384256"
+      ]
     },
     "maleksexcornflex": {
       "current_name": "Invincibles",
-      "aliases": ["Malek Sex & Cornflex", "Malek sex w cornflex", "Invincibles", "samerkoneiber"],
-      "sleeper_user_ids": ["709458333353963520"]
+      "aliases": [
+        "Malek Sex & Cornflex",
+        "Malek sex w cornflex",
+        "Invincibles",
+        "samerkoneiber"
+      ],
+      "sleeper_user_ids": [
+        "709458333353963520"
+      ]
     },
     "arshamaa": {
       "current_name": "ArShamaa",
-      "aliases": ["ArShamaa", "Team Shammaa", "Team 9"],
-      "sleeper_user_ids": ["860959176627695616"],
+      "aliases": [
+        "ArShamaa",
+        "Team Shammaa",
+        "Team 9"
+      ],
+      "sleeper_user_ids": [
+        "860959176627695616"
+      ],
       "historical_note": "ArShamaa left during 2025. Roster 9 remains attributable to ArShamaa for every scheduled 2025 matchup. Scheduled games after departure still count in historical H2H; ArShamaa remains intentionally omitted from the published 2025 standings."
+    },
+    "deeznutterz": {
+      "current_name": "Deez Nutterz",
+      "aliases": [
+        "Deez Nutterz",
+        "deeznutterz",
+        "IbrahimA"
+      ],
+      "sleeper_user_ids": [
+        "1265547493844729856"
+      ],
+      "historical_note": "New SCL franchise beginning in 2026. Do not inherit ArShamaa history from roster slot 9."
     }
   }
 }
