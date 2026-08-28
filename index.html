@@ -69,14 +69,15 @@
     }
 
     /* 2020 uses the exact same Champion-card logo footprint as every other season.
-       This direct guard prevents Dr. H-Town's site-wide crop treatment from ever
-       expanding the archived Champion image beyond the standard 72px badge. */
+       This direct guard keeps the 72px card footprint while allowing the requested
+       Dr. H-Town optical-size increase inside that footprint. */
     #championTeam .champion-team-logo[src*="drhtown-logo-2026-hq.png"]{
       width:72px !important;
       height:72px !important;
       max-width:72px !important;
       max-height:72px !important;
-      transform:none !important;
+      transform:scale(1.12) !important;
+      transform-origin:center center !important;
       border-radius:50% !important;
       object-fit:cover !important;
     }
@@ -102,7 +103,7 @@
   <link rel="stylesheet" href="./h2h-v2-polish-2026.css?v=20260821b" />
   <link rel="stylesheet" href="./h2h-history-2026.css?v=20260824c" />
   <link rel="stylesheet" href="./top-tabs-2026.css?v=20260820d" />
-  <link rel="stylesheet" href="./team-logo-policy-2026.css?v=20260828k" />
+  <link rel="stylesheet" href="./team-logo-policy-2026.css?v=20260828n" />
 </head>
 
 <body>
