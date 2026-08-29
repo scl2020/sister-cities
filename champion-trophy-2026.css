@@ -1,25 +1,80 @@
 /* =====================
    SISTER CITIES — CHAMPION TROPHY SHOWCASE
-   Slightly enlarges the existing trophy asset and gives every Champion-card
-   trophy a continuous 3D showroom rotation. Because the Champion card is
-   re-rendered whenever a season year is selected, the animation restarts
-   automatically on every season change with no user interaction required.
+   The trophy stays slightly enlarged, but the rotation now uses a shallow
+   volumetric stack instead of spinning one flat PNG. That preserves visible
+   thickness through the 90/270-degree side views, closer to a real display-
+   cabinet trophy turntable.
    ===================== */
 
 #championTeam .champion-trophy-row{
-  perspective: 520px;
-  perspective-origin: center center;
+  perspective:680px;
+  perspective-origin:center center;
 }
 
+/* Fallback: if JS has not enhanced the trophy yet, keep the static asset at
+   the requested 55px size rather than showing the old paper-thin rotation. */
 #championTeam .champion-trophy{
   width:55px !important;
   height:55px !important;
+  object-fit:contain !important;
+  display:block;
+  margin:0 auto 6px;
+  border-radius:0 !important;
+  animation:none !important;
+}
+
+/* One rotating 3D volume per trophy. The 10px depth is intentionally subtle:
+   thick enough to survive a full side profile, but not so thick that the cup
+   starts looking like a block. */
+#championTeam .champion-trophy-3d{
+  position:relative;
+  display:inline-block;
+  width:55px;
+  height:55px;
+  margin:0 auto 6px;
   transform-style:preserve-3d;
-  backface-visibility:visible;
-  -webkit-backface-visibility:visible;
+  -webkit-transform-style:preserve-3d;
   transform-origin:center center;
   animation:sclChampionTrophyShowcase 4.8s linear infinite;
   will-change:transform;
+}
+
+#championTeam .champion-trophy-3d .champion-trophy-layer{
+  position:absolute;
+  inset:0;
+  width:55px !important;
+  height:55px !important;
+  margin:0 !important;
+  object-fit:contain !important;
+  transform-style:preserve-3d;
+  -webkit-transform-style:preserve-3d;
+  transform:translateZ(var(--scl-trophy-z));
+  animation:none !important;
+  pointer-events:none;
+}
+
+/* The internal layers form the visible gold-toned edge when the trophy turns
+   sideways. Front/back stay crisp while the middle layers read as depth. */
+#championTeam .champion-trophy-3d .champion-trophy-edge{
+  filter:brightness(.58) saturate(.88) sepia(.12) contrast(1.08);
+  opacity:.96;
+  backface-visibility:visible;
+  -webkit-backface-visibility:visible;
+}
+
+#championTeam .champion-trophy-3d .champion-trophy-front{
+  filter:none;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+
+/* Rotate the rear face locally so the 180-degree view presents artwork rather
+   than the mirrored backside of a flat image plane. */
+#championTeam .champion-trophy-3d .champion-trophy-back{
+  filter:brightness(.82) saturate(.94);
+  transform:translateZ(var(--scl-trophy-z)) rotateY(180deg);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
 }
 
 @keyframes sclChampionTrophyShowcase{
