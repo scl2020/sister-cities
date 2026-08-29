@@ -1,51 +1,71 @@
 // =====================
-// SISTER CITIES — VOLUMETRIC CHAMPION TROPHY
-// The source trophy is a single transparent PNG, so a normal rotateY() makes
-// it look paper-thin at 90 degrees. This helper builds a shallow 3D extrusion
-// from stacked copies of the exact trophy artwork. The stack keeps visible
-// thickness through the side view while preserving the original trophy image.
+// SISTER CITIES — SMOOTH VOLUMETRIC CHAMPION TROPHY
+// The source is still the exact transparent trophy.png, but the side volume is
+// no longer made from repeated visible copies. Front/back use the artwork;
+// the body depth is a shaded silhouette shell, so side views look solid.
 // =====================
 
 (function initSclChampionTrophy3D() {
   if (window.SCL_CHAMPION_TROPHY_3D_INSTALLED) return;
   window.SCL_CHAMPION_TROPHY_3D_INSTALLED = true;
 
-  const LAYER_COUNT = 11;
-  const DEPTH_PX = 10;
+  const SHELL_SLICES = 17;
+  const DEPTH_PX = 12;
+
+  function metallicColor(index) {
+    const t = index / (SHELL_SLICES - 1);
+    const center = 1 - Math.abs((t * 2) - 1);
+    const lightness = 25 + (center * 24);
+    const saturation = 42 + (center * 10);
+    return `hsl(36 ${saturation.toFixed(0)}% ${lightness.toFixed(0)}%)`;
+  }
 
   function buildTrophyVolume(img) {
     if (!img || img.closest('.champion-trophy-3d')) return;
+
+    const src = img.currentSrc || img.src;
+    if (!src) return;
 
     const stage = document.createElement('span');
     stage.className = 'champion-trophy-3d';
     stage.setAttribute('role', 'img');
     stage.setAttribute('aria-label', img.alt || 'Trophy');
+    stage.style.setProperty('--scl-trophy-mask', `url("${src}")`);
 
     const parent = img.parentNode;
     parent.insertBefore(stage, img);
     img.remove();
 
-    for (let i = 0; i < LAYER_COUNT; i += 1) {
-      const layer = img.cloneNode(true);
-      const z = (-DEPTH_PX / 2) + (DEPTH_PX * i / (LAYER_COUNT - 1));
+    // Smooth metallic depth shell. Each slice contains only the alpha silhouette
+    // of the trophy, not the trophy details, eliminating the accordion effect.
+    for (let i = 0; i < SHELL_SLICES; i += 1) {
+      const slice = document.createElement('span');
+      const z = (-DEPTH_PX / 2) + (DEPTH_PX * i / (SHELL_SLICES - 1));
 
-      layer.classList.add('champion-trophy-layer');
-      layer.removeAttribute('loading');
-      layer.alt = '';
-      layer.setAttribute('aria-hidden', 'true');
-      layer.draggable = false;
-      layer.style.setProperty('--scl-trophy-z', `${z.toFixed(2)}px`);
-
-      if (i === 0) {
-        layer.classList.add('champion-trophy-back');
-      } else if (i === LAYER_COUNT - 1) {
-        layer.classList.add('champion-trophy-front');
-      } else {
-        layer.classList.add('champion-trophy-edge');
-      }
-
-      stage.appendChild(layer);
+      slice.className = 'champion-trophy-shell-slice';
+      slice.setAttribute('aria-hidden', 'true');
+      slice.style.setProperty('--scl-trophy-z', `${z.toFixed(2)}px`);
+      slice.style.setProperty('--scl-trophy-metal', metallicColor(i));
+      slice.style.maskImage = `url("${src}")`;
+      slice.style.webkitMaskImage = `url("${src}")`;
+      stage.appendChild(slice);
     }
+
+    const back = img.cloneNode(true);
+    back.className = `${img.className} champion-trophy-face champion-trophy-back`;
+    back.removeAttribute('loading');
+    back.alt = '';
+    back.setAttribute('aria-hidden', 'true');
+    back.draggable = false;
+    stage.appendChild(back);
+
+    const front = img.cloneNode(true);
+    front.className = `${img.className} champion-trophy-face champion-trophy-front`;
+    front.removeAttribute('loading');
+    front.alt = '';
+    front.setAttribute('aria-hidden', 'true');
+    front.draggable = false;
+    stage.appendChild(front);
   }
 
   function enhanceTrophies() {
@@ -53,7 +73,7 @@
     if (!championTeam) return;
 
     championTeam
-      .querySelectorAll('.champion-trophy:not(.champion-trophy-layer)')
+      .querySelectorAll('.champion-trophy:not(.champion-trophy-face)')
       .forEach(buildTrophyVolume);
   }
 
