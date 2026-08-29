@@ -1,17 +1,21 @@
 /* =====================
    SISTER CITIES — CHAMPION TROPHY SHOWCASE
-   The trophy stays slightly enlarged at 55px. The 3D turntable now uses the
-   original trophy artwork only for the front/back faces, while the side depth
-   is built from a smooth metallic silhouette shell. This avoids the visible
-   "stack of paper copies" effect at 90/270 degrees.
+   The trophy remains 55px (about 5.8% larger than the original 52px).
+
+   IMPORTANT: the old CSS 3D stack/extrusion has been removed. A single
+   high-resolution canvas now renders the trophy turntable frame-by-frame.
+   That lets the side profile keep a smooth tapered volume instead of exposing
+   repeated image slices or a rectangular metallic column at 90/270 degrees.
    ===================== */
 
 #championTeam .champion-trophy-row{
-  perspective:720px;
-  perspective-origin:center center;
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  align-items:center;
 }
 
-/* Fallback while the JS enhancer is loading. */
+/* Static fallback while the canvas renderer is preparing trophy.png. */
 #championTeam .champion-trophy{
   width:55px !important;
   height:55px !important;
@@ -22,97 +26,35 @@
   animation:none !important;
 }
 
-#championTeam .champion-trophy-3d{
+/* Procedural 2.5D trophy stage. The visible CSS footprint stays identical to
+   the approved 55px trophy; the canvas itself renders at 4x resolution. */
+#championTeam .champion-trophy-volume{
   position:relative;
   display:inline-block;
   width:55px;
   height:55px;
   margin:0 auto 6px;
-  transform-style:preserve-3d;
-  -webkit-transform-style:preserve-3d;
-  transform-origin:center center;
-  animation:sclChampionTrophyShowcase 4.8s linear infinite;
-  will-change:transform;
+  line-height:0;
+  overflow:visible;
+  contain:layout paint;
 }
 
-/* Front/back are the only full-detail copies of trophy.png. */
-#championTeam .champion-trophy-3d .champion-trophy-face{
-  position:absolute;
-  inset:0;
-  width:55px !important;
-  height:55px !important;
-  margin:0 !important;
-  object-fit:contain !important;
-  pointer-events:none;
-  animation:none !important;
-  transform-style:preserve-3d;
-  -webkit-transform-style:preserve-3d;
-}
-
-#championTeam .champion-trophy-3d .champion-trophy-front{
-  transform:translateZ(6px);
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-}
-
-#championTeam .champion-trophy-3d .champion-trophy-back{
-  transform:translateZ(-6px) rotateY(180deg);
-  filter:brightness(.78) saturate(.88);
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-}
-
-/*
-   Side shell: each slice is only the trophy SILHOUETTE, never the printed
-   trophy artwork. The slices are spread through 12px of Z-depth and shaded
-   from dark outer edges to a brighter metallic center. When the object reaches
-   a side angle these slices merge visually into one continuous solid sidewall.
-*/
-#championTeam .champion-trophy-3d .champion-trophy-shell-slice{
-  position:absolute;
-  inset:0;
+#championTeam .champion-trophy-volume canvas{
+  display:block;
   width:55px;
   height:55px;
-  margin:0;
-  pointer-events:none;
-  transform:translateZ(var(--scl-trophy-z));
-  transform-style:preserve-3d;
-  -webkit-transform-style:preserve-3d;
-  background:var(--scl-trophy-metal, #8a642d);
-  mask-repeat:no-repeat;
-  mask-position:center;
-  mask-size:contain;
-  -webkit-mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  -webkit-mask-size:contain;
+  max-width:none;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  image-rendering:auto;
+  filter:drop-shadow(0 1.5px 1.4px rgba(46,28,8,.18));
 }
 
-/* A faint highlight on the whole volume keeps it reading as polished metal. */
-#championTeam .champion-trophy-3d::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  transform:translateZ(6.12px);
-  pointer-events:none;
-  background:linear-gradient(105deg, rgba(255,255,255,.18), transparent 34%, transparent 66%, rgba(0,0,0,.10));
-  mask-image:var(--scl-trophy-mask);
-  mask-repeat:no-repeat;
-  mask-position:center;
-  mask-size:contain;
-  -webkit-mask-image:var(--scl-trophy-mask);
-  -webkit-mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  -webkit-mask-size:contain;
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-}
-
-@keyframes sclChampionTrophyShowcase{
-  0%{ transform:rotateY(0deg); }
-  100%{ transform:rotateY(360deg); }
-}
-
-@-webkit-keyframes sclChampionTrophyShowcase{
-  0%{ -webkit-transform:rotateY(0deg); }
-  100%{ -webkit-transform:rotateY(360deg); }
+/* If the user explicitly requests reduced motion, the JS renderer presents a
+   polished front view rather than animating. */
+@media (prefers-reduced-motion: reduce){
+  #championTeam .champion-trophy-volume canvas{
+    filter:drop-shadow(0 1.5px 1.4px rgba(46,28,8,.15));
+  }
 }
