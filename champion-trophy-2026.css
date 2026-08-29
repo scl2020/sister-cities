@@ -1,0 +1,41 @@
+/* =====================
+   SISTER CITIES — CHAMPION TROPHY SHOWCASE
+   Slightly enlarges the existing trophy asset and gives every Champion-card
+   trophy a continuous 3D showroom rotation. Because the Champion card is
+   re-rendered whenever a season year is selected, the animation restarts
+   automatically on every season change with no user interaction required.
+   ===================== */
+
+#championTeam .champion-trophy-row{
+  perspective: 520px;
+  perspective-origin: center center;
+}
+
+#championTeam .champion-trophy{
+  width:55px !important;
+  height:55px !important;
+  transform-style:preserve-3d;
+  backface-visibility:visible;
+  -webkit-backface-visibility:visible;
+  transform-origin:center center;
+  animation:sclChampionTrophyShowcase 4.8s linear infinite;
+  will-change:transform;
+}
+
+@keyframes sclChampionTrophyShowcase{
+  0%{
+    transform:rotateY(0deg);
+  }
+  100%{
+    transform:rotateY(360deg);
+  }
+}
+
+@-webkit-keyframes sclChampionTrophyShowcase{
+  0%{
+    -webkit-transform:rotateY(0deg);
+  }
+  100%{
+    -webkit-transform:rotateY(360deg);
+  }
+}
