@@ -1,18 +1,17 @@
 /* =====================
    SISTER CITIES — CHAMPION TROPHY SHOWCASE
-   The trophy stays slightly enlarged, but the rotation now uses a shallow
-   volumetric stack instead of spinning one flat PNG. That preserves visible
-   thickness through the 90/270-degree side views, closer to a real display-
-   cabinet trophy turntable.
+   The trophy stays slightly enlarged at 55px. The 3D turntable now uses the
+   original trophy artwork only for the front/back faces, while the side depth
+   is built from a smooth metallic silhouette shell. This avoids the visible
+   "stack of paper copies" effect at 90/270 degrees.
    ===================== */
 
 #championTeam .champion-trophy-row{
-  perspective:680px;
+  perspective:720px;
   perspective-origin:center center;
 }
 
-/* Fallback: if JS has not enhanced the trophy yet, keep the static asset at
-   the requested 55px size rather than showing the old paper-thin rotation. */
+/* Fallback while the JS enhancer is loading. */
 #championTeam .champion-trophy{
   width:55px !important;
   height:55px !important;
@@ -23,9 +22,6 @@
   animation:none !important;
 }
 
-/* One rotating 3D volume per trophy. The 10px depth is intentionally subtle:
-   thick enough to survive a full side profile, but not so thick that the cup
-   starts looking like a block. */
 #championTeam .champion-trophy-3d{
   position:relative;
   display:inline-block;
@@ -39,58 +35,84 @@
   will-change:transform;
 }
 
-#championTeam .champion-trophy-3d .champion-trophy-layer{
+/* Front/back are the only full-detail copies of trophy.png. */
+#championTeam .champion-trophy-3d .champion-trophy-face{
   position:absolute;
   inset:0;
   width:55px !important;
   height:55px !important;
   margin:0 !important;
   object-fit:contain !important;
+  pointer-events:none;
+  animation:none !important;
   transform-style:preserve-3d;
   -webkit-transform-style:preserve-3d;
-  transform:translateZ(var(--scl-trophy-z));
-  animation:none !important;
-  pointer-events:none;
-}
-
-/* The internal layers form the visible gold-toned edge when the trophy turns
-   sideways. Front/back stay crisp while the middle layers read as depth. */
-#championTeam .champion-trophy-3d .champion-trophy-edge{
-  filter:brightness(.58) saturate(.88) sepia(.12) contrast(1.08);
-  opacity:.96;
-  backface-visibility:visible;
-  -webkit-backface-visibility:visible;
 }
 
 #championTeam .champion-trophy-3d .champion-trophy-front{
-  filter:none;
+  transform:translateZ(6px);
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
 }
 
-/* Rotate the rear face locally so the 180-degree view presents artwork rather
-   than the mirrored backside of a flat image plane. */
 #championTeam .champion-trophy-3d .champion-trophy-back{
-  filter:brightness(.82) saturate(.94);
-  transform:translateZ(var(--scl-trophy-z)) rotateY(180deg);
+  transform:translateZ(-6px) rotateY(180deg);
+  filter:brightness(.78) saturate(.88);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+
+/*
+   Side shell: each slice is only the trophy SILHOUETTE, never the printed
+   trophy artwork. The slices are spread through 12px of Z-depth and shaded
+   from dark outer edges to a brighter metallic center. When the object reaches
+   a side angle these slices merge visually into one continuous solid sidewall.
+*/
+#championTeam .champion-trophy-3d .champion-trophy-shell-slice{
+  position:absolute;
+  inset:0;
+  width:55px;
+  height:55px;
+  margin:0;
+  pointer-events:none;
+  transform:translateZ(var(--scl-trophy-z));
+  transform-style:preserve-3d;
+  -webkit-transform-style:preserve-3d;
+  background:var(--scl-trophy-metal, #8a642d);
+  mask-repeat:no-repeat;
+  mask-position:center;
+  mask-size:contain;
+  -webkit-mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  -webkit-mask-size:contain;
+}
+
+/* A faint highlight on the whole volume keeps it reading as polished metal. */
+#championTeam .champion-trophy-3d::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  transform:translateZ(6.12px);
+  pointer-events:none;
+  background:linear-gradient(105deg, rgba(255,255,255,.18), transparent 34%, transparent 66%, rgba(0,0,0,.10));
+  mask-image:var(--scl-trophy-mask);
+  mask-repeat:no-repeat;
+  mask-position:center;
+  mask-size:contain;
+  -webkit-mask-image:var(--scl-trophy-mask);
+  -webkit-mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  -webkit-mask-size:contain;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
 }
 
 @keyframes sclChampionTrophyShowcase{
-  0%{
-    transform:rotateY(0deg);
-  }
-  100%{
-    transform:rotateY(360deg);
-  }
+  0%{ transform:rotateY(0deg); }
+  100%{ transform:rotateY(360deg); }
 }
 
 @-webkit-keyframes sclChampionTrophyShowcase{
-  0%{
-    -webkit-transform:rotateY(0deg);
-  }
-  100%{
-    -webkit-transform:rotateY(360deg);
-  }
+  0%{ -webkit-transform:rotateY(0deg); }
+  100%{ -webkit-transform:rotateY(360deg); }
 }
