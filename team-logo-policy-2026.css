@@ -92,6 +92,18 @@ img[data-scl-team-id="maleksexcornflex"]{
   transform:translateY(-10px) !important;
 }
 
+/* H2H optical centering: Deez Nutterz's transparent source canvas has more
+   visible artwork below its geometric center because the feet/cane extend under
+   the badge. H2H centers image canvases mathematically, so this one club reads
+   lower than every opponent even though the stage boxes are identical. Lift
+   only the selected H2H artwork by 8% of its own height while preserving the
+   existing site-wide 1.08 optical scale. Transform does not affect the H2H grid
+   footprint, so both logo stages and both team-name rows remain perfectly level. */
+#tab-h2h .h2h-logo-stage .h2h-team-logo[data-scl-team-id="deeznutterz"]{
+  transform:translateY(-8%) scale(1.08) !important;
+  transform-origin:center center !important;
+}
+
 /* Dr. H-Town uses the verified HQ circular PNG. Keep each component's native
    dimensions and overscan the artwork enough to crop the tiny bottom white
    sliver while also giving it the requested optical-size increase. */
