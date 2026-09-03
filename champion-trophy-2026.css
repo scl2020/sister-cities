@@ -1,8 +1,7 @@
 /* =====================
    SISTER CITIES — TRANSPARENT CHAMPION TROPHY VIDEO
-   The source MP4 stays high quality. WebGL samples the original decoded video
-   directly and keys out the light studio backdrop on the GPU, leaving the
-   rotating trophy visually free-floating over the Champion card.
+   Desktop uses the sharp WebGL renderer. Mobile/iOS switches to a high-resolution
+   2D matte to avoid Mobile Safari's live WebGL compositing rectangle.
    ===================== */
 
 #championTeam .champion-trophy-row{
@@ -58,8 +57,10 @@
   height:60px;
   max-width:none;
   max-height:none;
-  border:0;
-  border-radius:0;
+  border:0 !important;
+  outline:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
   background:transparent !important;
   opacity:0;
   transition:opacity .12s ease;
@@ -76,8 +77,6 @@
   opacity:0;
 }
 
-/* The MP4 is used only as a decoded GPU texture. It is never drawn directly,
-   so none of its gray/white studio backdrop can appear on the SCL page. */
 #championTeam .champion-trophy-video-source{
   position:absolute !important;
   width:1px !important;
@@ -87,4 +86,24 @@
   opacity:0 !important;
   pointer-events:none !important;
   border:0 !important;
+}
+
+/* Mobile Safari can show a rectangular GPU/compositing layer around a WebGL
+   canvas even though the canvas alpha is correct. The mobile renderer is 2D,
+   and these rules deliberately avoid forcing another filtered/isolated GPU layer. */
+#championTeam .champion-trophy-video-stage.mobile-2d{
+  isolation:auto !important;
+  contain:none !important;
+  transform:none !important;
+  -webkit-transform:none !important;
+}
+
+#championTeam .champion-trophy-video-stage.mobile-2d .champion-trophy-video-canvas{
+  filter:none !important;
+  mix-blend-mode:normal !important;
+  isolation:auto !important;
+  transform:none !important;
+  -webkit-transform:none !important;
+  -webkit-backface-visibility:visible !important;
+  backface-visibility:visible !important;
 }
