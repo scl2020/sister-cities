@@ -1,428 +1,320 @@
 // =====================
-// SISTER CITIES — PROCEDURAL VOLUMETRIC CHAMPION TROPHY
-//
-// trophy.png is a single front-facing transparent image, so neither rotateY()
-// nor a stack of copied images can produce a convincing side view. This pass
-// renders every frame into one high-resolution canvas instead:
-//   • the exact trophy.png supplies the front/back artwork;
-//   • its alpha silhouette is measured once in-browser;
-//   • each horizontal row gets a tapered depth value from the trophy's width;
-//   • the rotating side is drawn as ONE continuous shaded metallic body.
-//
-// At 90/270 degrees the trophy therefore keeps a narrow, shaped profile rather
-// than becoming paper-thin, an accordion of images, or a rectangular column.
+// SISTER CITIES — VIDEO-DRIVEN CHAMPION TROPHY
+// Uses the real 360-degree trophy footage uploaded to GitHub. The source video
+// remains hidden; each frame is chroma-keyed against its border background and
+// drawn into a transparent, high-resolution canvas shown in the Champion card.
 // =====================
 
-(function initSclChampionTrophy3D() {
-  if (window.SCL_CHAMPION_TROPHY_3D_INSTALLED) return;
-  window.SCL_CHAMPION_TROPHY_3D_INSTALLED = true;
+(function initSclChampionTrophyVideo() {
+  if (window.SCL_CHAMPION_TROPHY_VIDEO_INSTALLED) return;
+  window.SCL_CHAMPION_TROPHY_VIDEO_INSTALLED = true;
 
-  const SIZE = 240;              // 4.36x the 55px CSS display size
-  const PADDING = 14;
-  const CYCLE_MS = 5000;
-  const ALPHA_THRESHOLD = 22;
-  const modelCache = new Map();
+  const VIDEO_SRC = './assets/gemini_generated_video_3906FDD0.mp4';
+  const DISPLAY_RES = 300;
+  const ANALYSIS_MAX = 320;
+  const OUTPUT_PADDING = 16;
   const players = new Set();
-  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  let rafId = 0;
 
-  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+  function dominantBorderColor(data, width, height) {
+    const bins = new Map();
+    const step = Math.max(1, Math.floor(Math.min(width, height) / 80));
+    const edge = Math.max(2, Math.floor(Math.min(width, height) * 0.035));
 
-  function loadImage(src) {
-    return new Promise((resolve, reject) => {
-      const image = new Image();
-      image.decoding = 'async';
-      image.onload = () => resolve(image);
-      image.onerror = reject;
-      image.src = src;
+    function addPixel(x, y) {
+      const i = ((y * width) + x) * 4;
+      const a = data[i + 3];
+      if (a < 180) return;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      const key = `${r >> 4},${g >> 4},${b >> 4}`;
+      const entry = bins.get(key) || { count: 0, r: 0, g: 0, b: 0 };
+      entry.count += 1;
+      entry.r += r;
+      entry.g += g;
+      entry.b += b;
+      bins.set(key, entry);
+    }
+
+    for (let y = 0; y < height; y += step) {
+      for (let x = 0; x < edge; x += step) addPixel(x, y);
+      for (let x = Math.max(0, width - edge); x < width; x += step) addPixel(x, y);
+    }
+    for (let x = 0; x < width; x += step) {
+      for (let y = 0; y < edge; y += step) addPixel(x, y);
+      for (let y = Math.max(0, height - edge); y < height; y += step) addPixel(x, y);
+    }
+
+    let winner = null;
+    bins.forEach(entry => {
+      if (!winner || entry.count > winner.count) winner = entry;
     });
+
+    if (!winner || !winner.count) return { r: 255, g: 255, b: 255 };
+    return {
+      r: winner.r / winner.count,
+      g: winner.g / winner.count,
+      b: winner.b / winner.count
+    };
   }
 
-  function alphaBounds(imageData, width, height) {
-    let minX = width;
-    let minY = height;
+  function isolateFrame(player) {
+    const { video, sourceCanvas, sourceCtx, outputCanvas, outputCtx } = player;
+    if (!video.videoWidth || !video.videoHeight || video.readyState < 2) return false;
+
+    if (!player.sourceReady) {
+      const scale = Math.min(1, ANALYSIS_MAX / Math.max(video.videoWidth, video.videoHeight));
+      sourceCanvas.width = Math.max(2, Math.round(video.videoWidth * scale));
+      sourceCanvas.height = Math.max(2, Math.round(video.videoHeight * scale));
+      player.sourceReady = true;
+    }
+
+    const sw = sourceCanvas.width;
+    const sh = sourceCanvas.height;
+    sourceCtx.clearRect(0, 0, sw, sh);
+    sourceCtx.drawImage(video, 0, 0, sw, sh);
+
+    let frame;
+    try {
+      frame = sourceCtx.getImageData(0, 0, sw, sh);
+    } catch {
+      return false;
+    }
+
+    const pixels = frame.data;
+    const bg = dominantBorderColor(pixels, sw, sh);
+    const bgLum = (bg.r + bg.g + bg.b) / 3;
+    const low = bgLum > 230 || bgLum < 25 ? 20 : 27;
+    const high = bgLum > 230 || bgLum < 25 ? 78 : 92;
+    const low2 = low * low;
+    const high2 = high * high;
+
+    let minX = sw;
+    let minY = sh;
     let maxX = -1;
     let maxY = -1;
 
-    for (let y = 0; y < height; y += 1) {
-      for (let x = 0; x < width; x += 1) {
-        const alpha = imageData[((y * width + x) * 4) + 3];
-        if (alpha <= ALPHA_THRESHOLD) continue;
-        if (x < minX) minX = x;
-        if (x > maxX) maxX = x;
-        if (y < minY) minY = y;
-        if (y > maxY) maxY = y;
-      }
-    }
+    for (let y = 0; y < sh; y += 1) {
+      for (let x = 0; x < sw; x += 1) {
+        const i = ((y * sw) + x) * 4;
+        const dr = pixels[i] - bg.r;
+        const dg = pixels[i + 1] - bg.g;
+        const db = pixels[i + 2] - bg.b;
+        const dist2 = (dr * dr) + (dg * dg) + (db * db);
 
-    return maxX >= minX && maxY >= minY
-      ? { minX, minY, maxX, maxY }
-      : null;
-  }
-
-  function smoothSeries(values, firstY, lastY, radius = 2) {
-    const output = new Float32Array(values.length);
-
-    for (let y = firstY; y <= lastY; y += 1) {
-      let total = 0;
-      let weightTotal = 0;
-      for (let offset = -radius; offset <= radius; offset += 1) {
-        const yy = y + offset;
-        if (yy < firstY || yy > lastY) continue;
-        const weight = (radius + 1) - Math.abs(offset);
-        total += values[yy] * weight;
-        weightTotal += weight;
-      }
-      output[y] = weightTotal ? total / weightTotal : values[y];
-    }
-
-    return output;
-  }
-
-  async function buildModel(src) {
-    if (modelCache.has(src)) return modelCache.get(src);
-
-    const promise = (async () => {
-      const image = await loadImage(src);
-
-      // First pass: fit the original image into a modest analysis canvas and
-      // find the real non-transparent trophy bounds.
-      const raw = document.createElement('canvas');
-      raw.width = SIZE;
-      raw.height = SIZE;
-      const rawCtx = raw.getContext('2d', { willReadFrequently: true });
-      rawCtx.imageSmoothingEnabled = true;
-      rawCtx.imageSmoothingQuality = 'high';
-
-      const containScale = Math.min(SIZE / image.naturalWidth, SIZE / image.naturalHeight);
-      const containW = image.naturalWidth * containScale;
-      const containH = image.naturalHeight * containScale;
-      const containX = (SIZE - containW) / 2;
-      const containY = (SIZE - containH) / 2;
-      rawCtx.drawImage(image, containX, containY, containW, containH);
-
-      const rawPixels = rawCtx.getImageData(0, 0, SIZE, SIZE);
-      const bounds = alphaBounds(rawPixels.data, SIZE, SIZE);
-      if (!bounds) throw new Error('Trophy artwork has no visible alpha silhouette.');
-
-      // Second pass: crop away transparent padding and normalize the trophy into
-      // the 240x240 render square. This keeps the side profile centered and crisp.
-      const face = document.createElement('canvas');
-      face.width = SIZE;
-      face.height = SIZE;
-      const faceCtx = face.getContext('2d', { willReadFrequently: true });
-      faceCtx.imageSmoothingEnabled = true;
-      faceCtx.imageSmoothingQuality = 'high';
-
-      const cropW = (bounds.maxX - bounds.minX) + 1;
-      const cropH = (bounds.maxY - bounds.minY) + 1;
-      const usable = SIZE - (PADDING * 2);
-      const cropScale = Math.min(usable / cropW, usable / cropH);
-      const drawW = cropW * cropScale;
-      const drawH = cropH * cropScale;
-      const drawX = (SIZE - drawW) / 2;
-      const drawY = (SIZE - drawH) / 2;
-
-      faceCtx.drawImage(
-        raw,
-        bounds.minX,
-        bounds.minY,
-        cropW,
-        cropH,
-        drawX,
-        drawY,
-        drawW,
-        drawH
-      );
-
-      const back = document.createElement('canvas');
-      back.width = SIZE;
-      back.height = SIZE;
-      const backCtx = back.getContext('2d');
-      backCtx.drawImage(face, 0, 0);
-      backCtx.globalCompositeOperation = 'source-atop';
-      backCtx.fillStyle = 'rgba(68, 43, 15, .18)';
-      backCtx.fillRect(0, 0, SIZE, SIZE);
-      backCtx.globalCompositeOperation = 'source-over';
-
-      // Measure the normalized silhouette row-by-row. We use the outermost
-      // visible pixels as the front contour, then derive a smaller depth contour
-      // from each row's width. Wide trophy sections get more body; narrow stems
-      // remain narrow from the side.
-      const pixels = faceCtx.getImageData(0, 0, SIZE, SIZE).data;
-      const left = new Float32Array(SIZE);
-      const right = new Float32Array(SIZE);
-      left.fill(Number.NaN);
-      right.fill(Number.NaN);
-
-      let firstY = SIZE;
-      let lastY = -1;
-
-      for (let y = 0; y < SIZE; y += 1) {
-        let rowLeft = SIZE;
-        let rowRight = -1;
-
-        for (let x = 0; x < SIZE; x += 1) {
-          const alpha = pixels[((y * SIZE + x) * 4) + 3];
-          if (alpha <= ALPHA_THRESHOLD) continue;
-          if (x < rowLeft) rowLeft = x;
-          if (x > rowRight) rowRight = x;
+        let alpha;
+        if (dist2 <= low2) {
+          alpha = 0;
+        } else if (dist2 >= high2) {
+          alpha = 255;
+        } else {
+          const t = (Math.sqrt(dist2) - low) / (high - low);
+          const smooth = t * t * (3 - (2 * t));
+          alpha = Math.round(255 * smooth);
         }
 
-        if (rowRight >= rowLeft) {
-          left[y] = rowLeft;
-          right[y] = rowRight;
-          firstY = Math.min(firstY, y);
-          lastY = Math.max(lastY, y);
+        pixels[i + 3] = alpha;
+
+        if (alpha > 42) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
         }
       }
+    }
 
-      if (lastY < firstY) throw new Error('Unable to build trophy side profile.');
+    if (maxX < minX || maxY < minY) return false;
 
-      // Fill any tiny transparent gaps between disconnected artwork pieces so
-      // the 90-degree view reads as one manufactured trophy body, not fragments.
-      for (let y = firstY; y <= lastY; y += 1) {
-        if (!Number.isNaN(left[y])) continue;
+    sourceCtx.putImageData(frame, 0, 0);
 
-        let prev = y - 1;
-        while (prev >= firstY && Number.isNaN(left[prev])) prev -= 1;
-        let next = y + 1;
-        while (next <= lastY && Number.isNaN(left[next])) next += 1;
+    const marginX = Math.max(2, Math.round((maxX - minX + 1) * 0.035));
+    const marginY = Math.max(2, Math.round((maxY - minY + 1) * 0.035));
+    minX = Math.max(0, minX - marginX);
+    maxX = Math.min(sw - 1, maxX + marginX);
+    minY = Math.max(0, minY - marginY);
+    maxY = Math.min(sh - 1, maxY + marginY);
 
-        if (prev >= firstY && next <= lastY) {
-          const t = (y - prev) / (next - prev);
-          left[y] = left[prev] + ((left[next] - left[prev]) * t);
-          right[y] = right[prev] + ((right[next] - right[prev]) * t);
-        } else if (prev >= firstY) {
-          left[y] = left[prev];
-          right[y] = right[prev];
-        } else if (next <= lastY) {
-          left[y] = left[next];
-          right[y] = right[next];
+    const cropW = (maxX - minX) + 1;
+    const cropH = (maxY - minY) + 1;
+    const usable = DISPLAY_RES - (OUTPUT_PADDING * 2);
+    const scale = Math.min(usable / cropW, usable / cropH);
+    const drawW = cropW * scale;
+    const drawH = cropH * scale;
+    const drawX = (DISPLAY_RES - drawW) / 2;
+    const drawY = (DISPLAY_RES - drawH) / 2;
+
+    outputCtx.clearRect(0, 0, DISPLAY_RES, DISPLAY_RES);
+    outputCtx.drawImage(sourceCanvas, minX, minY, cropW, cropH, drawX, drawY, drawW, drawH);
+
+    if (!player.ready) {
+      player.ready = true;
+      player.stage.classList.add('is-ready');
+    }
+    return true;
+  }
+
+  function scheduleFrames(player) {
+    if (player.cancelled) return;
+
+    if (typeof player.video.requestVideoFrameCallback === 'function') {
+      player.frameHandle = player.video.requestVideoFrameCallback(() => {
+        if (!player.stage.isConnected) {
+          destroyPlayer(player);
+          return;
         }
-      }
-
-      const smoothLeft = smoothSeries(left, firstY, lastY, 2);
-      const smoothRight = smoothSeries(right, firstY, lastY, 2);
-      const depth = new Float32Array(SIZE);
-
-      for (let y = firstY; y <= lastY; y += 1) {
-        const span = Math.max(1, smoothRight[y] - smoothLeft[y]);
-        // At full side view this gives roughly 2.3–6.5 CSS px of visible width,
-        // depending on the actual trophy section. That is enough volume to read
-        // as solid without becoming the thick rectangular bar seen previously.
-        depth[y] = clamp(3.8 + (span * 0.050), 5.0, 14.2);
-      }
-
-      return {
-        face,
-        back,
-        left: smoothLeft,
-        right: smoothRight,
-        depth,
-        firstY,
-        lastY,
-        axis: SIZE / 2
-      };
-    })();
-
-    modelCache.set(src, promise);
-    return promise;
-  }
-
-  function traceVolume(ctx, model, cos, absSin) {
-    const { axis, left, right, depth, firstY, lastY } = model;
-    const leftProjected = new Float32Array((lastY - firstY) + 1);
-    const rightProjected = new Float32Array((lastY - firstY) + 1);
-
-    for (let y = firstY; y <= lastY; y += 1) {
-      const a = axis + ((left[y] - axis) * cos);
-      const b = axis + ((right[y] - axis) * cos);
-      const side = depth[y] * absSin;
-      const index = y - firstY;
-      leftProjected[index] = Math.min(a, b) - side;
-      rightProjected[index] = Math.max(a, b) + side;
+        isolateFrame(player);
+        scheduleFrames(player);
+      });
+      return;
     }
 
-    ctx.beginPath();
-    ctx.moveTo(leftProjected[0], firstY);
-    for (let y = firstY + 1; y <= lastY; y += 1) {
-      ctx.lineTo(leftProjected[y - firstY], y);
-    }
-    for (let y = lastY; y >= firstY; y -= 1) {
-      ctx.lineTo(rightProjected[y - firstY], y);
-    }
-    ctx.closePath();
-  }
-
-  function drawFrame(player, now) {
-    const { ctx, canvas, model } = player;
-    const reduce = Boolean(reduceMotion?.matches);
-    const phase = reduce ? 0 : ((now - player.startedAt) % CYCLE_MS) / CYCLE_MS;
-    const angle = phase * Math.PI * 2;
-    const cos = Math.cos(angle);
-    const absCos = Math.abs(cos);
-    const sin = Math.sin(angle);
-    const absSin = Math.abs(sin);
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Side body first: a single tapered metallic envelope derived from the
-    // trophy silhouette. No repeated artwork exists in this side view.
-    traceVolume(ctx, model, cos, absSin);
-
-    const extent = 44;
-    const gradient = ctx.createLinearGradient(
-      model.axis - extent,
-      0,
-      model.axis + extent,
-      0
-    );
-
-    if (sin >= 0) {
-      gradient.addColorStop(0.00, '#2d1b09');
-      gradient.addColorStop(0.18, '#6f4517');
-      gradient.addColorStop(0.43, '#b97d2d');
-      gradient.addColorStop(0.60, '#ddb15a');
-      gradient.addColorStop(0.78, '#8b571c');
-      gradient.addColorStop(1.00, '#321f0a');
-    } else {
-      gradient.addColorStop(0.00, '#321f0a');
-      gradient.addColorStop(0.22, '#8b571c');
-      gradient.addColorStop(0.40, '#ddb15a');
-      gradient.addColorStop(0.57, '#b97d2d');
-      gradient.addColorStop(0.82, '#6f4517');
-      gradient.addColorStop(1.00, '#2d1b09');
-    }
-
-    ctx.fillStyle = gradient;
-    ctx.fill();
-
-    // Soft rim only when the object is substantially turned. This helps the
-    // side read as one rounded metal surface instead of a flat gold cutout.
-    if (absSin > 0.20) {
-      ctx.save();
-      traceVolume(ctx, model, cos, absSin);
-      ctx.clip();
-      const shineX = model.axis + (sin * 8);
-      const shine = ctx.createLinearGradient(shineX - 15, 0, shineX + 15, 0);
-      shine.addColorStop(0.00, 'rgba(255,255,255,0)');
-      shine.addColorStop(0.48, 'rgba(255,233,173,.20)');
-      shine.addColorStop(0.55, 'rgba(255,244,206,.32)');
-      shine.addColorStop(1.00, 'rgba(255,255,255,0)');
-      ctx.fillStyle = shine;
-      ctx.fillRect(0, model.firstY, SIZE, model.lastY - model.firstY + 1);
-      ctx.restore();
-    }
-
-    // Draw the detailed trophy face as a horizontally projected surface. It
-    // naturally disappears at 90 degrees while the shaped body remains.
-    if (absCos > 0.018) {
-      ctx.save();
-      ctx.globalAlpha = clamp(Math.pow(absCos, 0.45) * 1.10, 0, 1);
-      ctx.translate(model.axis, 0);
-      ctx.scale(cos, 1);
-      ctx.translate(-model.axis, 0);
-      ctx.drawImage(cos >= 0 ? model.face : model.back, 0, 0);
-      ctx.restore();
-    }
-  }
-
-  function animationLoop(now) {
-    rafId = 0;
-
-    players.forEach(player => {
+    const tick = () => {
+      if (player.cancelled) return;
       if (!player.stage.isConnected) {
-        players.delete(player);
+        destroyPlayer(player);
         return;
       }
-      drawFrame(player, now);
-    });
-
-    if (players.size && !reduceMotion?.matches) {
-      rafId = window.requestAnimationFrame(animationLoop);
-    }
+      isolateFrame(player);
+      player.frameHandle = window.requestAnimationFrame(tick);
+    };
+    player.frameHandle = window.requestAnimationFrame(tick);
   }
 
-  function ensureAnimation() {
-    if (!rafId && players.size && !reduceMotion?.matches) {
-      rafId = window.requestAnimationFrame(animationLoop);
-    }
-  }
-
-  async function enhanceTrophy(img) {
-    if (!img || img.closest('.champion-trophy-volume')) return;
-    if (img.dataset.sclTrophyCanvasPending === 'true') return;
-    img.dataset.sclTrophyCanvasPending = 'true';
-
-    const src = img.currentSrc || img.src;
-    if (!src) return;
-
+  function destroyPlayer(player) {
+    if (!player || player.cancelled) return;
+    player.cancelled = true;
+    players.delete(player);
     try {
-      const model = await buildModel(src);
-      if (!img.isConnected) return;
+      if (typeof player.video.cancelVideoFrameCallback === 'function' && player.frameHandle) {
+        player.video.cancelVideoFrameCallback(player.frameHandle);
+      } else if (player.frameHandle) {
+        window.cancelAnimationFrame(player.frameHandle);
+      }
+    } catch {}
+    try { player.video.pause(); } catch {}
+  }
 
-      const stage = document.createElement('span');
-      stage.className = 'champion-trophy-volume';
-      stage.setAttribute('role', 'img');
-      stage.setAttribute('aria-label', img.alt || 'Trophy');
-
-      const canvas = document.createElement('canvas');
-      canvas.width = SIZE;
-      canvas.height = SIZE;
-      canvas.setAttribute('aria-hidden', 'true');
-      stage.appendChild(canvas);
-
-      const parent = img.parentNode;
-      parent.insertBefore(stage, img);
-      img.remove();
-
-      const player = {
-        stage,
-        canvas,
-        ctx: canvas.getContext('2d'),
-        model,
-        startedAt: performance.now()
-      };
-
-      player.ctx.imageSmoothingEnabled = true;
-      player.ctx.imageSmoothingQuality = 'high';
-      players.add(player);
-      drawFrame(player, player.startedAt);
-      ensureAnimation();
-    } catch (error) {
-      // Keep the original static trophy visible if enhancement ever fails.
-      delete img.dataset.sclTrophyCanvasPending;
-      console.warn('SCL trophy volume renderer could not initialize.', error);
+  function startPlayback(player) {
+    const playPromise = player.video.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {
+        const retry = () => {
+          if (!player.stage.isConnected) return;
+          player.video.play().catch(() => {});
+        };
+        window.setTimeout(retry, 250);
+        window.setTimeout(retry, 900);
+      });
     }
   }
 
-  function enhanceTrophies() {
+  function enhanceTrophy(img) {
+    if (!(img instanceof HTMLImageElement)) return;
+    if (img.closest('.champion-trophy-video-stage')) return;
+    if (img.dataset.sclTrophyVideoPending === 'true') return;
+    img.dataset.sclTrophyVideoPending = 'true';
+
+    const stage = document.createElement('span');
+    stage.className = 'champion-trophy-video-stage';
+    stage.setAttribute('role', 'img');
+    stage.setAttribute('aria-label', img.alt || 'Sister Cities trophy');
+
+    const fallback = img.cloneNode(true);
+    fallback.classList.add('champion-trophy-video-fallback');
+    fallback.removeAttribute('id');
+    fallback.setAttribute('aria-hidden', 'true');
+    fallback.alt = '';
+    stage.appendChild(fallback);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = DISPLAY_RES;
+    canvas.height = DISPLAY_RES;
+    canvas.setAttribute('aria-hidden', 'true');
+    stage.appendChild(canvas);
+
+    const video = document.createElement('video');
+    video.className = 'champion-trophy-video-source';
+    video.src = VIDEO_SRC;
+    video.autoplay = true;
+    video.loop = true;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.setAttribute('aria-hidden', 'true');
+    stage.appendChild(video);
+
+    const parent = img.parentNode;
+    if (!parent) return;
+    parent.insertBefore(stage, img);
+    img.remove();
+
+    const sourceCanvas = document.createElement('canvas');
+    const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+    const outputCtx = canvas.getContext('2d', { alpha: true });
+    if (!sourceCtx || !outputCtx) return;
+
+    sourceCtx.imageSmoothingEnabled = true;
+    sourceCtx.imageSmoothingQuality = 'high';
+    outputCtx.imageSmoothingEnabled = true;
+    outputCtx.imageSmoothingQuality = 'high';
+
+    const player = {
+      stage,
+      video,
+      sourceCanvas,
+      sourceCtx,
+      outputCanvas: canvas,
+      outputCtx,
+      sourceReady: false,
+      ready: false,
+      frameHandle: 0,
+      cancelled: false
+    };
+    players.add(player);
+
+    const begin = () => {
+      if (player.cancelled) return;
+      startPlayback(player);
+      isolateFrame(player);
+      scheduleFrames(player);
+    };
+
+    video.addEventListener('loadeddata', begin, { once: true });
+    video.addEventListener('canplay', () => startPlayback(player));
+    video.addEventListener('ended', () => startPlayback(player));
+    video.addEventListener('error', () => player.stage.classList.remove('is-ready'));
+    video.load();
+  }
+
+  function enhanceAll() {
     const championTeam = document.getElementById('championTeam');
     if (!championTeam) return;
-
     championTeam
-      .querySelectorAll('.champion-trophy:not([data-scl-trophy-canvas-pending="true"])')
+      .querySelectorAll('.champion-trophy:not(.champion-trophy-video-fallback)')
       .forEach(enhanceTrophy);
   }
 
-  function scheduleEnhance() {
-    window.requestAnimationFrame(enhanceTrophies);
+  function restartVisiblePlayers() {
+    players.forEach(player => {
+      if (player.stage.isConnected) startPlayback(player);
+    });
   }
 
-  enhanceTrophies();
+  enhanceAll();
 
   const championTeam = document.getElementById('championTeam');
   if (championTeam) {
-    const observer = new MutationObserver(scheduleEnhance);
+    const observer = new MutationObserver(() => window.requestAnimationFrame(enhanceAll));
     observer.observe(championTeam, { childList: true, subtree: true });
   }
 
-  reduceMotion?.addEventListener?.('change', () => {
-    players.forEach(player => {
-      player.startedAt = performance.now();
-      drawFrame(player, player.startedAt);
-    });
-    ensureAnimation();
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) restartVisiblePlayers();
   });
+  window.addEventListener('pageshow', restartVisiblePlayers);
 })();
