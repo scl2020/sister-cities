@@ -1,8 +1,8 @@
 /* =====================
    SISTER CITIES — CHAMPION TROPHY VIDEO SHOWCASE
-   The old synthetic 2.5D/3D rotation is retired. Champion cards now use the
-   actual rotating trophy footage from assets/gemini_generated_video_3906FDD0.mp4.
-   JS isolates the trophy from the video's background onto a transparent canvas.
+   Uses the original uploaded MP4 as the visible renderer so the browser keeps
+   the source video's full decoded detail. A one-time hidden analysis pass only
+   determines the crop; it never supplies the displayed pixels.
    ===================== */
 
 #championTeam .champion-trophy-row{
@@ -12,7 +12,6 @@
   align-items:center;
 }
 
-/* Static image fallback while the video is loading or if video playback fails. */
 #championTeam .champion-trophy{
   width:60px !important;
   height:60px !important;
@@ -27,58 +26,56 @@
 
 #championTeam .champion-trophy-video-stage{
   position:relative;
-  display:inline-grid;
-  place-items:center;
+  display:inline-block;
   width:60px;
   height:60px;
   margin:0 auto 6px;
   line-height:0;
-  overflow:visible;
+  overflow:hidden;
   background:transparent;
+  isolation:isolate;
 }
 
-/* 5x internal render resolution keeps the small trophy sharp on Retina phones. */
-#championTeam .champion-trophy-video-stage canvas{
-  display:block;
-  width:60px;
-  height:60px;
-  max-width:none;
-  border:0;
-  border-radius:0;
-  background:transparent;
-  image-rendering:auto;
-  opacity:0;
-  transition:opacity .14s ease;
-  filter:drop-shadow(0 1.5px 1.4px rgba(46,28,8,.18));
-}
-
-#championTeam .champion-trophy-video-stage.is-ready canvas{
-  opacity:1;
-}
-
-#championTeam .champion-trophy-video-stage .champion-trophy-video-fallback{
+/* Fallback remains visible only until the native MP4 has produced a frame. */
+#championTeam .champion-trophy-video-fallback{
   position:absolute;
   inset:0;
+  z-index:1;
   width:60px !important;
   height:60px !important;
   margin:0 !important;
   object-fit:contain !important;
   opacity:1;
-  transition:opacity .14s ease;
+  transition:opacity .12s ease;
 }
 
 #championTeam .champion-trophy-video-stage.is-ready .champion-trophy-video-fallback{
   opacity:0;
 }
 
-/* The source video itself stays offscreen; only the isolated transparent canvas
-   is shown. This prevents the original video background from appearing. */
+/* IMPORTANT: this is the actual high-resolution MP4, not a canvas copy.
+   JS positions/crops it inside the 60px window while preserving the source
+   pixels. mix-blend-mode makes the source's white backdrop disappear naturally
+   into the Champion card without destructive chroma-key processing. */
 #championTeam .champion-trophy-video-source{
-  position:absolute !important;
-  width:1px !important;
-  height:1px !important;
-  left:-9999px !important;
-  top:-9999px !important;
-  opacity:0 !important;
-  pointer-events:none !important;
+  position:absolute;
+  z-index:2;
+  display:block;
+  max-width:none !important;
+  max-height:none !important;
+  margin:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  opacity:0;
+  pointer-events:none;
+  mix-blend-mode:multiply;
+  transform:translateZ(0);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+
+#championTeam .champion-trophy-video-stage.is-ready .champion-trophy-video-source{
+  opacity:1;
 }
