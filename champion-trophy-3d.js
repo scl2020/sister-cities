@@ -1,21 +1,26 @@
 // =====================
 // SISTER CITIES — HD TRANSPARENT VIDEO CHAMPION TROPHY
 //
-// The uploaded Gemini MP4 remains the ONLY animation source. The browser sends
-// the decoded video directly to WebGL at high resolution, while the shader keys
-// out the neutral white/gray studio backdrop. Unlike the old low-quality pass,
-// the visible trophy is never downsampled to a small presentation canvas first.
+// Desktop keeps the WebGL path that already renders cleanly. Mobile/iOS uses a
+// high-resolution 2D matte instead because Mobile Safari can show a live-only
+// rectangular WebGL compositing layer even when the canvas itself is transparent.
+// Both paths use the uploaded Gemini MP4 as the only animation source.
 // =====================
 
 (function initSclChampionTrophyTransparentVideo(){
-  if(window.SCL_CHAMPION_TROPHY_WEBGL_INSTALLED) return;
-  window.SCL_CHAMPION_TROPHY_WEBGL_INSTALLED = true;
+  if(window.SCL_CHAMPION_TROPHY_VIDEO_INSTALLED) return;
+  window.SCL_CHAMPION_TROPHY_VIDEO_INSTALLED = true;
 
   const VIDEO_SRC = './assets/gemini_generated_video_3906FDD0.mp4';
-  const INTERNAL_SIZE = 360; // 6x the 60px CSS footprint for Retina sharpness
+  const INTERNAL_SIZE = 360; // 6x the 60px CSS footprint; sharp on Retina screens
   const ANALYSIS_MAX = 360;
   const CROP_PADDING = 0.075;
   const players = new Set();
+
+  const ua = navigator.userAgent || '';
+  const isIOS = /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const useMobile2D = isIOS || window.matchMedia('(max-width: 820px)').matches;
 
   function dominantBorderColor(data,w,h){
     let r=0,g=0,b=0,n=0;
@@ -23,6 +28,7 @@
     const step=Math.max(1,Math.floor(Math.min(w,h)/90));
     const add=(x,y)=>{
       const i=((y*w)+x)*4;
+      if(data[i+3] < 16) return;
       r+=data[i]; g+=data[i+1]; b+=data[i+2]; n++;
     };
     for(let y=0;y<h;y+=step){
@@ -36,9 +42,6 @@
     return n ? {r:r/n/255,g:g/n/255,b:b/n/255} : {r:1,g:1,b:1};
   }
 
-  // This pass is ONLY for finding the trophy's crop. Neutral light pixels are
-  // deliberately ignored even when the studio background has a gray vignette,
-  // preventing the background rectangle from being mistaken for foreground.
   function analyze(video){
     if(!video.videoWidth||!video.videoHeight) return null;
     const s=Math.min(1,ANALYSIS_MAX/Math.max(video.videoWidth,video.videoHeight));
@@ -72,8 +75,6 @@
         const dr=rr-br,dg=gg-bgG,db=bbp-bb;
         const dist2=dr*dr+dg*dg+db*db;
 
-        // White, off-white and neutral light gray are studio background. This
-        // also handles the soft gray vignette visible in the source MP4.
         const neutralStudio=(lum>172 && chroma<58);
         const nearBorderColor=(dist2<=close2 && lum>150 && chroma<70);
         if(neutralStudio || nearBorderColor) continue;
@@ -108,9 +109,7 @@
     return sh;
   }
 
-  function createRenderer(canvas,video,analysis){
-    // premultipliedAlpha=false avoids a pale fringe/box when Safari composites
-    // the transparent WebGL canvas over the white Champion card.
+  function createWebGLRenderer(canvas,video,analysis){
     const gl=canvas.getContext('webgl',{
       alpha:true,
       premultipliedAlpha:false,
@@ -150,26 +149,17 @@
         float lum=dot(c.rgb,vec3(0.2126,0.7152,0.0722));
         float dist=distance(c.rgb,u_bg);
 
-        // Main high-quality difference key. The wider feather removes the full
-        // off-white/gray studio vignette instead of leaving a faint rectangle.
         float alphaDist=smoothstep(0.105,0.315,dist);
-
-        // Strongly preserve unmistakable trophy information: gold, flags,
-        // engraving, dark seams and the darker silver body/base.
         float colorProtect=smoothstep(0.060,0.175,chroma);
         float darkProtect=1.0-smoothstep(0.555,0.775,lum);
         float alpha=max(alphaDist,max(colorProtect,darkProtect));
 
-        // Neutral light studio pixels can vary substantially from the sampled
-        // edge color because Gemini rendered a soft gray vignette. Remove those
-        // too, but only when they remain reasonably close to the backdrop range.
         float neutral=1.0-smoothstep(0.055,0.155,chroma);
         float lightNeutral=smoothstep(0.60,0.91,lum);
         float backdropRange=1.0-smoothstep(0.22,0.43,dist);
         float studio=neutral*lightNeutral*backdropRange;
         alpha=mix(alpha,0.0,studio*0.985);
 
-        // Final cleanup for the very pale halo around the trophy silhouette.
         float pale=smoothstep(0.73,0.975,lum)
           *(1.0-smoothstep(0.075,0.19,chroma))
           *(1.0-smoothstep(0.23,0.42,dist));
@@ -242,6 +232,136 @@
     };
   }
 
+  // Mobile Safari path: process the source video directly into a 360x360 2D
+  // canvas. The old blurry version first shrank the video to a tiny analysis
+  // frame and then enlarged it again; this renderer never does that. A border-
+  // connected flood matte removes the studio rectangle without erasing bright
+  // silver/gold details inside the trophy.
+  function createMobile2DRenderer(canvas,video,analysis){
+    const ctx=canvas.getContext('2d',{alpha:true,willReadFrequently:true});
+    if(!ctx) return null;
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+
+    const cropX=analysis.crop[0]*video.videoWidth;
+    const cropY=analysis.crop[1]*video.videoHeight;
+    const cropW=analysis.crop[2]*video.videoWidth;
+    const cropH=analysis.crop[3]*video.videoHeight;
+    const ratio=cropW/cropH;
+    const fit=0.95;
+    let drawW,drawH;
+    if(ratio>=1){
+      drawW=canvas.width*fit;
+      drawH=drawW/ratio;
+    }else{
+      drawH=canvas.height*fit;
+      drawW=drawH*ratio;
+    }
+    const drawX=(canvas.width-drawW)/2;
+    const drawY=(canvas.height-drawH)/2;
+
+    let candidate=null, mask=null, queue=null;
+
+    const isCandidate=(d,i,bgr,bgg,bgb)=>{
+      if(d[i+3] < 10) return false;
+      const r=d[i],g=d[i+1],b=d[i+2];
+      const hi=Math.max(r,g,b),lo=Math.min(r,g,b);
+      const chroma=hi-lo;
+      const lum=(r+g+b)/3;
+      const dr=r-bgr,dg=g-bgg,db=b-bgb;
+      const dist=Math.sqrt(dr*dr+dg*dg+db*db);
+      return lum>142 && chroma<68 && dist<138;
+    };
+
+    return ()=>{
+      if(video.readyState<2) return;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      try{
+        ctx.drawImage(video,cropX,cropY,cropW,cropH,drawX,drawY,drawW,drawH);
+      }catch{
+        return;
+      }
+
+      const x0=Math.max(0,Math.floor(drawX));
+      const y0=Math.max(0,Math.floor(drawY));
+      const x1=Math.min(canvas.width,Math.ceil(drawX+drawW));
+      const y1=Math.min(canvas.height,Math.ceil(drawY+drawH));
+      const w=Math.max(1,x1-x0);
+      const h=Math.max(1,y1-y0);
+
+      let frame;
+      try{ frame=ctx.getImageData(x0,y0,w,h); }catch{ return; }
+      const d=frame.data;
+      const bg=dominantBorderColor(d,w,h);
+      const bgr=bg.r*255,bgg=bg.g*255,bgb=bg.b*255;
+      const total=w*h;
+      if(!candidate||candidate.length!==total){
+        candidate=new Uint8Array(total);
+        mask=new Uint8Array(total);
+        queue=new Int32Array(total);
+      }else{
+        candidate.fill(0);
+        mask.fill(0);
+      }
+
+      for(let p=0;p<total;p++){
+        const i=p*4;
+        candidate[p]=isCandidate(d,i,bgr,bgg,bgb)?1:0;
+      }
+
+      let head=0,tail=0;
+      const seed=(p)=>{
+        if(p<0||p>=total||!candidate[p]||mask[p]) return;
+        mask[p]=1;
+        queue[tail++]=p;
+      };
+      for(let x=0;x<w;x++){
+        seed(x);
+        seed((h-1)*w+x);
+      }
+      for(let y=0;y<h;y++){
+        seed(y*w);
+        seed(y*w+(w-1));
+      }
+
+      while(head<tail){
+        const p=queue[head++];
+        const x=p%w;
+        if(x>0) seed(p-1);
+        if(x<w-1) seed(p+1);
+        if(p>=w) seed(p-w);
+        if(p<total-w) seed(p+w);
+      }
+
+      for(let p=0;p<total;p++){
+        const i=p*4;
+        if(mask[p]){
+          d[i+3]=0;
+          continue;
+        }
+
+        const x=p%w;
+        const touchesBg=(x>0&&mask[p-1]) || (x<w-1&&mask[p+1]) ||
+          (p>=w&&mask[p-w]) || (p<total-w&&mask[p+w]);
+        if(!touchesBg) continue;
+
+        const r=d[i],g=d[i+1],b=d[i+2];
+        const hi=Math.max(r,g,b),lo=Math.min(r,g,b);
+        const chroma=hi-lo;
+        const lum=(r+g+b)/3;
+        const dr=r-bgr,dg=g-bgg,db=b-bgb;
+        const dist=Math.sqrt(dr*dr+dg*dg+db*db);
+        if(lum>145 && chroma<78 && dist<150){
+          const t=Math.max(0,Math.min(1,(dist-24)/(150-24)));
+          const smooth=t*t*(3-2*t);
+          d[i+3]=Math.min(d[i+3],Math.round(255*smooth));
+        }
+      }
+
+      ctx.putImageData(frame,x0,y0);
+    };
+  }
+
   function schedule(player){
     if(player.cancelled) return;
     const tick=()=>{
@@ -276,14 +396,15 @@
   function enhanceTrophy(img){
     if(!(img instanceof HTMLImageElement)) return;
     if(img.closest('.champion-trophy-video-stage')) return;
-    if(img.dataset.sclTrophyWebglPending==='true') return;
-    img.dataset.sclTrophyWebglPending='true';
+    if(img.dataset.sclTrophyVideoPending==='true') return;
+    img.dataset.sclTrophyVideoPending='true';
 
     const parent=img.parentNode;
     if(!parent) return;
 
     const stage=document.createElement('span');
     stage.className='champion-trophy-video-stage';
+    if(useMobile2D) stage.classList.add('mobile-2d');
     stage.setAttribute('role','img');
     stage.setAttribute('aria-label',img.alt||'Sister Cities trophy');
 
@@ -323,12 +444,14 @@
       if(!stage.isConnected) return;
       const info=analyze(video)||{crop:[0,0,1,1],bg:{r:1,g:1,b:1}};
       let render=null;
-      try{ render=createRenderer(canvas,video,info); }
-      catch(error){ console.warn('Trophy transparency renderer failed',error); }
-      if(!render){
-        stage.classList.add('webgl-failed');
-        return;
+      try{
+        render=useMobile2D
+          ? createMobile2DRenderer(canvas,video,info)
+          : createWebGLRenderer(canvas,video,info);
+      }catch(error){
+        console.warn('Trophy transparency renderer failed',error);
       }
+      if(!render) return;
 
       const player={stage,video,render,handle:0,cancelled:false};
       players.add(player);
