@@ -1,56 +1,61 @@
 // =====================
-// SISTER CITIES — VIDEO-DRIVEN CHAMPION TROPHY
-// Uses the real 360-degree trophy footage uploaded to GitHub. The source video
-// remains hidden; each frame is chroma-keyed against its border background and
-// drawn into a transparent, high-resolution canvas shown in the Champion card.
+// SISTER CITIES — NATIVE VIDEO CHAMPION TROPHY
+//
+// The uploaded MP4 is already the high-quality 360-degree trophy animation.
+// Previous code downsampled every frame to a small analysis canvas, chroma-keyed
+// those reduced pixels, then enlarged the cropped result again. That destroyed
+// fine detail even though the source video itself was sharp.
+//
+// This version keeps the MP4 as the visible renderer. A tiny offscreen canvas is
+// used ONCE only to locate the trophy inside the frame; the browser then displays
+// the original decoded video pixels directly, cropped by CSS. No frame is ever
+// resampled through a presentation canvas.
 // =====================
 
-(function initSclChampionTrophyVideo() {
-  if (window.SCL_CHAMPION_TROPHY_VIDEO_INSTALLED) return;
-  window.SCL_CHAMPION_TROPHY_VIDEO_INSTALLED = true;
+(function initSclChampionTrophyNativeVideo() {
+  if (window.SCL_CHAMPION_TROPHY_NATIVE_VIDEO_INSTALLED) return;
+  window.SCL_CHAMPION_TROPHY_NATIVE_VIDEO_INSTALLED = true;
 
   const VIDEO_SRC = './assets/gemini_generated_video_3906FDD0.mp4';
-  const DISPLAY_RES = 300;
-  const ANALYSIS_MAX = 320;
-  const OUTPUT_PADDING = 16;
+  const ANALYSIS_MAX = 360;
+  const STAGE_SIZE = 60;
+  const CROP_PADDING = 0.065;
   const players = new Set();
 
   function dominantBorderColor(data, width, height) {
     const bins = new Map();
-    const step = Math.max(1, Math.floor(Math.min(width, height) / 80));
-    const edge = Math.max(2, Math.floor(Math.min(width, height) * 0.035));
+    const step = Math.max(1, Math.floor(Math.min(width, height) / 72));
+    const edge = Math.max(2, Math.floor(Math.min(width, height) * 0.04));
 
-    function addPixel(x, y) {
+    const add = (x, y) => {
       const i = ((y * width) + x) * 4;
-      const a = data[i + 3];
-      if (a < 180) return;
       const r = data[i];
       const g = data[i + 1];
       const b = data[i + 2];
       const key = `${r >> 4},${g >> 4},${b >> 4}`;
-      const entry = bins.get(key) || { count: 0, r: 0, g: 0, b: 0 };
-      entry.count += 1;
-      entry.r += r;
-      entry.g += g;
-      entry.b += b;
-      bins.set(key, entry);
-    }
+      const item = bins.get(key) || { count: 0, r: 0, g: 0, b: 0 };
+      item.count += 1;
+      item.r += r;
+      item.g += g;
+      item.b += b;
+      bins.set(key, item);
+    };
 
     for (let y = 0; y < height; y += step) {
-      for (let x = 0; x < edge; x += step) addPixel(x, y);
-      for (let x = Math.max(0, width - edge); x < width; x += step) addPixel(x, y);
+      for (let x = 0; x < edge; x += step) add(x, y);
+      for (let x = Math.max(0, width - edge); x < width; x += step) add(x, y);
     }
     for (let x = 0; x < width; x += step) {
-      for (let y = 0; y < edge; y += step) addPixel(x, y);
-      for (let y = Math.max(0, height - edge); y < height; y += step) addPixel(x, y);
+      for (let y = 0; y < edge; y += step) add(x, y);
+      for (let y = Math.max(0, height - edge); y < height; y += step) add(x, y);
     }
 
     let winner = null;
-    bins.forEach(entry => {
-      if (!winner || entry.count > winner.count) winner = entry;
+    bins.forEach(item => {
+      if (!winner || item.count > winner.count) winner = item;
     });
 
-    if (!winner || !winner.count) return { r: 255, g: 255, b: 255 };
+    if (!winner) return { r: 255, g: 255, b: 255 };
     return {
       r: winner.r / winner.count,
       g: winner.g / winner.count,
@@ -58,153 +63,105 @@
     };
   }
 
-  function isolateFrame(player) {
-    const { video, sourceCanvas, sourceCtx, outputCanvas, outputCtx } = player;
-    if (!video.videoWidth || !video.videoHeight || video.readyState < 2) return false;
+  function detectCrop(video) {
+    if (!video.videoWidth || !video.videoHeight) return null;
 
-    if (!player.sourceReady) {
-      const scale = Math.min(1, ANALYSIS_MAX / Math.max(video.videoWidth, video.videoHeight));
-      sourceCanvas.width = Math.max(2, Math.round(video.videoWidth * scale));
-      sourceCanvas.height = Math.max(2, Math.round(video.videoHeight * scale));
-      player.sourceReady = true;
-    }
+    const scale = Math.min(1, ANALYSIS_MAX / Math.max(video.videoWidth, video.videoHeight));
+    const aw = Math.max(2, Math.round(video.videoWidth * scale));
+    const ah = Math.max(2, Math.round(video.videoHeight * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = aw;
+    canvas.height = ah;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return null;
 
-    const sw = sourceCanvas.width;
-    const sh = sourceCanvas.height;
-    sourceCtx.clearRect(0, 0, sw, sh);
-    sourceCtx.drawImage(video, 0, 0, sw, sh);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(video, 0, 0, aw, ah);
 
     let frame;
     try {
-      frame = sourceCtx.getImageData(0, 0, sw, sh);
+      frame = ctx.getImageData(0, 0, aw, ah);
     } catch {
-      return false;
+      return null;
     }
 
-    const pixels = frame.data;
-    const bg = dominantBorderColor(pixels, sw, sh);
+    const p = frame.data;
+    const bg = dominantBorderColor(p, aw, ah);
     const bgLum = (bg.r + bg.g + bg.b) / 3;
-    const low = bgLum > 230 || bgLum < 25 ? 20 : 27;
-    const high = bgLum > 230 || bgLum < 25 ? 78 : 92;
-    const low2 = low * low;
-    const high2 = high * high;
+    const threshold = bgLum > 225 || bgLum < 30 ? 46 : 58;
+    const threshold2 = threshold * threshold;
 
-    let minX = sw;
-    let minY = sh;
+    let minX = aw;
+    let minY = ah;
     let maxX = -1;
     let maxY = -1;
 
-    for (let y = 0; y < sh; y += 1) {
-      for (let x = 0; x < sw; x += 1) {
-        const i = ((y * sw) + x) * 4;
-        const dr = pixels[i] - bg.r;
-        const dg = pixels[i + 1] - bg.g;
-        const db = pixels[i + 2] - bg.b;
+    for (let y = 0; y < ah; y += 1) {
+      for (let x = 0; x < aw; x += 1) {
+        const i = ((y * aw) + x) * 4;
+        const dr = p[i] - bg.r;
+        const dg = p[i + 1] - bg.g;
+        const db = p[i + 2] - bg.b;
         const dist2 = (dr * dr) + (dg * dg) + (db * db);
-
-        let alpha;
-        if (dist2 <= low2) {
-          alpha = 0;
-        } else if (dist2 >= high2) {
-          alpha = 255;
-        } else {
-          const t = (Math.sqrt(dist2) - low) / (high - low);
-          const smooth = t * t * (3 - (2 * t));
-          alpha = Math.round(255 * smooth);
-        }
-
-        pixels[i + 3] = alpha;
-
-        if (alpha > 42) {
-          if (x < minX) minX = x;
-          if (x > maxX) maxX = x;
-          if (y < minY) minY = y;
-          if (y > maxY) maxY = y;
-        }
+        if (dist2 <= threshold2) continue;
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
       }
     }
 
-    if (maxX < minX || maxY < minY) return false;
-
-    sourceCtx.putImageData(frame, 0, 0);
-
-    const marginX = Math.max(2, Math.round((maxX - minX + 1) * 0.035));
-    const marginY = Math.max(2, Math.round((maxY - minY + 1) * 0.035));
-    minX = Math.max(0, minX - marginX);
-    maxX = Math.min(sw - 1, maxX + marginX);
-    minY = Math.max(0, minY - marginY);
-    maxY = Math.min(sh - 1, maxY + marginY);
+    if (maxX < minX || maxY < minY) return null;
 
     const cropW = (maxX - minX) + 1;
     const cropH = (maxY - minY) + 1;
-    const usable = DISPLAY_RES - (OUTPUT_PADDING * 2);
-    const scale = Math.min(usable / cropW, usable / cropH);
-    const drawW = cropW * scale;
-    const drawH = cropH * scale;
-    const drawX = (DISPLAY_RES - drawW) / 2;
-    const drawY = (DISPLAY_RES - drawH) / 2;
+    const padX = cropW * CROP_PADDING;
+    const padY = cropH * CROP_PADDING;
 
-    outputCtx.clearRect(0, 0, DISPLAY_RES, DISPLAY_RES);
-    outputCtx.drawImage(sourceCanvas, minX, minY, cropW, cropH, drawX, drawY, drawW, drawH);
+    minX = Math.max(0, minX - padX);
+    maxX = Math.min(aw, maxX + padX);
+    minY = Math.max(0, minY - padY);
+    maxY = Math.min(ah, maxY + padY);
 
-    if (!player.ready) {
-      player.ready = true;
-      player.stage.classList.add('is-ready');
-    }
-    return true;
+    return {
+      x: (minX / aw) * video.videoWidth,
+      y: (minY / ah) * video.videoHeight,
+      width: ((maxX - minX) / aw) * video.videoWidth,
+      height: ((maxY - minY) / ah) * video.videoHeight
+    };
   }
 
-  function scheduleFrames(player) {
-    if (player.cancelled) return;
-
-    if (typeof player.video.requestVideoFrameCallback === 'function') {
-      player.frameHandle = player.video.requestVideoFrameCallback(() => {
-        if (!player.stage.isConnected) {
-          destroyPlayer(player);
-          return;
-        }
-        isolateFrame(player);
-        scheduleFrames(player);
-      });
+  function applyNativeCrop(video, crop) {
+    if (!crop) {
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.left = '0';
+      video.style.top = '0';
+      video.style.objectFit = 'contain';
       return;
     }
 
-    const tick = () => {
-      if (player.cancelled) return;
-      if (!player.stage.isConnected) {
-        destroyPlayer(player);
-        return;
-      }
-      isolateFrame(player);
-      player.frameHandle = window.requestAnimationFrame(tick);
-    };
-    player.frameHandle = window.requestAnimationFrame(tick);
-  }
+    const scale = Math.min(STAGE_SIZE / crop.width, STAGE_SIZE / crop.height);
+    const renderedW = video.videoWidth * scale;
+    const renderedH = video.videoHeight * scale;
+    const cropRenderedW = crop.width * scale;
+    const cropRenderedH = crop.height * scale;
 
-  function destroyPlayer(player) {
-    if (!player || player.cancelled) return;
-    player.cancelled = true;
-    players.delete(player);
-    try {
-      if (typeof player.video.cancelVideoFrameCallback === 'function' && player.frameHandle) {
-        player.video.cancelVideoFrameCallback(player.frameHandle);
-      } else if (player.frameHandle) {
-        window.cancelAnimationFrame(player.frameHandle);
-      }
-    } catch {}
-    try { player.video.pause(); } catch {}
+    video.style.width = `${renderedW}px`;
+    video.style.height = `${renderedH}px`;
+    video.style.left = `${((STAGE_SIZE - cropRenderedW) / 2) - (crop.x * scale)}px`;
+    video.style.top = `${((STAGE_SIZE - cropRenderedH) / 2) - (crop.y * scale)}px`;
+    video.style.objectFit = 'fill';
   }
 
   function startPlayback(player) {
-    const playPromise = player.video.play();
-    if (playPromise && typeof playPromise.catch === 'function') {
-      playPromise.catch(() => {
-        const retry = () => {
-          if (!player.stage.isConnected) return;
-          player.video.play().catch(() => {});
-        };
-        window.setTimeout(retry, 250);
-        window.setTimeout(retry, 900);
+    const promise = player.video.play();
+    if (promise && typeof promise.catch === 'function') {
+      promise.catch(() => {
+        window.setTimeout(() => {
+          if (player.stage.isConnected) player.video.play().catch(() => {});
+        }, 250);
       });
     }
   }
@@ -212,8 +169,11 @@
   function enhanceTrophy(img) {
     if (!(img instanceof HTMLImageElement)) return;
     if (img.closest('.champion-trophy-video-stage')) return;
-    if (img.dataset.sclTrophyVideoPending === 'true') return;
-    img.dataset.sclTrophyVideoPending = 'true';
+    if (img.dataset.sclTrophyNativeVideoPending === 'true') return;
+    img.dataset.sclTrophyNativeVideoPending = 'true';
+
+    const parent = img.parentNode;
+    if (!parent) return;
 
     const stage = document.createElement('span');
     stage.className = 'champion-trophy-video-stage';
@@ -223,15 +183,9 @@
     const fallback = img.cloneNode(true);
     fallback.classList.add('champion-trophy-video-fallback');
     fallback.removeAttribute('id');
-    fallback.setAttribute('aria-hidden', 'true');
     fallback.alt = '';
+    fallback.setAttribute('aria-hidden', 'true');
     stage.appendChild(fallback);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = DISPLAY_RES;
-    canvas.height = DISPLAY_RES;
-    canvas.setAttribute('aria-hidden', 'true');
-    stage.appendChild(canvas);
 
     const video = document.createElement('video');
     video.className = 'champion-trophy-video-source';
@@ -242,52 +196,30 @@
     video.defaultMuted = true;
     video.playsInline = true;
     video.preload = 'auto';
+    video.disablePictureInPicture = true;
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
     video.setAttribute('aria-hidden', 'true');
     stage.appendChild(video);
 
-    const parent = img.parentNode;
-    if (!parent) return;
     parent.insertBefore(stage, img);
     img.remove();
 
-    const sourceCanvas = document.createElement('canvas');
-    const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
-    const outputCtx = canvas.getContext('2d', { alpha: true });
-    if (!sourceCtx || !outputCtx) return;
-
-    sourceCtx.imageSmoothingEnabled = true;
-    sourceCtx.imageSmoothingQuality = 'high';
-    outputCtx.imageSmoothingEnabled = true;
-    outputCtx.imageSmoothingQuality = 'high';
-
-    const player = {
-      stage,
-      video,
-      sourceCanvas,
-      sourceCtx,
-      outputCanvas: canvas,
-      outputCtx,
-      sourceReady: false,
-      ready: false,
-      frameHandle: 0,
-      cancelled: false
-    };
+    const player = { stage, video };
     players.add(player);
 
-    const begin = () => {
-      if (player.cancelled) return;
+    const prepare = () => {
+      if (!stage.isConnected) return;
+      const crop = detectCrop(video);
+      applyNativeCrop(video, crop);
+      stage.classList.add('is-ready');
       startPlayback(player);
-      isolateFrame(player);
-      scheduleFrames(player);
     };
 
-    video.addEventListener('loadeddata', begin, { once: true });
+    video.addEventListener('loadeddata', prepare, { once: true });
     video.addEventListener('canplay', () => startPlayback(player));
-    video.addEventListener('ended', () => startPlayback(player));
-    video.addEventListener('error', () => player.stage.classList.remove('is-ready'));
+    video.addEventListener('error', () => stage.classList.remove('is-ready'));
     video.load();
   }
 
@@ -301,7 +233,11 @@
 
   function restartVisiblePlayers() {
     players.forEach(player => {
-      if (player.stage.isConnected) startPlayback(player);
+      if (!player.stage.isConnected) {
+        players.delete(player);
+        return;
+      }
+      startPlayback(player);
     });
   }
 
