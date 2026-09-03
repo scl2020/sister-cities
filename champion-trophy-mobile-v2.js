@@ -1,19 +1,26 @@
 // =====================
-// SISTER CITIES — MOBILE HD TROPHY MATTE V2
-// Mobile-only renderer for the uploaded Gemini 360 trophy video.
-// Keeps the existing 60px size, continuous autoplay/loop and transparent
-// free-floating presentation, while protecting bright silver/gold highlights
-// from being mistaken for the studio background.
+// SISTER CITIES — MOBILE HD TROPHY RENDERER V3
+//
+// Mobile Safari was the only problem area. The old mobile CPU matte removed
+// bright silver/gold trophy pixels along with the white studio backdrop, which
+// created the visible white/glitchy holes. Desktop's WebGL key is already clean.
+//
+// This mobile renderer therefore uses the SAME WebGL transparency shader as the
+// good desktop version, but renders it into a detached/off-DOM WebGL canvas.
+// Each finished frame is then copied into the visible ordinary 2D canvas.
+// Result: desktop-quality trophy pixels + mobile-safe 2D compositing, so there
+// is no live WebGL rectangle and no destructive CPU flood-fill through highlights.
 // =====================
 
-(function initSclChampionTrophyMobileV2(){
+(function initSclChampionTrophyMobileV3(){
   const ua=navigator.userAgent||'';
   const isIOS=/iPad|iPhone|iPod/.test(ua) ||
     (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
   const isMobile=isIOS || window.matchMedia('(max-width: 820px)').matches;
   if(!isMobile) return;
 
-  // Block the legacy trophy renderer on mobile only. Desktop still loads it.
+  // Prevent champion-trophy-3d.js from installing its own mobile renderer.
+  // Desktop never enters this file and continues using the existing renderer.
   window.SCL_CHAMPION_TROPHY_VIDEO_INSTALLED=true;
 
   const VIDEO_SRC='./assets/gemini_generated_video_3906FDD0.mp4';
@@ -28,7 +35,7 @@
     const step=Math.max(1,Math.floor(Math.min(w,h)/90));
     const add=(x,y)=>{
       const i=((y*w)+x)*4;
-      if(data[i+3]<16) return;
+      if(data[i+3]<16)return;
       r+=data[i];g+=data[i+1];b+=data[i+2];n++;
     };
     for(let y=0;y<h;y+=step){
@@ -54,6 +61,7 @@
     ctx.imageSmoothingEnabled=true;
     ctx.imageSmoothingQuality='high';
     ctx.drawImage(video,0,0,w,h);
+
     let frame;
     try{frame=ctx.getImageData(0,0,w,h);}catch{return null;}
     const d=frame.data;
@@ -71,192 +79,219 @@
         const lum=(r+g+b)/3;
         const dr=r-br,dg=g-bgG,db=b-bb;
         const dist2=dr*dr+dg*dg+db*db;
-        const studio=(lum>172&&chroma<58) || (dist2<=close2&&lum>150&&chroma<70);
+        const studio=(lum>172&&chroma<58)||(dist2<=close2&&lum>150&&chroma<70);
         if(studio)continue;
         if(x<minX)minX=x;if(x>maxX)maxX=x;
         if(y<minY)minY=y;if(y>maxY)maxY=y;
       }
     }
 
-    if(maxX<minX||maxY<minY)return {crop:[0,0,1,1]};
+    if(maxX<minX||maxY<minY)return {crop:[0,0,1,1],bg};
     const cw=maxX-minX+1,ch=maxY-minY+1;
     const px=cw*CROP_PADDING,py=ch*CROP_PADDING;
     minX=Math.max(0,minX-px);maxX=Math.min(w,maxX+px);
     minY=Math.max(0,minY-py);maxY=Math.min(h,maxY+py);
-    return {crop:[minX/w,minY/h,(maxX-minX)/w,(maxY-minY)/h]};
+    return {crop:[minX/w,minY/h,(maxX-minX)/w,(maxY-minY)/h],bg};
   }
 
-  function createRenderer(canvas,video,analysis){
-    const ctx=canvas.getContext('2d',{alpha:true,willReadFrequently:true});
+  function compileShader(gl,type,src){
+    const sh=gl.createShader(type);
+    gl.shaderSource(sh,src);
+    gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS)){
+      throw new Error(gl.getShaderInfoLog(sh)||'shader compile failed');
+    }
+    return sh;
+  }
+
+  // This is intentionally the same transparency logic used by the desktop path,
+  // which is already visually correct. The only difference is that this WebGL
+  // canvas never enters the DOM, so iOS cannot show its compositor rectangle.
+  function createDetachedWebGLRenderer(glCanvas,video,analysis){
+    const gl=glCanvas.getContext('webgl',{
+      alpha:true,
+      premultipliedAlpha:false,
+      antialias:true,
+      preserveDrawingBuffer:true
+    });
+    if(!gl)return null;
+
+    const vs=compileShader(gl,gl.VERTEX_SHADER,`
+      attribute vec2 a_pos;
+      attribute vec2 a_uv;
+      varying vec2 v_uv;
+      uniform vec2 u_fit;
+      void main(){
+        gl_Position=vec4(a_pos*u_fit,0.0,1.0);
+        v_uv=a_uv;
+      }
+    `);
+
+    const fs=compileShader(gl,gl.FRAGMENT_SHADER,`
+      precision highp float;
+      varying vec2 v_uv;
+      uniform sampler2D u_tex;
+      uniform vec4 u_crop;
+      uniform vec3 u_bg;
+
+      void main(){
+        vec2 uv=vec2(
+          u_crop.x + v_uv.x*u_crop.z,
+          u_crop.y + v_uv.y*u_crop.w
+        );
+        vec4 c=texture2D(u_tex,uv);
+
+        float hi=max(c.r,max(c.g,c.b));
+        float lo=min(c.r,min(c.g,c.b));
+        float chroma=hi-lo;
+        float lum=dot(c.rgb,vec3(0.2126,0.7152,0.0722));
+        float dist=distance(c.rgb,u_bg);
+
+        float alphaDist=smoothstep(0.105,0.315,dist);
+        float colorProtect=smoothstep(0.060,0.175,chroma);
+        float darkProtect=1.0-smoothstep(0.555,0.775,lum);
+        float alpha=max(alphaDist,max(colorProtect,darkProtect));
+
+        float neutral=1.0-smoothstep(0.055,0.155,chroma);
+        float lightNeutral=smoothstep(0.60,0.91,lum);
+        float backdropRange=1.0-smoothstep(0.22,0.43,dist);
+        float studio=neutral*lightNeutral*backdropRange;
+        alpha=mix(alpha,0.0,studio*0.985);
+
+        float pale=smoothstep(0.73,0.975,lum)
+          *(1.0-smoothstep(0.075,0.19,chroma))
+          *(1.0-smoothstep(0.23,0.42,dist));
+        alpha*=1.0-(pale*0.96);
+
+        alpha=clamp(alpha,0.0,1.0);
+        if(alpha<0.018)discard;
+        gl_FragColor=vec4(c.rgb,c.a*alpha);
+      }
+    `);
+
+    const program=gl.createProgram();
+    gl.attachShader(program,vs);
+    gl.attachShader(program,fs);
+    gl.linkProgram(program);
+    if(!gl.getProgramParameter(program,gl.LINK_STATUS)){
+      throw new Error(gl.getProgramInfoLog(program)||'program link failed');
+    }
+    gl.useProgram(program);
+
+    const buf=gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([
+      -1,-1,0,0,  1,-1,1,0,  -1,1,0,1,
+      -1,1,0,1,   1,-1,1,0,   1,1,1,1
+    ]),gl.STATIC_DRAW);
+
+    const stride=16;
+    const aPos=gl.getAttribLocation(program,'a_pos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,stride,0);
+    const aUv=gl.getAttribLocation(program,'a_uv');
+    gl.enableVertexAttribArray(aUv);
+    gl.vertexAttribPointer(aUv,2,gl.FLOAT,false,stride,8);
+
+    const uCrop=gl.getUniformLocation(program,'u_crop');
+    const uBg=gl.getUniformLocation(program,'u_bg');
+    const uFit=gl.getUniformLocation(program,'u_fit');
+    gl.uniform4fv(uCrop,new Float32Array(analysis.crop));
+    gl.uniform3f(uBg,analysis.bg.r,analysis.bg.g,analysis.bg.b);
+
+    const cropW=analysis.crop[2]*video.videoWidth;
+    const cropH=analysis.crop[3]*video.videoHeight;
+    const ratio=cropW/cropH;
+    if(ratio>=1)gl.uniform2f(uFit,0.95,0.95/ratio);
+    else gl.uniform2f(uFit,0.95*ratio,0.95);
+
+    const tex=gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D,tex);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+
+    gl.clearColor(0,0,0,0);
+    gl.viewport(0,0,glCanvas.width,glCanvas.height);
+
+    return ()=>{
+      if(video.readyState<2)return false;
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.bindTexture(gl.TEXTURE_2D,tex);
+      try{
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,video);
+      }catch{
+        return false;
+      }
+      gl.drawArrays(gl.TRIANGLES,0,6);
+      // Ensure the detached frame is complete before the 2D canvas copies it.
+      gl.finish();
+      return true;
+    };
+  }
+
+  function createRenderer(visibleCanvas,video,analysis){
+    // The user sees ONLY this ordinary 2D canvas. No pixel classification or
+    // matte is performed here, so bright trophy highlights cannot be punched out.
+    const ctx=visibleCanvas.getContext('2d',{alpha:true});
     if(!ctx)return null;
     ctx.imageSmoothingEnabled=true;
     ctx.imageSmoothingQuality='high';
 
-    const cropX=analysis.crop[0]*video.videoWidth;
-    const cropY=analysis.crop[1]*video.videoHeight;
-    const cropW=analysis.crop[2]*video.videoWidth;
-    const cropH=analysis.crop[3]*video.videoHeight;
-    const ratio=cropW/cropH;
-    const fit=0.95;
-    let drawW,drawH;
-    if(ratio>=1){drawW=canvas.width*fit;drawH=drawW/ratio;}
-    else{drawH=canvas.height*fit;drawW=drawH*ratio;}
-    const drawX=(canvas.width-drawW)/2;
-    const drawY=(canvas.height-drawH)/2;
-
-    let candidate=null,mask=null,queue=null,holeSeen=null,holeQueue=null,componentSeen=null,componentQueue=null;
-
-    function localGradient(d,p,w,h){
-      const x=p%w,y=(p/w)|0,i=p*4;
-      const r=d[i],g=d[i+1],b=d[i+2];
-      let maxDiff=0;
-      const test=(q)=>{
-        const j=q*4;
-        const diff=(Math.abs(r-d[j])+Math.abs(g-d[j+1])+Math.abs(b-d[j+2]))/3;
-        if(diff>maxDiff)maxDiff=diff;
-      };
-      if(x>0)test(p-1);
-      if(x<w-1)test(p+1);
-      if(y>0)test(p-w);
-      if(y<h-1)test(p+w);
-      return maxDiff;
-    }
-
-    function isBackgroundCandidate(d,p,w,h,bgr,bgg,bgb){
-      const i=p*4;
-      if(d[i+3]<10)return false;
-      const r=d[i],g=d[i+1],b=d[i+2];
-      const hi=Math.max(r,g,b),lo=Math.min(r,g,b);
-      const chroma=hi-lo;
-      const lum=(r+g+b)/3;
-      const dr=r-bgr,dg=g-bgg,db=b-bgb;
-      const dist=Math.sqrt(dr*dr+dg*dg+db*db);
-      const grad=localGradient(d,p,w,h);
-
-      // Background is smooth, neutral and connected to the frame edge.
-      // Metallic highlights may also be bright/neutral, but their local gradient
-      // is usually much stronger, which prevents the flood from entering them.
-      const ultraSmoothGray=lum>132 && chroma<46 && dist<150 && grad<11;
-      const normalStudio=lum>148 && chroma<58 && dist<140 && grad<24;
-      const brightStudio=lum>178 && chroma<68 && dist<165 && grad<34;
-      return ultraSmoothGray || normalStudio || brightStudio;
-    }
+    const glCanvas=document.createElement('canvas');
+    glCanvas.width=visibleCanvas.width;
+    glCanvas.height=visibleCanvas.height;
+    const renderGL=createDetachedWebGLRenderer(glCanvas,video,analysis);
+    if(!renderGL)return null;
 
     return ()=>{
-      if(video.readyState<2)return;
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      try{ctx.drawImage(video,cropX,cropY,cropW,cropH,drawX,drawY,drawW,drawH);}catch{return;}
-
-      const x0=Math.max(0,Math.floor(drawX));
-      const y0=Math.max(0,Math.floor(drawY));
-      const x1=Math.min(canvas.width,Math.ceil(drawX+drawW));
-      const y1=Math.min(canvas.height,Math.ceil(drawY+drawH));
-      const w=Math.max(1,x1-x0),h=Math.max(1,y1-y0),total=w*h;
-
-      let frame;
-      try{frame=ctx.getImageData(x0,y0,w,h);}catch{return;}
-      const d=frame.data;
-      const bg=dominantBorderColor(d,w,h);
-      const bgr=bg.r*255,bgg=bg.g*255,bgb=bg.b*255;
-
-      if(!candidate||candidate.length!==total){
-        candidate=new Uint8Array(total);
-        mask=new Uint8Array(total);
-        queue=new Int32Array(total);
-        holeSeen=new Uint8Array(total);
-        holeQueue=new Int32Array(total);
-        componentSeen=new Uint8Array(total);
-        componentQueue=new Int32Array(total);
-      }else{
-        candidate.fill(0);mask.fill(0);holeSeen.fill(0);componentSeen.fill(0);
-      }
-
-      for(let p=0;p<total;p++)candidate[p]=isBackgroundCandidate(d,p,w,h,bgr,bgg,bgb)?1:0;
-
-      // Flood ONLY from the outside border. Bright trophy pixels that happen to
-      // resemble the backdrop are preserved unless a smooth background path can
-      // physically reach them from the edge.
-      let head=0,tail=0;
-      const seed=(p)=>{
-        if(p<0||p>=total||!candidate[p]||mask[p])return;
-        mask[p]=1;queue[tail++]=p;
-      };
-      for(let x=0;x<w;x++){seed(x);seed((h-1)*w+x);}
-      for(let y=0;y<h;y++){seed(y*w);seed(y*w+w-1);}
-      while(head<tail){
-        const p=queue[head++],x=p%w;
-        if(x>0)seed(p-1);if(x<w-1)seed(p+1);
-        if(p>=w)seed(p-w);if(p<total-w)seed(p+w);
-      }
-
-      for(let p=0;p<total;p++)if(mask[p])d[p*4+3]=0;
-
-      // Hole protection: if an accidentally removed transparent area is fully
-      // enclosed by the trophy rather than connected to the outside canvas,
-      // restore its original alpha. This specifically prevents the white/glare
-      // cutouts seen on bright silver and gold surfaces.
-      head=0;tail=0;
-      const seedHole=(p)=>{
-        if(p<0||p>=total||holeSeen[p]||d[p*4+3]>8)return;
-        holeSeen[p]=1;holeQueue[tail++]=p;
-      };
-      for(let x=0;x<w;x++){seedHole(x);seedHole((h-1)*w+x);}
-      for(let y=0;y<h;y++){seedHole(y*w);seedHole(y*w+w-1);}
-      while(head<tail){
-        const p=holeQueue[head++],x=p%w;
-        if(x>0)seedHole(p-1);if(x<w-1)seedHole(p+1);
-        if(p>=w)seedHole(p-w);if(p<total-w)seedHole(p+w);
-      }
-      for(let p=0;p<total;p++){
-        if(d[p*4+3]<=8 && !holeSeen[p])d[p*4+3]=255;
-      }
-
-      // Remove tiny detached source specks/shadow dots while leaving the trophy
-      // itself untouched. Only very small opaque islands are discarded.
-      const tinyLimit=Math.max(18,Math.floor(total*0.0009));
-      for(let start=0;start<total;start++){
-        if(componentSeen[start]||d[start*4+3]<24)continue;
-        head=0;tail=0;componentSeen[start]=1;componentQueue[tail++]=start;
-        while(head<tail){
-          const p=componentQueue[head++],x=p%w;
-          const add=(q)=>{
-            if(q<0||q>=total||componentSeen[q]||d[q*4+3]<24)return;
-            componentSeen[q]=1;componentQueue[tail++]=q;
-          };
-          if(x>0)add(p-1);if(x<w-1)add(p+1);
-          if(p>=w)add(p-w);if(p<total-w)add(p+w);
-        }
-        if(tail<=tinyLimit){
-          for(let k=0;k<tail;k++)d[componentQueue[k]*4+3]=0;
-        }
-      }
-
-      ctx.putImageData(frame,x0,y0);
+      if(!renderGL())return;
+      ctx.clearRect(0,0,visibleCanvas.width,visibleCanvas.height);
+      try{
+        ctx.drawImage(glCanvas,0,0,visibleCanvas.width,visibleCanvas.height);
+      }catch{}
     };
   }
 
   function schedule(player){
+    if(player.cancelled)return;
     const tick=()=>{
-      if(!player.stage.isConnected){player.cancelled=true;players.delete(player);return;}
+      if(!player.stage.isConnected){
+        player.cancelled=true;players.delete(player);return;
+      }
       player.render();
-      if(typeof player.video.requestVideoFrameCallback==='function')player.handle=player.video.requestVideoFrameCallback(tick);
-      else player.handle=requestAnimationFrame(tick);
+      if(typeof player.video.requestVideoFrameCallback==='function'){
+        player.handle=player.video.requestVideoFrameCallback(tick);
+      }else{
+        player.handle=requestAnimationFrame(tick);
+      }
     };
-    if(typeof player.video.requestVideoFrameCallback==='function')player.handle=player.video.requestVideoFrameCallback(tick);
-    else player.handle=requestAnimationFrame(tick);
+    if(typeof player.video.requestVideoFrameCallback==='function'){
+      player.handle=player.video.requestVideoFrameCallback(tick);
+    }else{
+      player.handle=requestAnimationFrame(tick);
+    }
   }
 
   function play(player){
     const p=player.video.play();
-    if(p&&p.catch)p.catch(()=>setTimeout(()=>{if(player.stage.isConnected)player.video.play().catch(()=>{});},250));
+    if(p&&p.catch){
+      p.catch(()=>setTimeout(()=>{
+        if(player.stage.isConnected)player.video.play().catch(()=>{});
+      },250));
+    }
   }
 
   function enhanceTrophy(img){
     if(!(img instanceof HTMLImageElement))return;
     if(img.closest('.champion-trophy-video-stage'))return;
-    if(img.dataset.sclTrophyMobileV2==='true')return;
-    img.dataset.sclTrophyMobileV2='true';
-    const parent=img.parentNode;if(!parent)return;
+    if(img.dataset.sclTrophyMobileV3==='true')return;
+    img.dataset.sclTrophyMobileV3='true';
+    const parent=img.parentNode;
+    if(!parent)return;
 
     const stage=document.createElement('span');
     stage.className='champion-trophy-video-stage mobile-2d';
@@ -265,48 +300,74 @@
 
     const fallback=img.cloneNode(true);
     fallback.classList.add('champion-trophy-video-fallback');
-    fallback.alt='';fallback.setAttribute('aria-hidden','true');
+    fallback.alt='';
+    fallback.setAttribute('aria-hidden','true');
     stage.appendChild(fallback);
 
     const canvas=document.createElement('canvas');
-    canvas.width=INTERNAL_SIZE;canvas.height=INTERNAL_SIZE;
+    canvas.width=INTERNAL_SIZE;
+    canvas.height=INTERNAL_SIZE;
     canvas.className='champion-trophy-video-canvas';
     canvas.setAttribute('aria-hidden','true');
     stage.appendChild(canvas);
 
     const video=document.createElement('video');
     video.className='champion-trophy-video-source';
-    video.src=VIDEO_SRC;video.autoplay=true;video.loop=true;video.muted=true;
-    video.defaultMuted=true;video.playsInline=true;video.preload='auto';
+    video.src=VIDEO_SRC;
+    video.autoplay=true;
+    video.loop=true;
+    video.muted=true;
+    video.defaultMuted=true;
+    video.playsInline=true;
+    video.preload='auto';
     video.disablePictureInPicture=true;
-    video.setAttribute('muted','');video.setAttribute('playsinline','');
-    video.setAttribute('webkit-playsinline','');video.setAttribute('aria-hidden','true');
+    video.setAttribute('muted','');
+    video.setAttribute('playsinline','');
+    video.setAttribute('webkit-playsinline','');
+    video.setAttribute('aria-hidden','true');
     stage.appendChild(video);
 
-    parent.insertBefore(stage,img);img.remove();
+    parent.insertBefore(stage,img);
+    img.remove();
 
     const begin=()=>{
       if(!stage.isConnected)return;
-      const info=analyze(video)||{crop:[0,0,1,1]};
-      const render=createRenderer(canvas,video,info);
+      const info=analyze(video)||{crop:[0,0,1,1],bg:{r:1,g:1,b:1}};
+      let render=null;
+      try{render=createRenderer(canvas,video,info);}catch(error){
+        console.warn('Mobile trophy renderer failed',error);
+      }
       if(!render)return;
       const player={stage,video,render,handle:0,cancelled:false};
       players.add(player);
-      render();stage.classList.add('is-ready');play(player);schedule(player);
+      render();
+      stage.classList.add('is-ready');
+      play(player);
+      schedule(player);
     };
+
     video.addEventListener('loadeddata',begin,{once:true});
-    video.addEventListener('canplay',()=>{for(const p of players)if(p.video===video)play(p);});
+    video.addEventListener('canplay',()=>{
+      for(const p of players)if(p.video===video)play(p);
+    });
     video.load();
   }
 
   function enhanceAll(){
-    const root=document.getElementById('championTeam');if(!root)return;
+    const root=document.getElementById('championTeam');
+    if(!root)return;
     root.querySelectorAll('.champion-trophy:not(.champion-trophy-video-fallback)').forEach(enhanceTrophy);
   }
 
   enhanceAll();
   const root=document.getElementById('championTeam');
-  if(root)new MutationObserver(()=>requestAnimationFrame(enhanceAll)).observe(root,{childList:true,subtree:true});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)players.forEach(play);});
+  if(root){
+    new MutationObserver(()=>requestAnimationFrame(enhanceAll))
+      .observe(root,{childList:true,subtree:true});
+  }
+
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden)players.forEach(play);
+  });
   window.addEventListener('pageshow',()=>players.forEach(play));
 })();
