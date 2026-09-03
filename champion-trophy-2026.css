@@ -1,11 +1,8 @@
 /* =====================
-   SISTER CITIES — CHAMPION TROPHY SHOWCASE
-   The trophy remains 55px (about 5.8% larger than the original 52px).
-
-   IMPORTANT: the old CSS 3D stack/extrusion has been removed. A single
-   high-resolution canvas now renders the trophy turntable frame-by-frame.
-   That lets the side profile keep a smooth tapered volume instead of exposing
-   repeated image slices or a rectangular metallic column at 90/270 degrees.
+   SISTER CITIES — CHAMPION TROPHY VIDEO SHOWCASE
+   The old synthetic 2.5D/3D rotation is retired. Champion cards now use the
+   actual rotating trophy footage from assets/gemini_generated_video_3906FDD0.mp4.
+   JS isolates the trophy from the video's background onto a transparent canvas.
    ===================== */
 
 #championTeam .champion-trophy-row{
@@ -15,46 +12,73 @@
   align-items:center;
 }
 
-/* Static fallback while the canvas renderer is preparing trophy.png. */
+/* Static image fallback while the video is loading or if video playback fails. */
 #championTeam .champion-trophy{
-  width:55px !important;
-  height:55px !important;
+  width:60px !important;
+  height:60px !important;
   object-fit:contain !important;
   display:block;
   margin:0 auto 6px;
+  border:0 !important;
   border-radius:0 !important;
+  background:transparent !important;
   animation:none !important;
 }
 
-/* Procedural 2.5D trophy stage. The visible CSS footprint stays identical to
-   the approved 55px trophy; the canvas itself renders at 4x resolution. */
-#championTeam .champion-trophy-volume{
+#championTeam .champion-trophy-video-stage{
   position:relative;
-  display:inline-block;
-  width:55px;
-  height:55px;
+  display:inline-grid;
+  place-items:center;
+  width:60px;
+  height:60px;
   margin:0 auto 6px;
   line-height:0;
   overflow:visible;
-  contain:layout paint;
+  background:transparent;
 }
 
-#championTeam .champion-trophy-volume canvas{
+/* 5x internal render resolution keeps the small trophy sharp on Retina phones. */
+#championTeam .champion-trophy-video-stage canvas{
   display:block;
-  width:55px;
-  height:55px;
+  width:60px;
+  height:60px;
   max-width:none;
   border:0;
   border-radius:0;
   background:transparent;
   image-rendering:auto;
+  opacity:0;
+  transition:opacity .14s ease;
   filter:drop-shadow(0 1.5px 1.4px rgba(46,28,8,.18));
 }
 
-/* If the user explicitly requests reduced motion, the JS renderer presents a
-   polished front view rather than animating. */
-@media (prefers-reduced-motion: reduce){
-  #championTeam .champion-trophy-volume canvas{
-    filter:drop-shadow(0 1.5px 1.4px rgba(46,28,8,.15));
-  }
+#championTeam .champion-trophy-video-stage.is-ready canvas{
+  opacity:1;
+}
+
+#championTeam .champion-trophy-video-stage .champion-trophy-video-fallback{
+  position:absolute;
+  inset:0;
+  width:60px !important;
+  height:60px !important;
+  margin:0 !important;
+  object-fit:contain !important;
+  opacity:1;
+  transition:opacity .14s ease;
+}
+
+#championTeam .champion-trophy-video-stage.is-ready .champion-trophy-video-fallback{
+  opacity:0;
+}
+
+/* The source video itself stays offscreen; only the isolated transparent canvas
+   is shown. This prevents the original video background from appearing. */
+#championTeam .champion-trophy-video-source{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  left:-9999px !important;
+  top:-9999px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
 }
