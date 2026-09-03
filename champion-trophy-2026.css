@@ -1,8 +1,8 @@
 /* =====================
-   SISTER CITIES — CHAMPION TROPHY VIDEO SHOWCASE
-   Uses the original uploaded MP4 as the visible renderer so the browser keeps
-   the source video's full decoded detail. A one-time hidden analysis pass only
-   determines the crop; it never supplies the displayed pixels.
+   SISTER CITIES — TRANSPARENT CHAMPION TROPHY VIDEO
+   The source MP4 stays high quality. WebGL samples the original decoded video
+   directly and keys out the light studio backdrop on the GPU, leaving the
+   rotating trophy visually free-floating over the Champion card.
    ===================== */
 
 #championTeam .champion-trophy-row{
@@ -26,17 +26,17 @@
 
 #championTeam .champion-trophy-video-stage{
   position:relative;
-  display:inline-block;
+  display:inline-grid;
+  place-items:center;
   width:60px;
   height:60px;
   margin:0 auto 6px;
   line-height:0;
-  overflow:hidden;
-  background:transparent;
+  overflow:visible;
+  background:transparent !important;
   isolation:isolate;
 }
 
-/* Fallback remains visible only until the native MP4 has produced a frame. */
 #championTeam .champion-trophy-video-fallback{
   position:absolute;
   inset:0;
@@ -49,33 +49,42 @@
   transition:opacity .12s ease;
 }
 
+#championTeam .champion-trophy-video-canvas{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:block;
+  width:60px;
+  height:60px;
+  max-width:none;
+  max-height:none;
+  border:0;
+  border-radius:0;
+  background:transparent !important;
+  opacity:0;
+  transition:opacity .12s ease;
+  image-rendering:auto;
+  filter:drop-shadow(0 1.5px 1.4px rgba(46,28,8,.16));
+  pointer-events:none;
+}
+
+#championTeam .champion-trophy-video-stage.is-ready .champion-trophy-video-canvas{
+  opacity:1;
+}
+
 #championTeam .champion-trophy-video-stage.is-ready .champion-trophy-video-fallback{
   opacity:0;
 }
 
-/* IMPORTANT: this is the actual high-resolution MP4, not a canvas copy.
-   JS positions/crops it inside the 60px window while preserving the source
-   pixels. mix-blend-mode makes the source's white backdrop disappear naturally
-   into the Champion card without destructive chroma-key processing. */
+/* The MP4 is used only as a decoded GPU texture. It is never drawn directly,
+   so none of its gray/white studio backdrop can appear on the SCL page. */
 #championTeam .champion-trophy-video-source{
-  position:absolute;
-  z-index:2;
-  display:block;
-  max-width:none !important;
-  max-height:none !important;
-  margin:0;
-  padding:0;
-  border:0;
-  border-radius:0;
-  background:transparent;
-  opacity:0;
-  pointer-events:none;
-  mix-blend-mode:multiply;
-  transform:translateZ(0);
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-}
-
-#championTeam .champion-trophy-video-stage.is-ready .champion-trophy-video-source{
-  opacity:1;
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  left:-9999px !important;
+  top:-9999px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  border:0 !important;
 }
