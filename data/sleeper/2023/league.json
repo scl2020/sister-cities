@@ -62,10 +62,6 @@
   },
   "avatar": null,
   "company_id": null,
-  "sport": "nfl",
-  "season_type": "regular",
-  "season": "2023",
-  "shard": 69,
   "scoring_settings": {
     "sack": 1,
     "fgm_40_49": 4,
@@ -127,6 +123,10 @@
     "pts_allow_7_13": 6,
     "st_ff": 0.5
   },
+  "season": "2023",
+  "season_type": "regular",
+  "sport": "nfl",
+  "shard": 69,
   "last_message_id": "1048172575768772608",
   "last_author_avatar": null,
   "last_author_display_name": "sys",
