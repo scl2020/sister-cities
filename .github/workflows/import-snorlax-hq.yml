@@ -1,0 +1,40 @@
+name: Import Snorlax HQ Logo
+
+on:
+  push:
+    branches:
+      - staging/snorlax-hq-import-2026-08-15
+    paths:
+      - .github/workflows/import-snorlax-hq.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out staging branch
+        uses: actions/checkout@v4
+        with:
+          ref: staging/snorlax-hq-import-2026-08-15
+
+      - name: Download verified Snorlax source
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            'https://filebin.net/scnfl-snorlax-hq-20260815-a7f31c/snorlax-logo-hq-2026.jpg' \
+            -o assets/snorlax-logo-hq-2026.jpg
+          test "$(wc -c < assets/snorlax-logo-hq-2026.jpg)" -gt 10000
+          file assets/snorlax-logo-hq-2026.jpg | grep -qi 'JPEG image data'
+
+      - name: Commit verified image asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/snorlax-logo-hq-2026.jpg
+          git commit -m 'Stage high-resolution Snorlax logo asset'
+          git push origin HEAD:staging/snorlax-hq-import-2026-08-15
