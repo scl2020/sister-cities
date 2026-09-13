@@ -1,11 +1,85 @@
 /* =========================
    SISTER CITIES H2H — CHROME iOS KEYBOARD STABILITY
-   Keep the already-approved mobile H2H geometry active in Chrome on iPhone
-   while the software keyboard is open. This file intentionally does NOT move
-   the page, alter the header, or reposition the focused input.
+   Chrome on iPhone can temporarily stop matching portrait-only media queries
+   while the software keyboard is open. The approved mobile page/H2H geometry
+   must remain active during that transient state.
+
+   IMPORTANT: this file does NOT scroll the page, move focus, resize the visual
+   viewport, or reposition the dropdown. It only mirrors the existing portrait
+   CSS under the CriOS guard so focus behaves like the approved Aug. 21 build.
    ========================= */
 
 @media (max-width:720px){
+  /* ---- SITE MASTHEAD / PRIMARY NAV ----
+     These are normally portrait-only rules. If Chrome briefly reports a
+     landscape-like viewport while the keyboard is open, keep the phone header
+     exactly in its normal compact mobile form instead of falling back to the
+     desktop masthead. */
+  html.scl-crios .header{
+    position:static !important;
+    top:auto !important;
+    padding:0 10px 10px;
+  }
+
+  html.scl-crios .header > .container{
+    padding:13px 6px 11px;
+  }
+
+  html.scl-crios .topbar{
+    gap:0;
+  }
+
+  html.scl-crios .topbar-left,
+  html.scl-crios .topbar-right{
+    display:none;
+    min-height:0;
+  }
+
+  html.scl-crios .header .topbar-center{
+    gap:12px;
+  }
+
+  html.scl-crios .header .league-logo{
+    height:76px;
+    width:auto;
+  }
+
+  html.scl-crios .header .brand-title{
+    font-size:28px;
+    line-height:1.02;
+  }
+
+  html.scl-crios .header .brand-subtitle{
+    font-size:11.5px;
+    line-height:1.15;
+    letter-spacing:1.3px;
+  }
+
+  html.scl-crios .site-tab-nav > .container{
+    width:100%;
+    max-width:none;
+    padding:0 2px;
+  }
+
+  html.scl-crios .site-tab-nav .tabs{
+    margin:0;
+    gap:0;
+    justify-content:space-evenly;
+  }
+
+  html.scl-crios .site-tab-nav .tab{
+    padding:15px 4px 16px;
+    font-size:clamp(12.5px, 3.55vw, 15px);
+    letter-spacing:0;
+  }
+
+  html.scl-crios .site-tab-nav .tab::after{
+    left:4px;
+    right:4px;
+    height:4px;
+  }
+
+  /* ---- H2H MOBILE GEOMETRY ---- */
   html.scl-crios #tab-h2h .h2h-shell{
     min-height:540px;
     padding:20px 10px 28px;
@@ -142,7 +216,7 @@
     min-width:0;
   }
 
-  /* Prevent iOS focus zoom. */
+  /* 16px is intentional: iOS WebKit-based browsers otherwise focus-zoom. */
   html.scl-crios #tab-h2h .h2h-search{
     width:100%;
     height:43px;
@@ -169,14 +243,18 @@
     z-index:150;
   }
 
-  /* Normal dropdown behavior: always directly BELOW its search field. */
+  /* Preserve the original picker behavior from the approved build: dropdown
+     opens immediately and directly BELOW the search field. */
   html.scl-crios #tab-h2h .h2h-options{
     top:calc(100% + 8px) !important;
     bottom:auto !important;
     width:min(245px,78vw);
-    max-height:min(230px, 34vh);
+    max-height:285px;
     padding:6px;
     z-index:200;
+    touch-action:pan-y;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
   }
 
   html.scl-crios #tab-h2h .h2h-picker-right .h2h-options{
@@ -242,5 +320,13 @@
     left:7px;
     width:15px;
     height:15px;
+  }
+}
+
+@media (max-width:360px){
+  html.scl-crios .site-tab-nav .tab{
+    font-size:12px;
+    padding-left:3px;
+    padding-right:3px;
   }
 }
