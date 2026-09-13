@@ -9,6 +9,15 @@
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const mobilePortrait = window.matchMedia('(max-width: 720px) and (orientation: portrait)');
+  const mobileWidth = window.matchMedia('(max-width: 720px)');
+  const root = document.documentElement;
+
+  const isMobileFocusContext = () => {
+    // Chrome on iPhone can briefly stop matching the portrait media query while
+    // its keyboard is open. The CriOS class is added by the dedicated layout guard,
+    // so keep the same mobile-focus behavior active there based on width alone.
+    return mobilePortrait.matches || (root.classList.contains('scl-crios') && mobileWidth.matches);
+  };
 
   /* Remove the old explanatory note from the accessibility tree as well as visually. */
   const note = panel.querySelector('[data-note]');
@@ -95,14 +104,14 @@
     observer.observe(el, { childList:true, characterData:true, subtree:true });
   });
 
-  /* iPhone focus handling:
-     The previous implementation listened continuously to visualViewport scroll/resize,
-     which caused Safari and the page to fight each other while the keyboard opened.
-     This version performs exactly one centering pass after the keyboard settles. */
+  /* Mobile focus handling:
+     Perform one centering pass after the software keyboard settles. Chrome on
+     iPhone is allowed through the width-based CriOS guard even if WebKit briefly
+     reports a non-portrait orientation while the keyboard is visible. */
   let focusTimer = 0;
 
   const centerSearchOnce = input => {
-    if (!mobilePortrait.matches || document.activeElement !== input) return;
+    if (!isMobileFocusContext() || document.activeElement !== input) return;
 
     const rect = input.getBoundingClientRect();
     const viewport = window.visualViewport;
@@ -113,13 +122,17 @@
     const delta = actualCenter - desiredCenter;
 
     if (Math.abs(delta) > 10) {
-      window.scrollBy({ top: delta, left: 0, behavior:'auto' });
+      window.scrollBy({
+        top:delta,
+        left:0,
+        behavior: root.classList.contains('scl-crios') ? 'smooth' : 'auto'
+      });
     }
   };
 
   panel.querySelectorAll('.h2h-search').forEach(input => {
     input.addEventListener('focus', () => {
-      if (!mobilePortrait.matches) return;
+      if (!isMobileFocusContext()) return;
       clearTimeout(focusTimer);
       focusTimer = window.setTimeout(() => centerSearchOnce(input), 420);
     });
