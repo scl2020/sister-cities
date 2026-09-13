@@ -7,6 +7,10 @@
    ========================= */
 
 @media (max-width:720px){
+  html.scl-crios #tab-h2h{
+    scroll-margin-top:76px;
+  }
+
   html.scl-crios #tab-h2h .h2h-shell{
     min-height:540px;
     padding:20px 10px 28px;
@@ -170,14 +174,21 @@
     z-index:150;
   }
 
-  html.scl-crios #tab-h2h .h2h-options{
+  /* Keep the list behaving like a normal dropdown. JS scrolls the focused
+     search field into a safe position above the iPhone keyboard, so the list
+     can stay BELOW the field without being covered by the keyboard. */
+  html.scl-crios #tab-h2h .h2h-options,
+  html.scl-crios.scl-crios-h2h-focus #tab-h2h .h2h-options{
+    top:calc(100% + 8px) !important;
+    bottom:auto !important;
     width:min(245px,78vw);
-    max-height:min(285px, var(--scl-crios-options-height, 38dvh));
+    max-height:var(--scl-crios-options-height, 230px);
     padding:6px;
     z-index:200;
   }
 
-  html.scl-crios #tab-h2h .h2h-picker-right .h2h-options{
+  html.scl-crios #tab-h2h .h2h-picker-right .h2h-options,
+  html.scl-crios.scl-crios-h2h-focus #tab-h2h .h2h-picker-right .h2h-options{
     left:auto;
     right:0;
   }
@@ -195,20 +206,6 @@
 
   html.scl-crios #tab-h2h .h2h-option-name{
     font-size:12px;
-  }
-
-  /* While the iPhone keyboard is up, open the team list above the search box.
-     This keeps every option inside Chrome's visible viewport instead of behind
-     the keyboard. */
-  html.scl-crios.scl-crios-h2h-focus #tab-h2h .h2h-options{
-    top:auto;
-    bottom:calc(100% + 8px);
-    max-height:var(--scl-crios-options-height, 240px);
-  }
-
-  html.scl-crios.scl-crios-h2h-focus #tab-h2h .h2h-picker-right .h2h-options{
-    left:auto;
-    right:0;
   }
 }
 
