@@ -1,0 +1,258 @@
+/* =========================
+   SISTER CITIES H2H — CHROME iOS KEYBOARD STABILITY
+   Chrome on iPhone can re-evaluate CSS orientation from the keyboard-shrunken
+   visual viewport. When that happens, portrait-only H2H rules drop out and the
+   desktop geometry briefly takes over. These rules preserve the approved mobile
+   H2H geometry for CriOS based on width only, so the keyboard cannot change it.
+   ========================= */
+
+@media (max-width:720px){
+  html.scl-crios #tab-h2h .h2h-shell{
+    min-height:540px;
+    padding:20px 10px 28px;
+    border-radius:11px;
+    background:#ffffff;
+    overflow:visible;
+  }
+
+  html.scl-crios #tab-h2h .h2h-brand{
+    gap:9px;
+    margin-bottom:28px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-brand-logo{
+    width:54px;
+    height:54px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-brand-lockup{
+    gap:0;
+  }
+
+  html.scl-crios #tab-h2h .h2h-brand-title{
+    font-size:17px;
+    letter-spacing:1.3px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-stage{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    grid-template-columns:minmax(0,1fr) 84px minmax(0,1fr);
+    gap:6px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-side{
+    min-width:0;
+    max-width:100%;
+  }
+
+  html.scl-crios #tab-h2h .h2h-side-hero,
+  html.scl-crios #tab-h2h .h2h-side-hero-right{
+    width:100%;
+    height:172px;
+    min-height:172px;
+    display:grid !important;
+    align-items:center !important;
+    justify-content:stretch !important;
+    gap:4px !important;
+  }
+
+  html.scl-crios #tab-h2h .h2h-side-left .h2h-side-hero{
+    grid-template-columns:minmax(0,1fr) 32px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-side-right .h2h-side-hero{
+    grid-template-columns:32px minmax(0,1fr);
+  }
+
+  html.scl-crios #tab-h2h .h2h-side-left .h2h-team-identity{
+    grid-column:1;
+    grid-row:1;
+  }
+
+  html.scl-crios #tab-h2h .h2h-side-left .h2h-win-number{
+    grid-column:2;
+    grid-row:1;
+  }
+
+  html.scl-crios #tab-h2h .h2h-side-right .h2h-win-number{
+    grid-column:1;
+    grid-row:1;
+  }
+
+  html.scl-crios #tab-h2h .h2h-side-right .h2h-team-identity{
+    grid-column:2;
+    grid-row:1;
+  }
+
+  html.scl-crios #tab-h2h .h2h-team-identity{
+    min-width:0;
+    width:100%;
+  }
+
+  html.scl-crios #tab-h2h .h2h-logo-stage{
+    width:104px;
+    height:104px;
+    flex:0 0 104px;
+    border-width:2px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-team-name{
+    width:104px;
+    min-height:36px !important;
+    margin:8px auto 0;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    font-size:17px;
+    line-height:1.12;
+    font-weight:650;
+  }
+
+  html.scl-crios #tab-h2h .h2h-win-number{
+    min-width:0;
+    width:32px;
+    margin:0 !important;
+    font-size:43px;
+    line-height:1;
+    align-self:center;
+    justify-self:center;
+  }
+
+  html.scl-crios #tab-h2h .h2h-center{
+    min-width:0;
+    padding-top:30px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-ring{
+    width:84px;
+    height:84px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-ring::after{
+    inset:5px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-ring-core span{
+    font-size:20px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-picker{
+    width:100%;
+    min-width:0;
+  }
+
+  /* 16px is intentional: iOS WebKit-based browsers otherwise focus-zoom. */
+  html.scl-crios #tab-h2h .h2h-search{
+    width:100%;
+    height:43px;
+    min-width:0;
+    padding:0 4px 0 30px;
+    font-size:16px !important;
+    line-height:1.2;
+    letter-spacing:-.2px;
+    transform:none !important;
+  }
+
+  html.scl-crios #tab-h2h .h2h-search::placeholder{
+    font-size:14px;
+    letter-spacing:-.35px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-picker-icon{
+    left:8px;
+    width:16px;
+    height:16px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-picker:focus-within{
+    z-index:150;
+  }
+
+  html.scl-crios #tab-h2h .h2h-options{
+    width:min(245px,78vw);
+    max-height:min(285px, var(--scl-crios-options-height, 38dvh));
+    padding:6px;
+    z-index:200;
+  }
+
+  html.scl-crios #tab-h2h .h2h-picker-right .h2h-options{
+    left:auto;
+    right:0;
+  }
+
+  html.scl-crios #tab-h2h .h2h-option{
+    gap:8px;
+    padding:7px 8px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-option-logo{
+    width:34px;
+    height:34px;
+    flex-basis:34px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-option-name{
+    font-size:12px;
+  }
+
+  /* While the iPhone keyboard is up, open the team list above the search box.
+     This keeps every option inside Chrome's visible viewport instead of behind
+     the keyboard. */
+  html.scl-crios.scl-crios-h2h-focus #tab-h2h .h2h-options{
+    top:auto;
+    bottom:calc(100% + 8px);
+    max-height:var(--scl-crios-options-height, 240px);
+  }
+
+  html.scl-crios.scl-crios-h2h-focus #tab-h2h .h2h-picker-right .h2h-options{
+    left:auto;
+    right:0;
+  }
+}
+
+@media (max-width:390px){
+  html.scl-crios #tab-h2h .h2h-stage{
+    grid-template-columns:minmax(0,1fr) 78px minmax(0,1fr);
+    gap:4px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-ring{
+    width:78px;
+    height:78px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-logo-stage{
+    width:90px;
+    height:90px;
+    flex-basis:90px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-team-name{
+    width:90px;
+    font-size:16px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-win-number{
+    font-size:39px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-search{
+    padding-left:28px;
+    padding-right:3px;
+    font-size:16px !important;
+    letter-spacing:-.3px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-search::placeholder{
+    font-size:13.5px;
+    letter-spacing:-.45px;
+  }
+
+  html.scl-crios #tab-h2h .h2h-picker-icon{
+    left:7px;
+    width:15px;
+    height:15px;
+  }
+}
