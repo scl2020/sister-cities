@@ -1,0 +1,304 @@
+/* =====================
+   SISTER CITIES — HISTORICAL REGULAR-SEASON SCHEDULE MODAL
+   Compact standings-only popup for completed seasons 2021–2025.
+   ===================== */
+
+body.season-schedule-open{
+  overflow:hidden;
+}
+
+#seasonStandings .season-schedule-trigger{
+  cursor:pointer;
+  border-radius:10px;
+  transition:background-color .14s ease, box-shadow .14s ease, transform .14s ease;
+}
+
+#seasonStandings .season-schedule-trigger:hover{
+  background:rgba(30,64,175,.055);
+  box-shadow:0 0 0 4px rgba(30,64,175,.045);
+}
+
+#seasonStandings .season-schedule-trigger:active{
+  transform:scale(.985);
+}
+
+#seasonStandings .season-schedule-trigger:focus-visible{
+  outline:2px solid rgba(37,99,235,.72);
+  outline-offset:4px;
+}
+
+.season-schedule-modal{
+  position:fixed;
+  inset:0;
+  z-index:12000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(6,12,24,.34);
+  -webkit-backdrop-filter:blur(3px);
+  backdrop-filter:blur(3px);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .16s ease, visibility .16s ease;
+}
+
+.season-schedule-modal.is-open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.season-schedule-card{
+  position:relative;
+  width:min(460px, 94vw);
+  max-height:min(76vh, 680px);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  background:#fff;
+  border:1px solid rgba(15,23,42,.08);
+  border-radius:20px;
+  box-shadow:0 24px 70px rgba(2,8,23,.23);
+  transform:translateY(8px) scale(.985);
+  transition:transform .16s ease;
+}
+
+.season-schedule-modal.is-open .season-schedule-card{
+  transform:translateY(0) scale(1);
+}
+
+.season-schedule-close{
+  position:absolute;
+  z-index:2;
+  top:10px;
+  right:11px;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#64748b;
+  font:500 29px/1 Arial,sans-serif;
+  cursor:pointer;
+  transition:background-color .12s ease, color .12s ease;
+}
+
+.season-schedule-close:hover,
+.season-schedule-close:focus-visible{
+  background:#f1f5f9;
+  color:#0f172a;
+  outline:none;
+}
+
+.season-schedule-heading{
+  flex:0 0 auto;
+  padding:24px 48px 14px;
+  text-align:center;
+  border-bottom:1px solid #e8edf3;
+}
+
+.season-schedule-title{
+  color:#14213d;
+  font-family:"Barlow Condensed",Inter,Arial,sans-serif;
+  font-size:28px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:.035em;
+}
+
+.season-schedule-subtitle{
+  margin-top:7px;
+  color:#94a3b8;
+  font-family:Inter,Arial,sans-serif;
+  font-size:10px;
+  font-weight:800;
+  line-height:1.2;
+  letter-spacing:.12em;
+}
+
+.season-schedule-list{
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+}
+
+.season-schedule-row{
+  padding:11px 17px 13px;
+  border-bottom:1px solid #edf0f4;
+}
+
+.season-schedule-row:last-child{
+  border-bottom:0;
+}
+
+.season-schedule-weekline{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:7px;
+  color:#8a96a9;
+  font-family:Inter,Arial,sans-serif;
+  font-size:10px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:.11em;
+}
+
+.season-schedule-weekline span{
+  color:#c2c9d4;
+  font-size:9px;
+}
+
+.season-schedule-matchup{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 38px 58px 38px minmax(0,1fr);
+  align-items:center;
+  column-gap:7px;
+}
+
+.season-schedule-team{
+  min-width:0;
+  display:contents;
+}
+
+.season-schedule-team-name{
+  min-width:0;
+  color:#18233d;
+  font-family:Inter,Arial,sans-serif;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.08;
+}
+
+.season-schedule-team.left .season-schedule-team-name{
+  grid-column:1;
+  text-align:right;
+}
+
+.season-schedule-team.left .season-schedule-logo-stage,
+.season-schedule-team.left .season-schedule-logo-spacer{
+  grid-column:2;
+}
+
+.season-schedule-result{
+  grid-column:3;
+  justify-self:center;
+  min-width:52px;
+  text-align:center;
+  font-family:Inter,Arial,sans-serif;
+  font-size:13px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:.045em;
+}
+
+.season-schedule-result.win{
+  color:#0aa981;
+}
+
+.season-schedule-result.loss{
+  color:#ef476f;
+}
+
+.season-schedule-result.tie,
+.season-schedule-result.neutral{
+  color:#94a3b8;
+}
+
+.season-schedule-team.right .season-schedule-logo-stage,
+.season-schedule-team.right .season-schedule-logo-spacer{
+  grid-column:4;
+}
+
+.season-schedule-team.right .season-schedule-team-name{
+  grid-column:5;
+  text-align:left;
+}
+
+.season-schedule-logo-stage,
+.season-schedule-logo-spacer{
+  width:36px;
+  height:36px;
+  justify-self:center;
+}
+
+.season-schedule-logo-stage{
+  display:grid;
+  place-items:center;
+  overflow:visible;
+  background:transparent;
+}
+
+.season-schedule-logo{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  border:0;
+  background:transparent;
+}
+
+.season-schedule-row.is-missing{
+  opacity:.58;
+}
+
+@media (max-width:600px){
+  .season-schedule-modal{
+    padding:14px;
+  }
+
+  .season-schedule-card{
+    width:min(430px, 96vw);
+    max-height:78vh;
+    border-radius:18px;
+  }
+
+  .season-schedule-heading{
+    padding:21px 45px 12px;
+  }
+
+  .season-schedule-title{
+    font-size:25px;
+  }
+
+  .season-schedule-row{
+    padding:10px 12px 12px;
+  }
+
+  .season-schedule-matchup{
+    grid-template-columns:minmax(0,1fr) 34px 54px 34px minmax(0,1fr);
+    column-gap:5px;
+  }
+
+  .season-schedule-team-name{
+    font-size:12px;
+  }
+
+  .season-schedule-result{
+    min-width:48px;
+    font-size:12px;
+  }
+
+  .season-schedule-logo-stage,
+  .season-schedule-logo-spacer{
+    width:32px;
+    height:32px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  #seasonStandings .season-schedule-trigger,
+  .season-schedule-modal,
+  .season-schedule-card{
+    transition:none !important;
+  }
+}
