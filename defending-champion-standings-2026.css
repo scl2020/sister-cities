@@ -1,0 +1,54 @@
+/* =========================
+   SISTER CITIES — DEFENDING CHAMPION STANDINGS RIBBON
+   The ribbon is anchored to the team logo, not the seed position, so it follows
+   the defending champion anywhere that franchise moves in the standings.
+   ========================= */
+
+#seasonStandings .standings-team-logo-anchor{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  flex:0 0 44px;
+  overflow:visible;
+}
+
+#seasonStandings .standings-team-logo-anchor > .logo-dot{
+  width:44px;
+  height:44px;
+  flex:0 0 44px;
+}
+
+#seasonStandings .defending-champ-ribbon{
+  position:absolute;
+  left:-14px;
+  top:8px;
+  width:22px;
+  height:28px;
+  z-index:4;
+  display:block;
+  pointer-events:none;
+  transform:rotate(-2deg);
+  transform-origin:center;
+  filter:drop-shadow(0 1.5px 1.5px rgba(80,52,0,.22));
+}
+
+#seasonStandings .defending-champ-ribbon svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+/* Keep the marker compact on phones while preserving its position between
+   the seed column and team logo. */
+@media (max-width:720px){
+  #seasonStandings .defending-champ-ribbon{
+    left:-12px;
+    top:8px;
+    width:19px;
+    height:25px;
+  }
+}
