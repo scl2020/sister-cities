@@ -24,7 +24,7 @@
 #seasonStandings .defending-champ-ribbon{
   position:absolute;
   left:-14px;
-  top:8px;
+  top:15px;
   width:22px;
   height:28px;
   z-index:4;
@@ -47,7 +47,7 @@
 @media (max-width:720px){
   #seasonStandings .defending-champ-ribbon{
     left:-12px;
-    top:8px;
+    top:15px;
     width:19px;
     height:25px;
   }
