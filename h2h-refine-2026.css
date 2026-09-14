@@ -262,3 +262,33 @@
     margin-top:5px;
   }
 }
+
+/* H2H exception to the site-wide free-form-logo policy:
+   selected teams always live inside the matchup ring.  The site-wide policy
+   may keep crests free-floating everywhere else, but H2H must permanently
+   preserve BLUE on the left and RED on the right regardless of logo shape. */
+#tab-h2h .h2h-logo-stage{
+  border-radius:50% !important;
+  background:#ffffff !important;
+  overflow:hidden !important;
+  box-shadow:0 8px 24px rgba(7,16,31,.08) !important;
+}
+
+#tab-h2h .h2h-logo-stage-left{
+  border-style:solid !important;
+  border-color:var(--h2h-blue) !important;
+  border-width:3px !important;
+}
+
+#tab-h2h .h2h-logo-stage-right{
+  border-style:solid !important;
+  border-color:var(--h2h-red) !important;
+  border-width:3px !important;
+}
+
+@media (max-width:720px){
+  #tab-h2h .h2h-logo-stage-left,
+  #tab-h2h .h2h-logo-stage-right{
+    border-width:2px !important;
+  }
+}
