@@ -21,6 +21,7 @@
   flex:0 0 44px;
 }
 
+/* Sit the medal across the lower third of the team crest rather than centered. */
 #seasonStandings .defending-champ-ribbon{
   position:absolute;
   left:-14px;
@@ -42,8 +43,8 @@
   overflow:visible;
 }
 
-/* Keep the marker compact on phones while preserving its position between
-   the seed column and team logo. */
+/* Keep the marker compact on phones while preserving the same lower-third
+   attachment between the seed column and team logo. */
 @media (max-width:720px){
   #seasonStandings .defending-champ-ribbon{
     left:-12px;
