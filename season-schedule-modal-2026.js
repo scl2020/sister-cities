@@ -1,8 +1,9 @@
 // =====================
-// SISTER CITIES — HISTORICAL REGULAR-SEASON SCHEDULE MODAL
-// Standings-only interaction for completed Sleeper seasons 2021–2025.
-// Uses the audited H2H history dataset (Weeks 1–14 only), so winners/losses
-// follow finalized Sleeper records rather than potentially drifting raw scores.
+// SISTER CITIES — REGULAR-SEASON SCHEDULE MODAL
+// Standings-only interaction for Sleeper seasons 2021–2026.
+// Historical seasons show Weeks 1–14. The active 2026 season shows only weeks
+// the commissioner has declared complete, growing one week at a time.
+// Uses the audited H2H history dataset so winners/losses follow finalized data.
 // =====================
 
 (function initSclSeasonScheduleModal(){
@@ -10,7 +11,7 @@
   window.SCL_SEASON_SCHEDULE_MODAL_INSTALLED = true;
 
   const MIN_YEAR = 2021;
-  const MAX_YEAR = 2025;
+  const MAX_YEAR = 2026;
   const MAX_WEEK = 14;
   const ROOT_ID = 'seasonStandings';
   let lastTrigger = null;
@@ -30,6 +31,20 @@
     return history && Array.isArray(history.games) ? history.games : [];
   }
 
+  function completedWeekFor(year){
+    if (year !== 2026) return MAX_WEEK;
+
+    const explicit = Number(window.SCL_2026_COMPLETED_WEEK || 0);
+    if (Number.isInteger(explicit) && explicit > 0) return Math.min(MAX_WEEK, explicit);
+
+    const weeks = historyGames()
+      .filter(game => Number(game.season) === year)
+      .map(game => Number(game.week))
+      .filter(week => Number.isInteger(week) && week >= 1 && week <= MAX_WEEK);
+
+    return weeks.length ? Math.max(...weeks) : 0;
+  }
+
   function teamInfo(teamId){
     const fallback = { name: teamId, logo: '' };
     if (typeof TEAMS === 'undefined') return fallback;
@@ -38,16 +53,17 @@
 
   function scheduleFor(year, teamId){
     const byWeek = new Map();
+    const finalWeek = completedWeekFor(year);
 
     historyGames().forEach(game => {
       if (Number(game.season) !== year) return;
       const week = Number(game.week);
-      if (!Number.isInteger(week) || week < 1 || week > MAX_WEEK) return;
+      if (!Number.isInteger(week) || week < 1 || week > finalWeek) return;
       if (game.left !== teamId && game.right !== teamId) return;
       byWeek.set(week, game);
     });
 
-    return Array.from({ length: MAX_WEEK }, (_, i) => {
+    return Array.from({ length: finalWeek }, (_, i) => {
       const week = i + 1;
       const game = byWeek.get(week) || null;
       if (!game) return { week, missing: true };
@@ -82,6 +98,7 @@
     for (let year = MIN_YEAR; year <= MAX_YEAR; year++) {
       const season = seasons[year];
       if (!season || !Array.isArray(season.standings)) continue;
+      if (completedWeekFor(year) < 1) continue;
 
       season.standings.forEach(row => {
         const expected = parseStandingRecord(row.record);
@@ -112,7 +129,8 @@
       mismatches,
       source: history.source || 'SCL H2H history',
       historyGames: Number(history.gamesCount) || historyGames().length,
-      maxWeek: MAX_WEEK
+      maxWeek: MAX_WEEK,
+      completed2026Week: completedWeekFor(2026)
     });
 
     if (mismatches.length) {
@@ -201,12 +219,14 @@
     const list = overlay.querySelector('.season-schedule-list');
     const subtitle = overlay.querySelector('.season-schedule-subtitle');
     const close = overlay.querySelector('.season-schedule-close');
-    const team = teamInfo(teamId);
     const schedule = scheduleFor(year, teamId);
 
     if (!list || !subtitle || !close) return;
 
-    subtitle.textContent = `${year} REGULAR SEASON · WEEKS 1–14`;
+    const finalWeek = completedWeekFor(year);
+    subtitle.textContent = year === 2026
+      ? `${year} REGULAR SEASON · THROUGH WEEK ${finalWeek}`
+      : `${year} REGULAR SEASON · WEEKS 1–14`;
     list.innerHTML = schedule.map(item => rowMarkup(year, teamId, item)).join('');
 
     overlay.classList.add('is-open');
@@ -241,7 +261,7 @@
 
     const year = activeSeasonYear();
     const season = year ? seasons[year] : null;
-    const enabled = eligibleYear(year) && season && Array.isArray(season.standings);
+    const enabled = eligibleYear(year) && completedWeekFor(year) > 0 && season && Array.isArray(season.standings);
     root.classList.toggle('season-schedule-standings-enabled', Boolean(enabled));
 
     const rows = Array.from(root.querySelectorAll('tbody tr'));
