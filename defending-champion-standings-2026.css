@@ -1,7 +1,8 @@
 /* =========================
-   SISTER CITIES — DEFENDING CHAMPION STANDINGS RIBBON
-   The ribbon is anchored to the team logo, not the seed position, so it follows
-   the defending champion anywhere that franchise moves in the standings.
+   SISTER CITIES — STANDINGS STATUS MARKERS
+   - Defending champion ribbon stays attached to the previous champion's logo.
+   - Seeds 1-6 receive a compact gold vertical playoff accent.
+   - A legend beneath the table explains both symbols.
    ========================= */
 
 #seasonStandings .standings-team-logo-anchor{
@@ -44,6 +45,92 @@
   overflow:visible;
 }
 
+/* =========================
+   PLAYOFF POSITION ACCENT
+   Premier-League-style status marker: only the seed column is touched.
+   ========================= */
+
+#seasonStandings .standings-playoff-seed-wrap{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  white-space:nowrap;
+}
+
+#seasonStandings .standings-playoff-accent{
+  display:inline-block;
+  width:4px;
+  height:28px;
+  flex:0 0 4px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#F3CF62 0%,#D6A42C 48%,#B98516 100%);
+  box-shadow:0 1px 2px rgba(92,62,0,.18);
+}
+
+#seasonStandings .standings-seed-number{
+  display:inline-block;
+}
+
+/* =========================
+   STANDINGS LEGEND
+   Matches the table width and leaves clear breathing room between the two keys.
+   ========================= */
+
+#seasonStandings .standings-status-legend{
+  width:92%;
+  margin:15px auto 2px;
+  padding:11px 6px 2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(54px,9vw,118px);
+  border-top:1px solid rgba(11,18,32,.08);
+  color:#334155;
+}
+
+#seasonStandings .standings-status-legend-item{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+#seasonStandings .standings-status-legend-text{
+  font-size:12px;
+  line-height:1.15;
+  font-weight:800;
+  white-space:nowrap;
+  color:#536176;
+}
+
+#seasonStandings .standings-legend-playoff-accent{
+  height:23px;
+  width:4px;
+  flex-basis:4px;
+}
+
+#seasonStandings .standings-legend-ribbon-wrap{
+  position:relative;
+  display:inline-flex;
+  width:18px;
+  height:24px;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 18px;
+}
+
+/* The exact same ribbon artwork is reused in the legend, but the legend copy
+   participates in normal document flow instead of being attached to a logo. */
+#seasonStandings .standings-status-legend .defending-champ-ribbon{
+  position:static;
+  left:auto;
+  top:auto;
+  width:18px;
+  height:24px;
+  transform:rotate(-2deg);
+  filter:drop-shadow(0 1px 1px rgba(80,52,0,.18));
+}
+
 /* Keep the marker compact on phones while preserving the same lower attachment
    between the seed column and team logo. */
 @media (max-width:720px){
@@ -52,5 +139,42 @@
     top:19px;
     width:19px;
     height:25px;
+  }
+
+  #seasonStandings .standings-playoff-seed-wrap{
+    gap:5px;
+  }
+
+  #seasonStandings .standings-playoff-accent{
+    width:3px;
+    height:25px;
+    flex-basis:3px;
+  }
+
+  #seasonStandings .standings-status-legend{
+    width:100%;
+    margin-top:13px;
+    padding-left:4px;
+    padding-right:4px;
+    gap:34px;
+  }
+
+  #seasonStandings .standings-status-legend-item{
+    gap:7px;
+  }
+
+  #seasonStandings .standings-status-legend-text{
+    font-size:11px;
+  }
+
+  #seasonStandings .standings-legend-playoff-accent{
+    height:21px;
+    width:3px;
+    flex-basis:3px;
+  }
+
+  #seasonStandings .standings-status-legend .defending-champ-ribbon{
+    width:17px;
+    height:23px;
   }
 }
