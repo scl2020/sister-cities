@@ -1,7 +1,8 @@
 // =====================
-// SISTER CITIES — DEFENDING CHAMPION STANDINGS RIBBON
-// Marks the previous season's champion in the following season's standings.
-// The marker is tied to teamId, so it follows the franchise regardless of seed.
+// SISTER CITIES — STANDINGS STATUS MARKERS
+// 1) Marks the previous season's champion in the following season's standings.
+// 2) Marks seeds 1-6 as playoff positions for every standings table from 2021 on.
+// Both markers are presentation-only and follow the rendered standings each year.
 // =====================
 
 (function initDefendingChampionStandingsRibbon(){
@@ -11,6 +12,8 @@
   if (typeof renderStandings !== 'function' || typeof seasons === 'undefined') return;
 
   const originalRenderStandings = renderStandings;
+  const PLAYOFF_START_YEAR = 2021;
+  const PLAYOFF_SEEDS = 6;
 
   const ribbonMarkup = `
     <span class="defending-champ-ribbon" role="img" aria-label="Defending champion" title="Defending champion">
@@ -52,6 +55,35 @@
     `;
   }
 
+  function seedMarkup(seed, showPlayoffMarker){
+    if (!showPlayoffMarker) return String(seed);
+
+    return `
+      <span class="standings-playoff-seed-wrap">
+        <span class="standings-playoff-accent" aria-hidden="true"></span>
+        <span class="standings-seed-number">${seed}</span>
+      </span>
+    `;
+  }
+
+  function standingsLegendMarkup(showPlayoffLegend){
+    if (!showPlayoffLegend) return '';
+
+    return `
+      <div class="standings-status-legend" aria-label="Standings markers">
+        <div class="standings-status-legend-item standings-status-playoffs">
+          <span class="standings-playoff-accent standings-legend-playoff-accent" aria-hidden="true"></span>
+          <span class="standings-status-legend-text">Playoffs</span>
+        </div>
+
+        <div class="standings-status-legend-item standings-status-defending">
+          <span class="standings-legend-ribbon-wrap" aria-hidden="true">${ribbonMarkup}</span>
+          <span class="standings-status-legend-text">Defending champion</span>
+        </div>
+      </div>
+    `;
+  }
+
   renderStandings = function(season){
     if (!season || !Array.isArray(season.standings)) {
       return originalRenderStandings(season);
@@ -61,16 +93,21 @@
     const defendingChampionId = year && seasons[year - 1]
       ? seasons[year - 1].championTeamId
       : null;
+    const showPlayoffMarkers = Boolean(year && year >= PLAYOFF_START_YEAR);
 
-    const rows = season.standings.map(r => `
-      <tr>
-        <td>${r.seed}</td>
-        <td>${standingsTeamPill(r.teamId, Boolean(defendingChampionId && r.teamId === defendingChampionId))}</td>
-        <td>${r.record}</td>
-        <td>${r.pf.toFixed(2)}</td>
-        <td>${r.pa.toFixed(2)}</td>
-      </tr>
-    `).join('');
+    const rows = season.standings.map(r => {
+      const isPlayoffSeed = showPlayoffMarkers && Number(r.seed) >= 1 && Number(r.seed) <= PLAYOFF_SEEDS;
+
+      return `
+        <tr${isPlayoffSeed ? ' class="is-playoff-position"' : ''}>
+          <td${isPlayoffSeed ? ' class="playoff-seed-cell"' : ''}>${seedMarkup(r.seed, isPlayoffSeed)}</td>
+          <td>${standingsTeamPill(r.teamId, Boolean(defendingChampionId && r.teamId === defendingChampionId))}</td>
+          <td>${r.record}</td>
+          <td>${r.pf.toFixed(2)}</td>
+          <td>${r.pa.toFixed(2)}</td>
+        </tr>
+      `;
+    }).join('');
 
     return `
       <table class="table" aria-label="Season standings">
@@ -85,6 +122,7 @@
         </thead>
         <tbody>${rows}</tbody>
       </table>
+      ${standingsLegendMarkup(showPlayoffMarkers)}
     `;
   };
 })();
