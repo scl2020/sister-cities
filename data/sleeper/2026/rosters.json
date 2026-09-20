@@ -322,9 +322,7 @@
       "9756",
       "DEN"
     ],
-    "reserve": [
-      "12529"
-    ],
+    "reserve": null,
     "roster_id": 6,
     "settings": {
       "fpts": 125,
