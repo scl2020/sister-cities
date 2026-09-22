@@ -29,6 +29,22 @@
     { week:2, matchupId:5, left:"deeznutterz",      leftScore:140.70, right:"snorlax",           rightScore:164.62 }
   ]);
 
+  // Official Sleeper cumulative totals after the finalized week. These come from
+  // data/sleeper/2026/rosters.json and intentionally override sums of rounded
+  // weekly matchup displays when Sleeper's season total differs by a hundredth.
+  const OFFICIAL_TOTALS = Object.freeze({
+    drhtown:          { pf:265.82, pa:309.60 },
+    sixowls:          { pf:344.44, pa:221.99 },
+    maleksexcornflex: { pf:254.98, pa:295.78 },
+    daddytate:        { pf:244.48, pa:287.82 },
+    angolarookie:     { pf:204.94, pa:291.62 },
+    miami:            { pf:246.18, pa:259.82 },
+    barjalona:        { pf:272.90, pa:228.28 },
+    svetunited:       { pf:278.88, pa:217.44 },
+    deeznutterz:      { pf:248.86, pa:305.96 },
+    snorlax:          { pf:348.38, pa:291.54 }
+  });
+
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
   window.SCL_2026_COMPLETED_WEEK = completedWeek;
   window.SCL_2026_FINALIZED_GAMES = FINALIZED_GAMES;
@@ -86,6 +102,13 @@
       record.pf = round2(record.pf);
       record.pa = round2(record.pa);
       record.results.sort((a,b) => a.week - b.week);
+
+      // Match Sleeper's official cumulative standings totals exactly.
+      const official = OFFICIAL_TOTALS[record.teamId];
+      if (official) {
+        record.pf = Number(official.pf);
+        record.pa = Number(official.pa);
+      }
     });
 
     return records;
