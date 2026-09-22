@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Week 1 source: Sleeper league 1388938049026535424, finalized mirrored data.
+// Weeks 1-2 source: Sleeper league 1388938049026535424, finalized connected-league data.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -19,7 +19,14 @@
     { week:1, matchupId:2, left:"sixowls",          leftScore:160.06, right:"angolarookie",     rightScore:84.82  },
     { week:1, matchupId:3, left:"daddytate",        leftScore:113.30, right:"svetunited",       rightScore:166.86 },
     { week:1, matchupId:4, left:"barjalona",        leftScore:141.34, right:"deeznutterz",      rightScore:108.16 },
-    { week:1, matchupId:5, left:"maleksexcornflex", leftScore:150.84, right:"snorlax",          rightScore:183.76 }
+    { week:1, matchupId:5, left:"maleksexcornflex", leftScore:150.84, right:"snorlax",          rightScore:183.76 },
+
+    // WEEK 2
+    { week:2, matchupId:1, left:"drhtown",          leftScore:137.18, right:"sixowls",          rightScore:184.38 },
+    { week:2, matchupId:4, left:"maleksexcornflex", leftScore:104.14, right:"svetunited",       rightScore:112.02 },
+    { week:2, matchupId:2, left:"daddytate",        leftScore:131.18, right:"miami",             rightScore:120.96 },
+    { week:2, matchupId:3, left:"angolarookie",     leftScore:120.12, right:"barjalona",         rightScore:131.56 },
+    { week:2, matchupId:5, left:"deeznutterz",      leftScore:140.70, right:"snorlax",           rightScore:164.62 }
   ]);
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -313,6 +320,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized mirrored Week 1 data"
+    source:"Sleeper finalized connected-league Weeks 1-2 data"
   });
 })();
