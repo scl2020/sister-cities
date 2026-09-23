@@ -60,7 +60,7 @@
     "trade_review_days": 1,
     "bench_lock": 1,
     "offseason_adds": 0,
-    "leg": 2,
+    "leg": 3,
     "reserve_slots": 1,
     "reserve_allow_cov": 1,
     "daily_waivers_last_ran": 28
@@ -135,21 +135,24 @@
     "pts_allow_7_13": 6,
     "st_ff": 0.5
   },
-  "last_message_id": "1408189717211570176",
+  "last_message_id": "1408450494086590464",
   "last_author_avatar": null,
   "last_author_display_name": "sys",
   "last_author_id": "166666666666666666",
   "last_author_is_bot": true,
   "last_message_attachment": null,
   "last_message_text_map": null,
-  "last_message_time": 1790101100785,
-  "last_pinned_message_id": null,
+  "last_message_time": 1790163274836,
   "draft_id": "1388938049043320832",
+  "last_pinned_message_id": null,
   "last_read_id": null,
   "league_id": "1388938049026535424",
   "previous_league_id": "1257104280452599808",
   "bracket_id": null,
   "bracket_overrides_id": null,
+  "group_id": null,
+  "loser_bracket_id": null,
+  "loser_bracket_overrides_id": null,
   "roster_positions": [
     "QB",
     "RB",
@@ -167,8 +170,5 @@
     "BN",
     "BN"
   ],
-  "group_id": null,
-  "loser_bracket_id": null,
-  "loser_bracket_overrides_id": null,
   "total_rosters": 10
 }
