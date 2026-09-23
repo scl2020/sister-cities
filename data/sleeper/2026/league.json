@@ -148,7 +148,6 @@
   "draft_id": "1388938049043320832",
   "league_id": "1388938049026535424",
   "previous_league_id": "1257104280452599808",
-  "group_id": null,
   "roster_positions": [
     "QB",
     "RB",
@@ -166,6 +165,7 @@
     "BN",
     "BN"
   ],
+  "group_id": null,
   "bracket_id": null,
   "bracket_overrides_id": null,
   "loser_bracket_id": null,
