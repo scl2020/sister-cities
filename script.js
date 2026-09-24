@@ -308,9 +308,25 @@ function renderStats(season) {
 
   const rows = season.seasonStats.map(st => {
     const valueClass = st.isAllTime ? "stat-alltime" : "";
-    const teams = (st.teams && st.teams.length) ? st.teams.map(teamPill).join(" · ") : "";
+    const holders = Array.isArray(st.teams) ? st.teams : [];
     const details = st.details ? `<div class="stat-detail">${st.details}</div>` : "";
 
+    // Give tied/multi-team stats a full-width, two-column holder grid.
+    // Single-team cards retain their original layout and styling.
+    if (holders.length >= 2) {
+      return `
+        <div class="stat-row stat-row--multi">
+          <div class="stat-copy">
+            <div class="stat-label">${st.label}</div>
+            ${details}
+          </div>
+          <div class="stat-value ${valueClass}">${st.display ?? st.value}</div>
+          <div class="stat-detail stat-holders">${holders.map(teamPill).join("")}</div>
+        </div>
+      `;
+    }
+
+    const teams = holders.length ? teamPill(holders[0]) : "";
     return `
       <div class="stat-row">
         <div>
