@@ -1,0 +1,81 @@
+/* Sister Cities — consistent multi-team holder alignment across Season Stats (2021–2026).
+   Layout-only: team logos, names, typography, point values and single-team
+   statistic cards retain their existing presentation. */
+#seasonStats .stat-row.stat-row--multi {
+  grid-template-areas:
+    "summary metric"
+    "holders holders";
+  column-gap:14px;
+  row-gap:12px;
+}
+
+#seasonStats .stat-row.stat-row--multi > .stat-copy {
+  grid-area:summary;
+  min-width:0;
+}
+
+#seasonStats .stat-row.stat-row--multi > .stat-value {
+  grid-area:metric;
+  align-self:start;
+  justify-self:end;
+}
+
+#seasonStats .stat-row.stat-row--multi > .stat-detail.stat-holders {
+  grid-area:holders;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:26px;
+  row-gap:12px;
+  align-items:center;
+  justify-items:stretch;
+  width:100%;
+  min-width:0;
+  margin:0;
+  font-size:0; /* hide legacy separators; team labels keep existing font size */
+  line-height:1;
+}
+
+#seasonStats .stat-row.stat-row--multi > .stat-holders > .team-pill {
+  display:flex;
+  align-items:center;
+  justify-self:stretch;
+  width:100%;
+  min-width:0;
+  max-width:none;
+  min-height:30px;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+}
+
+/* An odd final holder centers beneath the paired rows (3, 5, etc.).
+   Exactly 2 or 4 holders stay flush in equal-width columns. */
+#seasonStats .stat-row.stat-row--multi > .stat-holders > .team-pill:nth-child(odd):last-child {
+  grid-column:1 / -1;
+  width:max-content;
+  max-width:100%;
+  justify-self:center;
+}
+
+#seasonStats .stat-row.stat-row--multi > .stat-holders .team-pill-text {
+  min-width:0;
+  max-width:100%;
+  white-space:normal;
+}
+
+@media (max-width:720px) and (orientation:portrait) {
+  #seasonStats .stat-row.stat-row--multi {
+    column-gap:10px;
+    row-gap:11px;
+  }
+
+  #seasonStats .stat-row.stat-row--multi > .stat-detail.stat-holders {
+    column-gap:12px;
+    row-gap:11px;
+  }
+
+  #seasonStats .stat-row.stat-row--multi > .stat-holders > .team-pill {
+    min-height:28px;
+  }
+}
