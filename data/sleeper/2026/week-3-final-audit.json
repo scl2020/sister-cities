@@ -1,0 +1,149 @@
+{
+  "leagueId": "1388938049026535424",
+  "season": 2026,
+  "week": 3,
+  "source": "Connected Sleeper matchup + official cumulative standings",
+  "commissionerConfirmedBestTeam": {
+    "team": "Invincibles",
+    "points": 167.96
+  },
+  "matchups": [
+    {
+      "matchupId": 1,
+      "left": "Dr. H-Town",
+      "leftScore": 142.18,
+      "right": "Spidey",
+      "rightScore": 117.64
+    },
+    {
+      "matchupId": 2,
+      "left": "6ixOwls",
+      "leftScore": 122.94,
+      "right": "Barjalona",
+      "rightScore": 111.5
+    },
+    {
+      "matchupId": 3,
+      "left": "Invincibles",
+      "leftScore": 167.96,
+      "right": "Buy the Dip-hins",
+      "rightScore": 151.12
+    },
+    {
+      "matchupId": 4,
+      "left": "Angola Rookie",
+      "leftScore": 98.16,
+      "right": "Snorlax",
+      "rightScore": 125.66
+    },
+    {
+      "matchupId": 5,
+      "left": "Trablos United",
+      "leftScore": 112.54,
+      "right": "Deez Nutterz",
+      "rightScore": 131.7
+    }
+  ],
+  "officialCumulativeTotals": {
+    "snorlax": {
+      "pf": 474.04,
+      "pa": 389.7,
+      "wins": 3,
+      "losses": 0
+    },
+    "sixowls": {
+      "pf": 467.38,
+      "pa": 333.5,
+      "wins": 3,
+      "losses": 0
+    },
+    "drhtown": {
+      "pf": 407.99,
+      "pa": 427.24,
+      "wins": 2,
+      "losses": 1
+    },
+    "svetunited": {
+      "pf": 391.42,
+      "pa": 349.14,
+      "wins": 2,
+      "losses": 1
+    },
+    "barjalona": {
+      "pf": 384.4,
+      "pa": 351.22,
+      "wins": 2,
+      "losses": 1
+    },
+    "maleksexcornflex": {
+      "pf": 422.94,
+      "pa": 446.9,
+      "wins": 1,
+      "losses": 2
+    },
+    "deeznutterz": {
+      "pf": 380.56,
+      "pa": 418.5,
+      "wins": 1,
+      "losses": 2
+    },
+    "daddytate": {
+      "pf": 362.12,
+      "pa": 429.99,
+      "wins": 1,
+      "losses": 2
+    },
+    "miami": {
+      "pf": 397.3,
+      "pa": 427.78,
+      "wins": 0,
+      "losses": 3
+    },
+    "angolarookie": {
+      "pf": 303.1,
+      "pa": 417.28,
+      "wins": 0,
+      "losses": 3
+    }
+  },
+  "rawMirrorNote": "Auto-synced week-3.json was stale at audit time; this audit and season-2026-live-data.js hold the finalized connected matchup values.",
+  "rawMirrorDifferences": [
+    {
+      "rosterId": 3,
+      "mirrored": 162.56,
+      "finalized": 167.96
+    },
+    {
+      "rosterId": 5,
+      "mirrored": 89.66,
+      "finalized": 98.16
+    },
+    {
+      "rosterId": 6,
+      "mirrored": 138.5,
+      "finalized": 151.12
+    },
+    {
+      "rosterId": 8,
+      "mirrored": 65.04,
+      "finalized": 112.54
+    },
+    {
+      "rosterId": 9,
+      "mirrored": 122.8,
+      "finalized": 131.7
+    },
+    {
+      "rosterId": 10,
+      "mirrored": 121.16,
+      "finalized": 125.66
+    }
+  ],
+  "qa": {
+    "games": 15,
+    "stats": 13,
+    "h2hGames": 351,
+    "scheduleWeeksPerTeam": 3,
+    "noFalseAllTimeRecords": true
+  }
+}

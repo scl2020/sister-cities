@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-2 source: Sleeper league 1388938049026535424, finalized connected-league data.
+// Weeks 1-3 source: finalized connected Sleeper matchup results; week 3 supersedes stale mirrored points.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -26,23 +26,30 @@
     { week:2, matchupId:4, left:"maleksexcornflex", leftScore:104.14, right:"svetunited",       rightScore:112.02 },
     { week:2, matchupId:2, left:"daddytate",        leftScore:131.18, right:"miami",             rightScore:120.96 },
     { week:2, matchupId:3, left:"angolarookie",     leftScore:120.12, right:"barjalona",         rightScore:131.56 },
-    { week:2, matchupId:5, left:"deeznutterz",      leftScore:140.70, right:"snorlax",           rightScore:164.62 }
+    { week:2, matchupId:5, left:"deeznutterz",      leftScore:140.70, right:"snorlax",           rightScore:164.62 },
+
+    // WEEK 3
+    { week:3, matchupId:1, left:"drhtown"           , leftScore:142.18, right:"daddytate"         , rightScore:117.64 },
+    { week:3, matchupId:2, left:"sixowls"           , leftScore:122.94, right:"barjalona"         , rightScore:111.50 },
+    { week:3, matchupId:3, left:"maleksexcornflex"  , leftScore:167.96, right:"miami"             , rightScore:151.12 },
+    { week:3, matchupId:4, left:"angolarookie"      , leftScore:98.16, right:"snorlax"           , rightScore:125.66 },
+    { week:3, matchupId:5, left:"svetunited"        , leftScore:112.54, right:"deeznutterz"       , rightScore:131.70 }
   ]);
 
   // Official Sleeper cumulative totals after the finalized week. These come from
   // data/sleeper/2026/rosters.json and intentionally override sums of rounded
   // weekly matchup displays when Sleeper's season total differs by a hundredth.
   const OFFICIAL_TOTALS = Object.freeze({
-    drhtown:          { pf:265.82, pa:309.60 },
-    sixowls:          { pf:344.44, pa:221.99 },
-    maleksexcornflex: { pf:254.98, pa:295.78 },
-    daddytate:        { pf:244.48, pa:287.82 },
-    angolarookie:     { pf:204.94, pa:291.62 },
-    miami:            { pf:246.18, pa:259.82 },
-    barjalona:        { pf:272.90, pa:228.28 },
-    svetunited:       { pf:278.88, pa:217.44 },
-    deeznutterz:      { pf:248.86, pa:305.96 },
-    snorlax:          { pf:348.38, pa:291.54 }
+    snorlax            : { pf:474.04, pa:389.70 },
+    sixowls            : { pf:467.38, pa:333.50 },
+    drhtown            : { pf:407.99, pa:427.24 },
+    svetunited         : { pf:391.42, pa:349.14 },
+    barjalona          : { pf:384.40, pa:351.22 },
+    maleksexcornflex   : { pf:422.94, pa:446.90 },
+    deeznutterz        : { pf:380.56, pa:418.50 },
+    daddytate          : { pf:362.12, pa:429.99 },
+    miami              : { pf:397.30, pa:427.78 },
+    angolarookie       : { pf:303.10, pa:417.28 }
   });
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -343,6 +350,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized connected-league Weeks 1-2 data"
+    source:"Sleeper finalized connected-league Weeks 1-3 data"
   });
 })();
