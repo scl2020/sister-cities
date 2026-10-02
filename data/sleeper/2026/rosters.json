@@ -18,14 +18,14 @@
       "2747",
       "4035",
       "7526",
-      "7571",
       "8137",
       "8138",
       "8167",
       "8183",
       "9224",
       "9753",
-      "HOU"
+      "HOU",
+      "KC"
     ],
     "reserve": [
       "9753"
@@ -42,7 +42,7 @@
       "ties": 0,
       "total_moves": 0,
       "waiver_budget_used": 27,
-      "waiver_position": 5,
+      "waiver_position": 10,
       "wins": 2
     },
     "starters": [
@@ -55,7 +55,7 @@
       "7526",
       "11635",
       "2747",
-      "HOU"
+      "KC"
     ],
     "taxi": null
   },
@@ -103,7 +103,7 @@
       "ties": 0,
       "total_moves": 0,
       "waiver_budget_used": 20,
-      "waiver_position": 8,
+      "waiver_position": 7,
       "wins": 3
     },
     "starters": [
@@ -145,8 +145,8 @@
       "8112",
       "8408",
       "9221",
-      "MIN",
-      "NE"
+      "DAL",
+      "MIN"
     ],
     "reserve": [
       "5859"
@@ -163,7 +163,7 @@
       "ties": 0,
       "total_moves": 0,
       "waiver_budget_used": 62,
-      "waiver_position": 9,
+      "waiver_position": 8,
       "wins": 1
     },
     "starters": [
@@ -192,7 +192,7 @@
     "player_map": null,
     "players": [
       "10229",
-      "11631",
+      "12474",
       "12507",
       "12512",
       "12514",
@@ -223,7 +223,7 @@
       "ties": 0,
       "total_moves": 0,
       "waiver_budget_used": 25,
-      "waiver_position": 10,
+      "waiver_position": 9,
       "wins": 1
     },
     "starters": [
@@ -280,7 +280,7 @@
       "ties": 0,
       "total_moves": 0,
       "waiver_budget_used": 13,
-      "waiver_position": 6,
+      "waiver_position": 5,
       "wins": 0
     },
     "starters": [
@@ -394,7 +394,7 @@
       "ties": 0,
       "total_moves": 0,
       "waiver_budget_used": 43,
-      "waiver_position": 7,
+      "waiver_position": 6,
       "wins": 2
     },
     "starters": [
@@ -436,11 +436,11 @@
       "6770",
       "6790",
       "6794",
-      "6797",
       "7002",
       "7525",
       "7553",
       "8144",
+      "9486",
       "CHI"
     ],
     "reserve": [
@@ -465,11 +465,11 @@
       "6770",
       "6790",
       "5892",
-      "7525",
-      "6794",
+      "8144",
+      "11628",
       "7553",
       "12533",
-      "8144",
+      "7002",
       "12711",
       "CHI"
     ],
