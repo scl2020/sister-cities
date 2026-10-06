@@ -3,7 +3,7 @@
   "season": 2026,
   "week": 4,
   "scope": "regular season only",
-  "source": "Connected Sleeper Week 4 matchups plus official cumulative standings",
+  "source": "Connected Sleeper matchup history plus current official cumulative standings; 6ixOwls Week 4 scoring adjustment reconciled from official PF.",
   "commissionerConfirmedBestTeam": {
     "team": "Snorlax",
     "points": 162.82
@@ -26,7 +26,7 @@
     {
       "matchupId": 3,
       "left": "6ixOwls",
-      "leftScore": 155.08,
+      "leftScore": 157.28,
       "right": "Snorlax",
       "rightScore": 162.82
     },
@@ -48,10 +48,10 @@
   "officialCumulativeTotals": {
     "snorlax": {
       "pf": 636.86,
-      "pa": 532.58
+      "pa": 546.98
     },
     "sixowls": {
-      "pf": 610.26,
+      "pf": 624.66,
       "pa": 496.32
     },
     "barjalona": {
@@ -87,7 +87,7 @@
       "pa": 513.5
     }
   },
-  "rawMirrorNote": "Auto-synced week-4.json contained stale point values at audit time. Finalized connected Sleeper values above are authoritative for the website update.",
+  "rawMirrorNote": "Auto-synced week-4.json and the matchup snapshot lag the post-final 6ixOwls scoring adjustment. Website canonical data uses 157.28, reconciled to Sleeper's official cumulative PF/PA.",
   "rawMirrorDifferences": [
     {
       "rosterId": 2,
@@ -130,6 +130,30 @@
     "teams": 10,
     "seasonStats": 13,
     "bestTeam": "Snorlax 162.82",
-    "noNewAllTimeRecord": true
+    "noNewAllTimeRecord": true,
+    "sixOwlsAdjustedWeek4": 157.28,
+    "sixOwlsOfficialPF": 624.66,
+    "snorlaxOfficialPA": 546.98,
+    "noWinnerChange": true,
+    "bestTeamStill": "Snorlax 162.82"
+  },
+  "scoreAdjustment": {
+    "team": "6ixOwls",
+    "week": 4,
+    "oldWebsiteScore": 155.08,
+    "adjustedScore": 157.28,
+    "verification": {
+      "weeks1To3": [
+        160.06,
+        184.38,
+        122.94
+      ],
+      "weeks1To3Sum": 467.38,
+      "currentOfficialPF": 624.66,
+      "derivedWeek4Score": 157.28,
+      "opponent": "Snorlax",
+      "currentOfficialOpponentPA": 546.98
+    },
+    "note": "Sleeper's Week 4 matchup snapshot still displayed 155.08, but official cumulative standings now reflect the post-final adjustment. Prior Weeks 1-3 remain unchanged, so 624.66 - 467.38 = 157.28."
   }
 }

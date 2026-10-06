@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-4 source: finalized connected Sleeper matchup results; Week 4 supersedes stale mirrored points.
+// Weeks 1-4 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -38,7 +38,7 @@
     // WEEK 4
     { week:4, matchupId:1, left:"drhtown"           , leftScore:102.92, right:"barjalona"         , rightScore:162.74 },
     { week:4, matchupId:2, left:"maleksexcornflex"  , leftScore:139.78, right:"daddytate"         , rightScore:113.90 },
-    { week:4, matchupId:3, left:"sixowls"           , leftScore:155.08, right:"snorlax"           , rightScore:162.82 },
+    { week:4, matchupId:3, left:"sixowls"           , leftScore:157.28, right:"snorlax"           , rightScore:162.82 },
     { week:4, matchupId:4, left:"miami"             , leftScore:155.22, right:"deeznutterz"       , rightScore:105.68 },
     { week:4, matchupId:5, left:"angolarookie"      , leftScore:159.80, right:"svetunited"        , rightScore:96.22 }
   ]);
@@ -47,8 +47,8 @@
   // data/sleeper/2026/rosters.json and intentionally override sums of rounded
   // weekly matchup displays when Sleeper's season total differs by a hundredth.
   const OFFICIAL_TOTALS = Object.freeze({
-    snorlax            : { pf:636.86, pa:532.58 },
-    sixowls            : { pf:610.26, pa:496.32 },
+    snorlax            : { pf:636.86, pa:546.98 },
+    sixowls            : { pf:624.66, pa:496.32 },
     barjalona          : { pf:547.14, pa:454.14 },
     maleksexcornflex   : { pf:562.72, pa:560.80 },
     drhtown            : { pf:510.92, pa:589.98 },
@@ -357,6 +357,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized connected-league Weeks 1-4 data"
+    source:"Sleeper finalized connected-league Weeks 1-4 data; 6ixOwls Week 4 adjusted to 157.28"
   });
 })();
