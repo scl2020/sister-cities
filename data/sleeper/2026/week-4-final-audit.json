@@ -1,0 +1,135 @@
+{
+  "leagueId": "1388938049026535424",
+  "season": 2026,
+  "week": 4,
+  "scope": "regular season only",
+  "source": "Connected Sleeper Week 4 matchups plus official cumulative standings",
+  "commissionerConfirmedBestTeam": {
+    "team": "Snorlax",
+    "points": 162.82
+  },
+  "matchups": [
+    {
+      "matchupId": 1,
+      "left": "Dr. H-Town",
+      "leftScore": 102.92,
+      "right": "Barjalona",
+      "rightScore": 162.74
+    },
+    {
+      "matchupId": 2,
+      "left": "Invincibles",
+      "leftScore": 139.78,
+      "right": "Spidey",
+      "rightScore": 113.9
+    },
+    {
+      "matchupId": 3,
+      "left": "6ixOwls",
+      "leftScore": 155.08,
+      "right": "Snorlax",
+      "rightScore": 162.82
+    },
+    {
+      "matchupId": 4,
+      "left": "Buy the Dip-hins",
+      "leftScore": 155.22,
+      "right": "Deez Nutterz",
+      "rightScore": 105.68
+    },
+    {
+      "matchupId": 5,
+      "left": "Angola Rookie",
+      "leftScore": 159.8,
+      "right": "Trablos United",
+      "rightScore": 96.22
+    }
+  ],
+  "officialCumulativeTotals": {
+    "snorlax": {
+      "pf": 636.86,
+      "pa": 532.58
+    },
+    "sixowls": {
+      "pf": 610.26,
+      "pa": 496.32
+    },
+    "barjalona": {
+      "pf": 547.14,
+      "pa": 454.14
+    },
+    "maleksexcornflex": {
+      "pf": 562.72,
+      "pa": 560.8
+    },
+    "drhtown": {
+      "pf": 510.92,
+      "pa": 589.98
+    },
+    "svetunited": {
+      "pf": 487.64,
+      "pa": 508.94
+    },
+    "miami": {
+      "pf": 552.52,
+      "pa": 533.46
+    },
+    "deeznutterz": {
+      "pf": 486.24,
+      "pa": 573.72
+    },
+    "daddytate": {
+      "pf": 476.02,
+      "pa": 569.78
+    },
+    "angolarookie": {
+      "pf": 462.9,
+      "pa": 513.5
+    }
+  },
+  "rawMirrorNote": "Auto-synced week-4.json contained stale point values at audit time. Finalized connected Sleeper values above are authoritative for the website update.",
+  "rawMirrorDifferences": [
+    {
+      "rosterId": 2,
+      "mirrored": 142.88,
+      "finalized": 155.08
+    },
+    {
+      "rosterId": 3,
+      "mirrored": 127.68,
+      "finalized": 139.78
+    },
+    {
+      "rosterId": 7,
+      "mirrored": 144.8,
+      "finalized": 162.74
+    },
+    {
+      "rosterId": 8,
+      "mirrored": 72.92,
+      "finalized": 96.22
+    },
+    {
+      "rosterId": 10,
+      "mirrored": 133.62,
+      "finalized": 162.82
+    }
+  ],
+  "sixPartAudit": {
+    "standings": "records/PF/PA/seeds derive from canonical finalized games plus official Sleeper cumulative totals",
+    "standingsSchedule": "2026 standings popup now exposes Weeks 1-4 only",
+    "seasonStats": "all 13 2026 categories recompute through Week 4; Snorlax owns 2 Best Team reports",
+    "allTimeRecords": "Week 4 creates no new SCL all-time record",
+    "franchiseHub": "all-time regular-season W-L derives from H2H matrix plus Weeks 1-4",
+    "h2h": "five Week 4 games added to record matrix and matchup history"
+  },
+  "qa": {
+    "completedWeek": 4,
+    "canonicalGames": 20,
+    "h2hGamesExpected": 356,
+    "teams": 10,
+    "seasonStats": 13,
+    "bestTeam": "Snorlax 162.82",
+    "noNewAllTimeRecord": true
+  }
+}
