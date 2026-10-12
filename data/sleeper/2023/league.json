@@ -62,10 +62,10 @@
   },
   "avatar": null,
   "company_id": null,
-  "sport": "nfl",
-  "season_type": "regular",
-  "season": "2023",
   "shard": 69,
+  "season": "2023",
+  "season_type": "regular",
+  "sport": "nfl",
   "scoring_settings": {
     "sack": 1,
     "fgm_40_49": 4,
