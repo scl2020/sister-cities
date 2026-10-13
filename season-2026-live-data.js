@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-4 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment.
+// Weeks 1-5 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 5 supersedes the pre-final auto-sync mirror.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -40,23 +40,31 @@
     { week:4, matchupId:2, left:"maleksexcornflex"  , leftScore:139.78, right:"daddytate"         , rightScore:113.90 },
     { week:4, matchupId:3, left:"sixowls"           , leftScore:157.28, right:"snorlax"           , rightScore:162.82 },
     { week:4, matchupId:4, left:"miami"             , leftScore:155.22, right:"deeznutterz"       , rightScore:105.68 },
-    { week:4, matchupId:5, left:"angolarookie"      , leftScore:159.80, right:"svetunited"        , rightScore:96.22 }
+    { week:4, matchupId:5, left:"angolarookie"      , leftScore:159.80, right:"svetunited"        , rightScore:96.22 },
+
+    // WEEK 5
+    { week:5, matchupId:1, left:"drhtown"           , leftScore:141.04, right:"maleksexcornflex"  , rightScore:184.84 },
+    { week:5, matchupId:2, left:"barjalona"         , leftScore:164.04, right:"snorlax"           , rightScore:150.20 },
+    { week:5, matchupId:3, left:"daddytate"         , leftScore:150.44, right:"deeznutterz"       , rightScore:97.02  },
+    { week:5, matchupId:4, left:"sixowls"           , leftScore:123.92, right:"svetunited"        , rightScore:138.70 },
+    { week:5, matchupId:5, left:"angolarookie"      , leftScore:114.96, right:"miami"             , rightScore:151.20 }
   ]);
 
-  // Official Sleeper cumulative totals after the finalized week. These come from
-  // data/sleeper/2026/rosters.json and intentionally override sums of rounded
-  // weekly matchup displays when Sleeper's season total differs by a hundredth.
+  // Canonical cumulative totals after the finalized week. Weeks 1-4 use Sleeper's
+  // official cumulative standings. At the Week 5 finalization moment Sleeper's
+  // roster totals had not rolled from Week 4 yet, so Week 5 is the official Week 4
+  // baseline plus the finalized connected Week 5 matchup scores.
   const OFFICIAL_TOTALS = Object.freeze({
-    snorlax            : { pf:636.86, pa:546.98 },
-    sixowls            : { pf:624.66, pa:496.32 },
-    barjalona          : { pf:547.14, pa:454.14 },
-    maleksexcornflex   : { pf:562.72, pa:560.80 },
-    drhtown            : { pf:510.92, pa:589.98 },
-    svetunited         : { pf:487.64, pa:508.94 },
-    miami              : { pf:552.52, pa:533.46 },
-    deeznutterz        : { pf:486.24, pa:573.72 },
-    daddytate          : { pf:476.02, pa:569.78 },
-    angolarookie       : { pf:462.90, pa:513.50 }
+    snorlax            : { pf:787.06, pa:711.02 },
+    sixowls            : { pf:748.58, pa:635.02 },
+    barjalona          : { pf:711.18, pa:604.34 },
+    maleksexcornflex   : { pf:747.56, pa:701.84 },
+    drhtown            : { pf:651.96, pa:774.82 },
+    svetunited         : { pf:626.34, pa:632.86 },
+    miami              : { pf:703.72, pa:648.42 },
+    deeznutterz        : { pf:583.26, pa:724.16 },
+    daddytate          : { pf:626.46, pa:666.80 },
+    angolarookie       : { pf:577.86, pa:664.70 }
   });
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -357,6 +365,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized connected-league Weeks 1-4 data; 6ixOwls Week 4 adjusted to 157.28"
+    source:"Sleeper finalized connected-league Weeks 1-5 data; Week 4 includes the 6ixOwls 157.28 adjustment; Week 5 supersedes the pre-final mirror"
   });
 })();
