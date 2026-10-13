@@ -45,15 +45,13 @@
     // WEEK 5
     { week:5, matchupId:1, left:"drhtown"           , leftScore:141.04, right:"maleksexcornflex"  , rightScore:184.84 },
     { week:5, matchupId:2, left:"barjalona"         , leftScore:164.04, right:"snorlax"           , rightScore:150.20 },
-    { week:5, matchupId:3, left:"daddytate"         , leftScore:150.44, right:"deeznutterz"       , rightScore:97.02  },
+    { week:5, matchupId:3, left:"daddytate"         , leftScore:150.44, right:"deeznutterz"       , rightScore:113.22 },
     { week:5, matchupId:4, left:"sixowls"           , leftScore:123.92, right:"svetunited"        , rightScore:138.70 },
     { week:5, matchupId:5, left:"angolarookie"      , leftScore:114.96, right:"miami"             , rightScore:151.20 }
   ]);
 
-  // Canonical cumulative totals after the finalized week. Weeks 1-4 use Sleeper's
-  // official cumulative standings. At the Week 5 finalization moment Sleeper's
-  // roster totals had not rolled from Week 4 yet, so Week 5 is the official Week 4
-  // baseline plus the finalized connected Week 5 matchup scores.
+  // Official Sleeper cumulative totals after finalized Week 5. Re-verified after
+  // Sleeper rolled the Week 5 standings; these now match the provider exactly.
   const OFFICIAL_TOTALS = Object.freeze({
     snorlax            : { pf:787.06, pa:711.02 },
     sixowls            : { pf:748.58, pa:635.02 },
@@ -62,8 +60,8 @@
     drhtown            : { pf:651.96, pa:774.82 },
     svetunited         : { pf:626.34, pa:632.86 },
     miami              : { pf:703.72, pa:648.42 },
-    deeznutterz        : { pf:583.26, pa:724.16 },
-    daddytate          : { pf:626.46, pa:666.80 },
+    deeznutterz        : { pf:599.46, pa:724.16 },
+    daddytate          : { pf:626.46, pa:682.99 },
     angolarookie       : { pf:577.86, pa:664.70 }
   });
 
@@ -365,6 +363,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized connected-league Weeks 1-5 data; Week 4 includes the 6ixOwls 157.28 adjustment; Week 5 supersedes the pre-final mirror"
+    source:"Sleeper finalized connected-league Weeks 1-5 data; Week 4 includes the 6ixOwls 157.28 adjustment; Week 5 re-verified after official standings rollover"
   });
 })();
