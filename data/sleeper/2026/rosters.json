@@ -90,7 +90,9 @@
       "9228",
       "JAX"
     ],
-    "reserve": null,
+    "reserve": [
+      "4983"
+    ],
     "roster_id": 2,
     "settings": {
       "fpts": 624,
