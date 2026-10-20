@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-5 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 5 supersedes the pre-final auto-sync mirror.
+// Weeks 1-6 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -47,22 +47,32 @@
     { week:5, matchupId:2, left:"barjalona"         , leftScore:164.04, right:"snorlax"           , rightScore:150.20 },
     { week:5, matchupId:3, left:"daddytate"         , leftScore:150.44, right:"deeznutterz"       , rightScore:113.22 },
     { week:5, matchupId:4, left:"sixowls"           , leftScore:123.92, right:"svetunited"        , rightScore:138.70 },
-    { week:5, matchupId:5, left:"angolarookie"      , leftScore:114.96, right:"miami"             , rightScore:151.20 }
+    { week:5, matchupId:5, left:"angolarookie"      , leftScore:114.96, right:"miami"             , rightScore:151.20 },
+
+    // WEEK 6
+    { week:6, matchupId:1, left:"drhtown"           , leftScore:120.86, right:"snorlax"           , rightScore:116.40 },
+    { week:6, matchupId:5, left:"sixowls"           , leftScore:149.58, right:"miami"             , rightScore:117.72 },
+    { week:6, matchupId:2, left:"maleksexcornflex"  , leftScore:117.54, right:"deeznutterz"       , rightScore:111.28 },
+    { week:6, matchupId:4, left:"daddytate"         , leftScore:111.28, right:"angolarookie"      , rightScore:116.90 },
+    { week:6, matchupId:3, left:"barjalona"         , leftScore:111.06, right:"svetunited"        , rightScore:114.76 }
   ]);
 
-  // Official Sleeper cumulative totals after finalized Week 5. Re-verified after
-  // Sleeper rolled the Week 5 standings; these now match the provider exactly.
+  // Canonical cumulative totals after finalized Week 6. Sleeper's cumulative
+  // standings were still on Week 5 when Week 6 was declared complete, so these
+  // use the verified official Week 5 baseline plus finalized Week 6 scores.
+  // Deez Nutterz Week 6 is commissioner-adjusted to 111.28 (McLaurin 3.2 out,
+  // Corum 13.0 from bench in), and Invincibles PA reflects that same correction.
   const OFFICIAL_TOTALS = Object.freeze({
-    snorlax            : { pf:787.06, pa:711.02 },
-    sixowls            : { pf:748.58, pa:635.02 },
-    barjalona          : { pf:711.18, pa:604.34 },
-    maleksexcornflex   : { pf:747.56, pa:701.84 },
-    drhtown            : { pf:651.96, pa:774.82 },
-    svetunited         : { pf:626.34, pa:632.86 },
-    miami              : { pf:703.72, pa:648.42 },
-    deeznutterz        : { pf:599.46, pa:724.16 },
-    daddytate          : { pf:626.46, pa:682.99 },
-    angolarookie       : { pf:577.86, pa:664.70 }
+    snorlax            : { pf:903.46, pa:831.88 },
+    sixowls            : { pf:898.16, pa:752.74 },
+    barjalona          : { pf:822.24, pa:719.10 },
+    maleksexcornflex   : { pf:865.10, pa:813.12 },
+    drhtown            : { pf:772.82, pa:891.22 },
+    svetunited         : { pf:741.10, pa:743.92 },
+    miami              : { pf:821.44, pa:798.00 },
+    deeznutterz        : { pf:710.74, pa:841.70 },
+    daddytate          : { pf:737.74, pa:799.89 },
+    angolarookie       : { pf:694.76, pa:775.98 }
   });
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -363,6 +373,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized connected-league Weeks 1-5 data; Week 4 includes the 6ixOwls 157.28 adjustment; Week 5 re-verified after official standings rollover"
+    source:"Sleeper finalized connected-league Weeks 1-6 data; Week 6 Deez Nutterz commissioner-adjusted to 111.28"
   });
 })();
