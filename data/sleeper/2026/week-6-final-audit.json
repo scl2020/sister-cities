@@ -267,6 +267,13 @@
       "teams": [
         "Angola Rookie"
       ]
+    },
+    "bestStart": {
+      "value": "4-0",
+      "teams": [
+        "Snorlax"
+      ],
+      "details": "Weeks 1–4"
     }
   },
   "rawMirrorNote": "The repository's auto-synced week-6.json and the connected league feed both still showed Barjalona at 111.06 during the scrub, while the finalized Sleeper scoreboard showed 113.16. Canonical website data uses 113.16. Deez Nutterz remains commissioner-adjusted to 111.28.",
@@ -307,8 +314,8 @@
   "sixPartAudit": {
     "standings": "records/PF/PA/seeds recomputed through Week 6 using Deez 111.28 and Barjalona 113.16",
     "standingsSchedule": "2026 standings popup exposes completed Weeks 1-6; Barjalona–Trablos corrected to 113.16–114.76",
-    "seasonStats": "all 13 2026 categories recompute through Week 6; closest matchup is now Barjalona–Trablos at 1.60 points",
-    "allTimeRecords": "Week 6 still creates no new SCL all-time record after the Barjalona correction",
+    "seasonStats": "all 14 2026 categories recompute through Week 6, including Best start of the season (Snorlax 4–0)",
+    "allTimeRecords": "Best start of the season added to all-time records; 4–0 is tied by Dr. H-Town (2023, 2024) and Snorlax (2025, 2026)",
     "franchiseHub": "all-time regular-season W-L derives from H2H matrix plus Weeks 1-6; playoff records remain untouched",
     "h2h": "five Week 6 games included; Barjalona–Trablos history corrected to 113.16–114.76"
   },
@@ -317,7 +324,7 @@
     "canonicalGames": 30,
     "h2hGamesExpected": 366,
     "teams": 10,
-    "seasonStats": 13,
+    "seasonStats": 14,
     "week6BestTeam": "6ixOwls 149.58",
     "deezCanonicalScore": 111.28,
     "deezAdjustmentVerified": true,
@@ -337,6 +344,8 @@
     ],
     "barjalonaCanonicalScore": 113.16,
     "barjalonaConnectorStaleScore": 111.06,
-    "closestMatchupNow": "Barjalona 113.16–114.76 Trablos United (1.60 points)"
+    "closestMatchupNow": "Barjalona 113.16–114.76 Trablos United (1.60 points)",
+    "bestStartOfSeason": "Snorlax 4–0",
+    "bestStartAllTime": "4–0 — Dr. H-Town (2023, 2024), Snorlax (2025, 2026)"
   }
 }
