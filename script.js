@@ -70,6 +70,7 @@ seasons[2025] = {
   seasonStats: [
     { label: "Longest losing streak of the season", value: "4", display: "T-4 losses", teams: ["drhtown","miami","daddytate","barjalona"], details: null },
     { label: "Longest winning streak of the season", value: "9", display: "9 wins", teams: ["svetunited"], details: null },
+    { label: "Best start of the season", value: "4", display: "4–0", teams: ["snorlax"], details: "Weeks 1–4" },
     { label: "Best regular season record", value: "12-2", display: "12–2", teams: ["svetunited"], details: null },
     { label: "Worst regular season record", value: "4-10", display: "4–10", teams: ["barjalona"], details: null },
     { label: "Most total points", value: "2059.30", display: "2059.30", teams: ["svetunited"], details: null },
@@ -102,6 +103,7 @@ seasons[2024] = {
   seasonStats: [
     { label: "Longest losing streak of the season", value: "5", display: "5 losses (tied)", teams: ["angolarookie","barjalona"], details: null },
     { label: "Longest winning streak of the season", value: "5", display: "5 wins (tied)", teams: ["maleksexcornflex","daddytate","angolarookie"], details: null },
+    { label: "Best start of the season", value: "4", display: "4–0", teams: ["drhtown"], details: "Weeks 1–4" },
     { label: "Best regular season record", value: "10-4", display: "10–4", teams: ["maleksexcornflex"], details: null },
     { label: "Worst regular season record", value: "3-11", display: "3–11", teams: ["barjalona"], details: null },
     { label: "Most total points", value: "1959.96", display: "1959.96", teams: ["drhtown"], details: null },
@@ -134,6 +136,7 @@ seasons[2023] = {
   seasonStats: [
     { label: "Longest losing streak of the season", value: "6", display: "6 losses (tied)", teams: ["drhtown","barjalona"], details: null },
     { label: "Longest winning streak of the season", value: "4", display: "4 wins (tied)", teams: ["angolarookie","abethe3arab","daddytate","drhtown","barjalona"], details: null },
+    { label: "Best start of the season", value: "4", display: "4–0", teams: ["drhtown"], details: "Weeks 1–4" },
     { label: "Best regular season record", value: "9-5", display: "9–5", teams: ["angolarookie"], details: null },
     { label: "Worst regular season record", value: "4-10", display: "4–10", teams: ["barjalona"], details: null },
     { label: "Most total points", value: "1851.66", display: "1851.66", teams: ["arshamaa"], details: null },
@@ -166,6 +169,7 @@ seasons[2022] = {
   seasonStats: [
     { label: "Longest losing streak of the season", value: "6", display: "6 losses", teams: ["maleksexcornflex"], details: "Weeks 1–6" },
     { label: "Longest winning streak of the season", value: "4", display: "4 wins (tied)", teams: ["arshamaa","snorlax","sixowls"], details: null },
+    { label: "Best start of the season", value: "2", display: "2–0 (tied)", teams: ["abethe3arab","angolarookie","miami"], details: "Weeks 1–2" },
     { label: "Best regular season record", value: "9-5", display: "9–5 (tied)", teams: ["snorlax","miami"], details: null },
     { label: "Worst regular season record", value: "4-10", display: "4–10", teams: ["maleksexcornflex"], details: null },
     { label: "Most total points", value: "1855.70", display: "1855.70", teams: ["barjalona"], details: null },
@@ -196,6 +200,7 @@ seasons[2021] = {
   seasonStats: [
     { label: "Longest losing streak of the season", value: "6", display: "6 losses", teams: ["angolarookie"], details: "Weeks 8–13" },
     { label: "Longest winning streak of the season", value: "7", display: "7 wins", teams: ["drhtown"], details: "Weeks 6–12" },
+    { label: "Best start of the season", value: "2", display: "2–0 (tied)", teams: ["maleksexcornflex","miami"], details: "Weeks 1–2" },
     { label: "Best regular season record", value: "9-5", display: "9–5 (tied)", teams: ["drhtown","barjalona"], details: null },
     { label: "Worst regular season record", value: "5-9", display: "5–9", teams: ["arshamaa"], details: null },
     { label: "Most total points", value: "1981.02", display: "1981.02", teams: ["drhtown"], details: null },
@@ -356,6 +361,7 @@ function renderAllTime(recordMap) {
 
   const order = [
     "Longest winning streak of the season",
+    "Best start of the season",
     "Longest losing streak of the season",
     "Closest matchup of the season",
     "Biggest blowout of the season",
@@ -388,9 +394,11 @@ function renderAllTime(recordMap) {
       `;
     }).join("");
 
-    const bestDisplay = (info.best && info.best.toFixed)
-      ? info.best.toFixed(2).replace(/\.00$/, "")
-      : String(info.best);
+    const bestDisplay = label === "Best start of the season"
+      ? `${Number(info.best)}–0`
+      : (info.best && info.best.toFixed)
+        ? info.best.toFixed(2).replace(/\.00$/, "")
+        : String(info.best);
 
     return `
       <div class="record-card">
