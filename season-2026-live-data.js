@@ -158,6 +158,17 @@
     return best;
   }
 
+  // Separate from longest winning streak: only consecutive wins beginning in Week 1 count.
+  // Once the first non-win occurs, that franchise's start is permanently frozen.
+  function openingWinStreak(record){
+    let streak = 0;
+    for (const item of record.results) {
+      if (item.week !== streak + 1 || item.result !== "W") break;
+      streak += 1;
+    }
+    return streak;
+  }
+
   function recordLabel(record){
     return record.ties
       ? `${record.wins}–${record.losses}–${record.ties}`
@@ -197,6 +208,7 @@
   const bySeed = ids => ids.slice().sort((a,b) => (seedIndex.get(a) || 99) - (seedIndex.get(b) || 99));
 
   const winningStreak = holderIds(records, r => maxStreak(r, "W"), "max");
+  const bestStart = holderIds(records, r => openingWinStreak(r), "max");
   const losingStreak = holderIds(records, r => maxStreak(r, "L"), "max");
   const bestRecord = holderIds(records, r => r.wins, "max");
   const worstRecord = holderIds(records, r => r.wins, "min");
@@ -246,6 +258,7 @@
   const seasonStats = [
     { label:"Longest losing streak of the season", value:String(losingStreak.value), display:`${losingStreak.value} ${losingStreak.value === 1 ? "loss" : "losses"}${tieSuffix(losingStreak.teams)}`, teams:bySeed(losingStreak.teams), details:`Through Week ${completedWeek}` },
     { label:"Longest winning streak of the season", value:String(winningStreak.value), display:`${winningStreak.value} ${winningStreak.value === 1 ? "win" : "wins"}${tieSuffix(winningStreak.teams)}`, teams:bySeed(winningStreak.teams), details:`Through Week ${completedWeek}` },
+    { label:"Best start of the season", value:String(bestStart.value), display:`${bestStart.value}–0${tieSuffix(bestStart.teams)}`, teams:bySeed(bestStart.teams), details:`Weeks 1–${bestStart.value}` },
     { label:"Best regular season record", value:bestRecordDisplay.replace(/–/g,"-"), display:`${bestRecordDisplay}${tieSuffix(bestRecord.teams)}`, teams:bySeed(bestRecord.teams), details:`Through Week ${completedWeek}`, excludeFromAllTime:partialSeason },
     { label:"Worst regular season record", value:worstRecordDisplay.replace(/–/g,"-"), display:`${worstRecordDisplay}${tieSuffix(worstRecord.teams)}`, teams:bySeed(worstRecord.teams), details:`Through Week ${completedWeek}`, excludeFromAllTime:partialSeason },
     { label:"Most total points", value:mostPoints.value.toFixed(2), display:mostPoints.value.toFixed(2), teams:bySeed(mostPoints.teams), details:`Through Week ${completedWeek}`, excludeFromAllTime:partialSeason },
@@ -268,8 +281,8 @@
   // During an active season, final-season-only metrics (record, cumulative PF,
   // season averages) are displayed in 2026 but intentionally cannot overwrite
   // historical All Time Records until Week 14 is complete. Monotonic/event stats
-  // (streaks, weekly highs/lows, closest game, blowout, Best Team count) remain
-  // eligible immediately.
+  // (streaks, best start, weekly highs/lows, closest game, blowout, Best Team count)
+  // remain eligible immediately.
   computeAllTime = function(seasonsObj) {
     const recordMap = new Map();
 
