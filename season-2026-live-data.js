@@ -54,7 +54,7 @@
     { week:6, matchupId:5, left:"sixowls"           , leftScore:149.58, right:"miami"             , rightScore:117.72 },
     { week:6, matchupId:2, left:"maleksexcornflex"  , leftScore:117.54, right:"deeznutterz"       , rightScore:111.28 },
     { week:6, matchupId:4, left:"daddytate"         , leftScore:111.28, right:"angolarookie"      , rightScore:116.90 },
-    { week:6, matchupId:3, left:"barjalona"         , leftScore:111.06, right:"svetunited"        , rightScore:114.76 }
+    { week:6, matchupId:3, left:"barjalona"         , leftScore:113.16, right:"svetunited"        , rightScore:114.76 }
   ]);
 
   // Canonical cumulative totals after finalized Week 6. Sleeper's cumulative
@@ -65,10 +65,10 @@
   const OFFICIAL_TOTALS = Object.freeze({
     snorlax            : { pf:903.46, pa:831.88 },
     sixowls            : { pf:898.16, pa:752.74 },
-    barjalona          : { pf:822.24, pa:719.10 },
+    barjalona          : { pf:824.34, pa:719.10 },
     maleksexcornflex   : { pf:865.10, pa:813.12 },
     drhtown            : { pf:772.82, pa:891.22 },
-    svetunited         : { pf:741.10, pa:743.92 },
+    svetunited         : { pf:741.10, pa:746.02 },
     miami              : { pf:821.44, pa:798.00 },
     deeznutterz        : { pf:710.74, pa:841.70 },
     daddytate          : { pf:737.74, pa:799.89 },
@@ -373,6 +373,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized connected-league Weeks 1-6 data; Week 6 Deez Nutterz commissioner-adjusted to 111.28"
+    source:"Sleeper finalized connected-league Weeks 1-6 data; Week 6 Deez Nutterz commissioner-adjusted to 111.28; Barjalona corrected to 113.16 from finalized Sleeper scoreboard"
   });
 })();
