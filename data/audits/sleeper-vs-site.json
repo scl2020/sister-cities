@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-20T04:19:47.190Z",
+  "generated_at_utc": "2026-10-20T19:07:06.094Z",
   "methodology": {
     "standings_and_totals": "Sleeper finalized roster settings (wins/losses/PF/PA).",
     "streaks_and_h2h_results": "Sleeper finalized per-week W/L sequence in roster metadata, paired with weekly matchup IDs.",
@@ -17,7 +17,7 @@
     "definitive_season_stat_mismatches": 0,
     "weekly_score_cards_checked": 25,
     "weekly_score_snapshot_variances": 10,
-    "unverified_best_team_cards": 0,
+    "unverified_best_team_cards": 5,
     "h2h_cells_checked": 132,
     "h2h_mismatches": 0,
     "h2h_game_count_status": "PASS",
@@ -1233,6 +1233,21 @@
     },
     {
       "year": 2021,
+      "label": "Best start of the season",
+      "site": {
+        "value": "2",
+        "teams": [
+          "maleksexcornflex",
+          "miami"
+        ],
+        "details": "Weeks 1–2"
+      },
+      "sleeper": null,
+      "status": "UNVERIFIED",
+      "reason": "Not exposed by mirrored Sleeper sources."
+    },
+    {
+      "year": 2021,
       "label": "Best regular season record",
       "site": {
         "value": "9-5",
@@ -1535,6 +1550,22 @@
       "valueOk": true,
       "teamsOk": true,
       "detailsOk": true
+    },
+    {
+      "year": 2022,
+      "label": "Best start of the season",
+      "site": {
+        "value": "2",
+        "teams": [
+          "abethe3arab",
+          "angolarookie",
+          "miami"
+        ],
+        "details": "Weeks 1–2"
+      },
+      "sleeper": null,
+      "status": "UNVERIFIED",
+      "reason": "Not exposed by mirrored Sleeper sources."
     },
     {
       "year": 2022,
@@ -1854,6 +1885,20 @@
     },
     {
       "year": 2023,
+      "label": "Best start of the season",
+      "site": {
+        "value": "4",
+        "teams": [
+          "drhtown"
+        ],
+        "details": "Weeks 1–4"
+      },
+      "sleeper": null,
+      "status": "UNVERIFIED",
+      "reason": "Not exposed by mirrored Sleeper sources."
+    },
+    {
+      "year": 2023,
       "label": "Best regular season record",
       "site": {
         "value": "9-5",
@@ -2159,6 +2204,20 @@
     },
     {
       "year": 2024,
+      "label": "Best start of the season",
+      "site": {
+        "value": "4",
+        "teams": [
+          "drhtown"
+        ],
+        "details": "Weeks 1–4"
+      },
+      "sleeper": null,
+      "status": "UNVERIFIED",
+      "reason": "Not exposed by mirrored Sleeper sources."
+    },
+    {
+      "year": 2024,
       "label": "Best regular season record",
       "site": {
         "value": "10-4",
@@ -2460,6 +2519,20 @@
       "valueOk": true,
       "teamsOk": true,
       "detailsOk": true
+    },
+    {
+      "year": 2025,
+      "label": "Best start of the season",
+      "site": {
+        "value": "4",
+        "teams": [
+          "snorlax"
+        ],
+        "details": "Weeks 1–4"
+      },
+      "sleeper": null,
+      "status": "UNVERIFIED",
+      "reason": "Not exposed by mirrored Sleeper sources."
     },
     {
       "year": 2025,
