@@ -71,8 +71,8 @@
   "sport": "nfl",
   "season_type": "regular",
   "season": "2025",
-  "last_message_id": "1388691307710406656",
   "shard": 674,
+  "last_message_id": "1388691307710406656",
   "scoring_settings": {
     "sack": 1,
     "fgm_40_49": 4,
