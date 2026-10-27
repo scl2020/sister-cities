@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-6 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction.
+// Weeks 1-7 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 totals were verified against connected Sleeper starter sums while rollover status lagged.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -54,25 +54,32 @@
     { week:6, matchupId:5, left:"sixowls"           , leftScore:149.58, right:"miami"             , rightScore:117.72 },
     { week:6, matchupId:2, left:"maleksexcornflex"  , leftScore:117.54, right:"deeznutterz"       , rightScore:111.28 },
     { week:6, matchupId:4, left:"daddytate"         , leftScore:111.28, right:"angolarookie"      , rightScore:116.90 },
-    { week:6, matchupId:3, left:"barjalona"         , leftScore:113.16, right:"svetunited"        , rightScore:114.76 }
+    { week:6, matchupId:3, left:"barjalona"         , leftScore:113.16, right:"svetunited"        , rightScore:114.76 },
+
+    // WEEK 7
+    { week:7, matchupId:1, left:"drhtown"           , leftScore:94.92,  right:"deeznutterz"       , rightScore:136.98 },
+    { week:7, matchupId:5, left:"sixowls"           , leftScore:91.22,  right:"daddytate"         , rightScore:126.50 },
+    { week:7, matchupId:3, left:"maleksexcornflex"  , leftScore:125.82, right:"angolarookie"      , rightScore:115.34 },
+    { week:7, matchupId:4, left:"miami"             , leftScore:134.56, right:"barjalona"         , rightScore:156.92 },
+    { week:7, matchupId:2, left:"svetunited"        , leftScore:145.28, right:"snorlax"           , rightScore:127.42 }
   ]);
 
-  // Canonical cumulative totals after finalized Week 6. Sleeper's cumulative
-  // standings were still on Week 5 when Week 6 was declared complete, so these
-  // use the verified official Week 5 baseline plus finalized Week 6 scores.
-  // Deez Nutterz Week 6 is commissioner-adjusted to 111.28 (McLaurin 3.2 out,
-  // Corum 13.0 from bench in), and Invincibles PA reflects that same correction.
+  // Canonical cumulative totals after finalized Week 7. Sleeper's cumulative
+  // standings were still showing Week 6 when Week 7 was declared complete, so
+  // these preserve the corrected Week 6 SCL baseline and add the verified Week 7
+  // Sleeper matchup totals. This prevents rollover lag from undoing prior manual
+  // corrections (Deez Nutterz 111.28 and Barjalona 113.16 in Week 6).
   const OFFICIAL_TOTALS = Object.freeze({
-    snorlax            : { pf:903.46, pa:831.88 },
-    sixowls            : { pf:898.16, pa:752.74 },
-    barjalona          : { pf:824.34, pa:719.10 },
-    maleksexcornflex   : { pf:865.10, pa:813.12 },
-    drhtown            : { pf:772.82, pa:891.22 },
-    svetunited         : { pf:741.10, pa:746.02 },
-    miami              : { pf:821.44, pa:798.00 },
-    deeznutterz        : { pf:710.74, pa:841.70 },
-    daddytate          : { pf:737.74, pa:799.89 },
-    angolarookie       : { pf:694.76, pa:775.98 }
+    snorlax            : { pf:1030.88, pa:977.16 },
+    sixowls            : { pf:989.38,  pa:879.24 },
+    barjalona          : { pf:981.26,  pa:853.66 },
+    maleksexcornflex   : { pf:990.92,  pa:928.46 },
+    drhtown            : { pf:867.74,  pa:1028.20 },
+    svetunited         : { pf:886.38,  pa:873.44 },
+    miami              : { pf:956.00,  pa:954.92 },
+    deeznutterz        : { pf:847.72,  pa:936.62 },
+    daddytate          : { pf:864.24,  pa:891.11 },
+    angolarookie       : { pf:810.10,  pa:901.80 }
   });
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -386,6 +393,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized connected-league Weeks 1-6 data; Week 6 Deez Nutterz commissioner-adjusted to 111.28; Barjalona corrected to 113.16 from finalized Sleeper scoreboard"
+    source:"Sleeper verified Weeks 1-7 data; Week 6 manual corrections preserved; Week 7 team totals cross-checked against Sleeper starter sums while rollover status lagged"
   });
 })();
