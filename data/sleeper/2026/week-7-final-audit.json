@@ -3,12 +3,13 @@
   "season": 2026,
   "week": 7,
   "scope": "regular season only",
-  "source": "Connected Sleeper Week 7 matchup totals, verified by summing every listed starter. Sleeper matchup status and cumulative standings were still lagging at Week 6 when the user declared Week 7 complete.",
+  "source": "Post-rollover verification against finalized connected Sleeper Week 7 matchups and official cumulative standings.",
   "verification": {
     "allTenTeamTotalsMatchStarterSums": true,
-    "sleeperMatchupStatusAtFinalization": "in_progress",
-    "sleeperCumulativeStandingsThroughWeek": 6,
-    "canonicalPolicy": "User-declared completed Week 7 plus verified Sleeper matchup totals; preserve all prior SCL scoring corrections."
+    "sleeperMatchupStatus": "final",
+    "sleeperCumulativeStandingsThroughWeek": 7,
+    "officialStandingsVerified": true,
+    "canonicalPolicy": "Use finalized Sleeper Week 7 scores and official cumulative standings while preserving accepted prior SCL scoring corrections."
   },
   "bestTeam": {
     "team": "Barjalona",
@@ -77,7 +78,7 @@
       "pa": 873.44
     },
     "miami": {
-      "pf": 956,
+      "pf": 955.99,
       "pa": 954.92
     },
     "deeznutterz": {
@@ -86,7 +87,7 @@
     },
     "daddytate": {
       "pf": 864.24,
-      "pa": 891.11
+      "pa": 891.12
     },
     "angolarookie": {
       "pf": 810.1,
@@ -141,13 +142,13 @@
       "team": "Spidey",
       "record": "3-4",
       "pf": 864.24,
-      "pa": 891.11
+      "pa": 891.12
     },
     {
       "seed": 8,
       "team": "Buy the Dip-hins",
       "record": "2-5",
-      "pf": 956,
+      "pf": 955.99,
       "pa": 954.92
     },
     {
@@ -268,7 +269,7 @@
       ]
     }
   },
-  "rawMirrorNote": "The repository auto-synced week-7.json was captured earlier than the connected Sleeper scoreboard. Canonical Week 7 uses the later connected totals, all of which exactly matched their listed starter sums.",
+  "rawMirrorNote": "The repository auto-synced week-7.json remains an earlier snapshot, but connected Sleeper has now finalized Week 7. Canonical website scores and standings have been re-verified against finalized Sleeper; the raw mirror should not override them.",
   "rawMirrorDifferences": [
     {
       "rosterId": 1,
@@ -314,12 +315,12 @@
     }
   ],
   "sixPartAudit": {
-    "standings": "records/PF/PA/seeds recomputed through Week 7 from 35 canonical games and corrected cumulative totals",
-    "standingsSchedule": "2026 standings schedule exposes completed Weeks 1-7 only",
-    "seasonStats": "all 14 2026 categories recompute through Week 7, including Best start of the season",
-    "allTimeRecords": "Week 7 creates no new SCL all-time record; existing Best start all-time tie remains 4-0",
-    "franchiseHub": "all-time regular-season W-L derives from H2H matrix plus Weeks 1-7; playoff records remain untouched",
-    "h2h": "five Week 7 games added to record matrix and matchup history"
+    "standings": "official Week 7 records/PF/PA/seeds verified against Sleeper after rollover",
+    "standingsSchedule": "2026 standings schedule exposes completed Weeks 1-7 with all five Week 7 final scores verified",
+    "seasonStats": "all 14 2026 categories recompute through Week 7; penny-level cumulative corrections do not change any holder",
+    "allTimeRecords": "Week 7 still creates no new SCL all-time record after official rollover verification",
+    "franchiseHub": "regular-season W-L remains correct; official rollover produced no winner changes",
+    "h2h": "all five Week 7 outcomes and scores match finalized Sleeper"
   },
   "qa": {
     "completedWeek": 7,
@@ -329,7 +330,7 @@
     "seasonStats": 14,
     "week7BestTeam": "Barjalona 156.92",
     "sleeperTotalsVerifiedByStarterSums": true,
-    "sleeperStatusLagDocumented": true,
+    "sleeperStatusLagDocumented": false,
     "noNewAllTimeRecord": true,
     "bestStartOfSeason": "Snorlax 4-0",
     "standingsOrder": [
@@ -343,6 +344,13 @@
       "miami",
       "deeznutterz",
       "angolarookie"
-    ]
+    ],
+    "sleeperStatusNowFinal": true,
+    "officialStandingsVerified": true,
+    "officialTotalsVerified": true,
+    "pennyCorrections": {
+      "Buy the Dip-hins PF": "955.99 (was derived as 956.00)",
+      "Spidey PA": "891.12 (was derived as 891.11)"
+    }
   }
 }
