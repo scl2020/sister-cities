@@ -24,8 +24,7 @@
       "8167",
       "8183",
       "9224",
-      "9753",
-      "HOU"
+      "9753"
     ],
     "reserve": [
       "11635"
@@ -34,7 +33,7 @@
     "settings": {
       "fpts": 867,
       "fpts_against": 1028,
-      "fpts_against_decimal": 20,
+      "fpts_against_decimal": 10,
       "fpts_decimal": 74,
       "losses": 4,
       "ppts": 926,
@@ -55,7 +54,7 @@
       "8167",
       "8137",
       "6650",
-      "HOU"
+      "0"
     ],
     "taxi": null
   },
@@ -272,7 +271,7 @@
       "LAR"
     ],
     "reserve": [
-      "13287"
+      "12533"
     ],
     "roster_id": 5,
     "settings": {
@@ -292,7 +291,7 @@
     "starters": [
       "11564",
       "12489",
-      "8132",
+      "13287",
       "12526",
       "7547",
       "10859",
@@ -517,10 +516,10 @@
       "fpts": 847,
       "fpts_against": 936,
       "fpts_against_decimal": 62,
-      "fpts_decimal": 72,
+      "fpts_decimal": 62,
       "losses": 5,
       "ppts": 947,
-      "ppts_decimal": 56,
+      "ppts_decimal": 46,
       "ties": 0,
       "total_moves": 0,
       "waiver_budget_used": 10,
