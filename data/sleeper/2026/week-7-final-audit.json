@@ -3,7 +3,7 @@
   "season": 2026,
   "week": 7,
   "scope": "regular season only",
-  "source": "Post-rollover verification against finalized connected Sleeper Week 7 matchups and official cumulative standings.",
+  "source": "Post-rollover Week 7 verification, later amended for Sleeper stat corrections discovered during the Week 8 scrub.",
   "verification": {
     "allTenTeamTotalsMatchStarterSums": true,
     "sleeperMatchupStatus": "final",
@@ -21,14 +21,14 @@
       "left": "Dr. H-Town",
       "leftScore": 94.92,
       "right": "Deez Nutterz",
-      "rightScore": 136.98
+      "rightScore": 136.88
     },
     {
       "matchupId": 2,
       "left": "Trablos United",
       "leftScore": 145.28,
       "right": "Snorlax",
-      "rightScore": 127.42
+      "rightScore": 126.92
     },
     {
       "matchupId": 3,
@@ -54,7 +54,7 @@
   ],
   "canonicalCumulativeTotals": {
     "snorlax": {
-      "pf": 1030.88,
+      "pf": 1030.38,
       "pa": 977.16
     },
     "sixowls": {
@@ -71,18 +71,18 @@
     },
     "drhtown": {
       "pf": 867.74,
-      "pa": 1028.2
+      "pa": 1028.1
     },
     "svetunited": {
       "pf": 886.38,
-      "pa": 873.44
+      "pa": 872.94
     },
     "miami": {
       "pf": 955.99,
       "pa": 954.92
     },
     "deeznutterz": {
-      "pf": 847.72,
+      "pf": 847.62,
       "pa": 936.62
     },
     "daddytate": {
@@ -114,13 +114,13 @@
       "team": "Trablos United",
       "record": "5-2",
       "pf": 886.38,
-      "pa": 873.44
+      "pa": 872.94
     },
     {
       "seed": 4,
       "team": "Snorlax",
       "record": "4-3",
-      "pf": 1030.88,
+      "pf": 1030.38,
       "pa": 977.16
     },
     {
@@ -135,7 +135,7 @@
       "team": "Dr. H-Town",
       "record": "3-4",
       "pf": 867.74,
-      "pa": 1028.2
+      "pa": 1028.1
     },
     {
       "seed": 7,
@@ -155,7 +155,7 @@
       "seed": 9,
       "team": "Deez Nutterz",
       "record": "2-5",
-      "pf": 847.72,
+      "pf": 847.62,
       "pa": 936.62
     },
     {
@@ -207,7 +207,7 @@
       ]
     },
     "mostTotalPoints": {
-      "value": 1030.88,
+      "value": 1030.38,
       "teams": [
         "Snorlax"
       ]
@@ -243,7 +243,7 @@
       ]
     },
     "highestAverage": {
-      "value": 147.27,
+      "value": 147.2,
       "teams": [
         "Snorlax"
       ]
@@ -351,6 +351,10 @@
     "pennyCorrections": {
       "Buy the Dip-hins PF": "955.99 (was derived as 956.00)",
       "Spidey PA": "891.12 (was derived as 891.11)"
+    },
+    "lateWeek7StatCorrections": {
+      "Deez Nutterz Week 7": "136.88 (was 136.98)",
+      "Snorlax Week 7": "126.92 (was 127.42)"
     }
   }
 }
