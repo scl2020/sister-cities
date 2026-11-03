@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-7 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 scores and cumulative standings were re-verified after Sleeper rollover.
+// Weeks 1-8 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 8 totals were verified against connected Sleeper starter sums while rollover status lagged.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -57,27 +57,35 @@
     { week:6, matchupId:3, left:"barjalona"         , leftScore:113.16, right:"svetunited"        , rightScore:114.76 },
 
     // WEEK 7
-    { week:7, matchupId:1, left:"drhtown"           , leftScore:94.92,  right:"deeznutterz"       , rightScore:136.98 },
+    { week:7, matchupId:1, left:"drhtown"           , leftScore:94.92,  right:"deeznutterz"       , rightScore:136.88 },
     { week:7, matchupId:5, left:"sixowls"           , leftScore:91.22,  right:"daddytate"         , rightScore:126.50 },
     { week:7, matchupId:3, left:"maleksexcornflex"  , leftScore:125.82, right:"angolarookie"      , rightScore:115.34 },
     { week:7, matchupId:4, left:"miami"             , leftScore:134.56, right:"barjalona"         , rightScore:156.92 },
-    { week:7, matchupId:2, left:"svetunited"        , leftScore:145.28, right:"snorlax"           , rightScore:127.42 }
+    { week:7, matchupId:2, left:"svetunited"        , leftScore:145.28, right:"snorlax"           , rightScore:126.92 },
+
+    // WEEK 8
+    { week:8, matchupId:1, left:"drhtown"           , leftScore:150.98, right:"svetunited"        , rightScore:117.70 },
+    { week:8, matchupId:4, left:"sixowls"           , leftScore:111.58, right:"maleksexcornflex"  , rightScore:118.64 },
+    { week:8, matchupId:5, left:"daddytate"         , leftScore:129.90, right:"barjalona"         , rightScore:111.08 },
+    { week:8, matchupId:2, left:"angolarookie"      , leftScore:115.46, right:"deeznutterz"       , rightScore:82.16  },
+    { week:8, matchupId:3, left:"miami"             , leftScore:201.42, right:"snorlax"           , rightScore:156.96 }
   ]);
 
-  // Official Sleeper cumulative totals after finalized Week 7. Re-verified
-  // after Sleeper rolled the Week 7 standings; these now match the provider
-  // exactly while preserving the accepted Week 6 scoring corrections.
+  // Canonical cumulative totals after finalized Week 8. Sleeper's cumulative
+  // standings were still showing Week 7 when Week 8 was declared complete, so
+  // these use the latest official Week 7 standings (including late stat corrections)
+  // plus the verified Week 8 matchup totals.
   const OFFICIAL_TOTALS = Object.freeze({
-    snorlax            : { pf:1030.88, pa:977.16 },
-    sixowls            : { pf:989.38,  pa:879.24 },
-    barjalona          : { pf:981.26,  pa:853.66 },
-    maleksexcornflex   : { pf:990.92,  pa:928.46 },
-    drhtown            : { pf:867.74,  pa:1028.20 },
-    svetunited         : { pf:886.38,  pa:873.44 },
-    miami              : { pf:955.99,  pa:954.92 },
-    deeznutterz        : { pf:847.72,  pa:936.62 },
-    daddytate          : { pf:864.24,  pa:891.12 },
-    angolarookie       : { pf:810.10,  pa:901.80 }
+    snorlax            : { pf:1187.34, pa:1178.58 },
+    sixowls            : { pf:1100.96, pa:997.88  },
+    barjalona          : { pf:1092.34, pa:983.56  },
+    maleksexcornflex   : { pf:1109.56, pa:1040.04 },
+    drhtown            : { pf:1018.72, pa:1145.80 },
+    svetunited         : { pf:1004.08, pa:1023.92 },
+    miami              : { pf:1157.41, pa:1111.88 },
+    deeznutterz        : { pf:929.78,  pa:1052.08 },
+    daddytate          : { pf:994.14,  pa:1002.20 },
+    angolarookie       : { pf:925.56,  pa:983.96  }
   });
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -391,6 +399,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized Weeks 1-7 data; Week 6 accepted corrections preserved; Week 7 scores and cumulative standings re-verified after official rollover"
+    source:"Sleeper verified Weeks 1-8 data; Week 6 accepted corrections preserved; Week 7 late stat corrections incorporated; Week 8 totals cross-checked against starter sums while rollover status lagged"
   });
 })();
