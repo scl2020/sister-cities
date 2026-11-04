@@ -67,6 +67,7 @@
   },
   "avatar": null,
   "company_id": null,
+  "last_message_id": "1180084123251777537",
   "scoring_settings": {
     "sack": 1,
     "fgm_40_49": 4,
@@ -130,9 +131,8 @@
   },
   "season": "2024",
   "season_type": "regular",
-  "shard": 380,
   "sport": "nfl",
-  "last_message_id": "1180084123251777537",
+  "shard": 380,
   "draft_id": "1124816318139219969",
   "last_author_avatar": null,
   "last_author_display_name": "sys",
