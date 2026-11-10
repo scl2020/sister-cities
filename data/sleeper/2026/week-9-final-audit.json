@@ -1,0 +1,363 @@
+{
+  "leagueId": "1388938049026535424",
+  "season": 2026,
+  "week": 9,
+  "scope": "regular season only",
+  "source": "Connected Sleeper Week 9 matchup totals, verified by summing all listed starters, with commissioner-approved Buy the Dip-hins Caleb Douglas bench adjustment.",
+  "verification": {
+    "allTenRawSleeperTotalsMatchStarterSums": true,
+    "sleeperMatchupStatusAtFinalization": "in_progress",
+    "sleeperCumulativeStandingsThroughWeek": 8,
+    "officialWeek8BaselineUsed": true,
+    "commissionerAdjustmentVerified": true,
+    "canonicalPolicy": "Use official Week 8 cumulative standings plus verified Week 9 totals; override Buy the Dip-hins Week 9 to include Caleb Douglas' 10.00 bench points."
+  },
+  "commissionerOverride": {
+    "team": "Buy the Dip-hins",
+    "sleeperRawScore": 124.3,
+    "benchPlayer": {
+      "player": "Caleb Douglas",
+      "position": "WR",
+      "points": 10
+    },
+    "adjustment": 10,
+    "canonicalScore": 134.3,
+    "calculation": "124.30 + 10.00 = 134.30",
+    "winnerChanged": false
+  },
+  "bestTeam": {
+    "team": "Snorlax",
+    "points": 169.46
+  },
+  "matchups": [
+    {
+      "matchupId": 1,
+      "left": "Dr. H-Town",
+      "leftScore": 137.68,
+      "right": "Angola Rookie",
+      "rightScore": 144.66
+    },
+    {
+      "matchupId": 2,
+      "left": "Buy the Dip-hins",
+      "leftScore": 134.3,
+      "right": "Trablos United",
+      "rightScore": 88.8
+    },
+    {
+      "matchupId": 3,
+      "left": "6ixOwls",
+      "leftScore": 123.28,
+      "right": "Deez Nutterz",
+      "rightScore": 88.16
+    },
+    {
+      "matchupId": 4,
+      "left": "Spidey",
+      "leftScore": 112.38,
+      "right": "Snorlax",
+      "rightScore": 169.46
+    },
+    {
+      "matchupId": 5,
+      "left": "Invincibles",
+      "leftScore": 132.5,
+      "right": "Barjalona",
+      "rightScore": 106.34
+    }
+  ],
+  "canonicalCumulativeTotals": {
+    "snorlax": {
+      "pf": 1356.8,
+      "pa": 1290.96
+    },
+    "sixowls": {
+      "pf": 1224.24,
+      "pa": 1086.04
+    },
+    "barjalona": {
+      "pf": 1198.68,
+      "pa": 1116.06
+    },
+    "maleksexcornflex": {
+      "pf": 1242.06,
+      "pa": 1146.38
+    },
+    "drhtown": {
+      "pf": 1156.4,
+      "pa": 1290.46
+    },
+    "svetunited": {
+      "pf": 1092.88,
+      "pa": 1158.22
+    },
+    "miami": {
+      "pf": 1291.72,
+      "pa": 1200.68
+    },
+    "deeznutterz": {
+      "pf": 1017.94,
+      "pa": 1175.36
+    },
+    "daddytate": {
+      "pf": 1106.52,
+      "pa": 1171.66
+    },
+    "angolarookie": {
+      "pf": 1070.22,
+      "pa": 1121.64
+    }
+  },
+  "standings": [
+    {
+      "seed": 1,
+      "team": "Invincibles",
+      "record": "7-2",
+      "pf": 1242.06,
+      "pa": 1146.38
+    },
+    {
+      "seed": 2,
+      "team": "Snorlax",
+      "record": "5-4",
+      "pf": 1356.8,
+      "pa": 1290.96
+    },
+    {
+      "seed": 3,
+      "team": "6ixOwls",
+      "record": "5-4",
+      "pf": 1224.24,
+      "pa": 1086.04
+    },
+    {
+      "seed": 4,
+      "team": "Barjalona",
+      "record": "5-4",
+      "pf": 1198.68,
+      "pa": 1116.06
+    },
+    {
+      "seed": 5,
+      "team": "Trablos United",
+      "record": "5-4",
+      "pf": 1092.88,
+      "pa": 1158.22
+    },
+    {
+      "seed": 6,
+      "team": "Buy the Dip-hins",
+      "record": "4-5",
+      "pf": 1291.72,
+      "pa": 1200.68
+    },
+    {
+      "seed": 7,
+      "team": "Dr. H-Town",
+      "record": "4-5",
+      "pf": 1156.4,
+      "pa": 1290.46
+    },
+    {
+      "seed": 8,
+      "team": "Spidey",
+      "record": "4-5",
+      "pf": 1106.52,
+      "pa": 1171.66
+    },
+    {
+      "seed": 9,
+      "team": "Angola Rookie",
+      "record": "4-5",
+      "pf": 1070.22,
+      "pa": 1121.64
+    },
+    {
+      "seed": 10,
+      "team": "Deez Nutterz",
+      "record": "2-7",
+      "pf": 1017.94,
+      "pa": 1175.36
+    }
+  ],
+  "seasonStatsAudit": {
+    "longestWinningStreak": {
+      "value": 7,
+      "teams": [
+        "Invincibles"
+      ],
+      "details": "Weeks 3–9"
+    },
+    "bestStart": {
+      "value": "4-0",
+      "teams": [
+        "Snorlax"
+      ],
+      "details": "Weeks 1–4"
+    },
+    "longestLosingStreak": {
+      "value": 4,
+      "teams": [
+        "Snorlax"
+      ],
+      "details": "Weeks 5–8"
+    },
+    "bestRecord": {
+      "value": "7-2",
+      "teams": [
+        "Invincibles"
+      ]
+    },
+    "worstRecord": {
+      "value": "2-7",
+      "teams": [
+        "Deez Nutterz"
+      ]
+    },
+    "mostTotalPoints": {
+      "value": 1356.8,
+      "teams": [
+        "Snorlax"
+      ]
+    },
+    "lowestTotalPoints": {
+      "value": 1017.94,
+      "teams": [
+        "Deez Nutterz"
+      ]
+    },
+    "mostBestTeamReports": {
+      "value": 3,
+      "teams": [
+        "Snorlax"
+      ]
+    },
+    "closestMatchup": {
+      "value": 1.6,
+      "week": 6,
+      "teams": [
+        "Barjalona",
+        "Trablos United"
+      ]
+    },
+    "biggestBlowout": {
+      "value": 75.24,
+      "week": 1,
+      "teams": [
+        "6ixOwls",
+        "Angola Rookie"
+      ]
+    },
+    "highestAverage": {
+      "value": 150.76,
+      "teams": [
+        "Snorlax"
+      ]
+    },
+    "highestWeek": {
+      "value": 201.42,
+      "week": 8,
+      "teams": [
+        "Buy the Dip-hins"
+      ]
+    },
+    "lowestWeek": {
+      "value": 82.16,
+      "week": 8,
+      "teams": [
+        "Deez Nutterz"
+      ]
+    },
+    "lowestAverage": {
+      "value": 113.1,
+      "teams": [
+        "Deez Nutterz"
+      ]
+    }
+  },
+  "allTimeAudit": {
+    "newRecord": false,
+    "notes": [
+      "Invincibles' 7-game winning streak remains below the 9-game all-time record.",
+      "Snorlax's 3 Best Team reports remain below the all-time mark of 5.",
+      "Best start remains the existing 4-0 all-time tie.",
+      "The 201.42 weekly high and 82.16 weekly low from Week 8 remain the 2026 marks and do not break all-time records."
+    ]
+  },
+  "rawMirrorNote": "The repository auto-synced week-9.json is an earlier snapshot. Canonical Week 9 uses the later connected Sleeper totals, plus the commissioner-approved Caleb Douglas +10 adjustment for Buy the Dip-hins.",
+  "rawMirrorDifferences": [
+    {
+      "rosterId": 1,
+      "team": "Dr. H-Town",
+      "mirrored": 111.68,
+      "verified": 137.68
+    },
+    {
+      "rosterId": 2,
+      "team": "6ixOwls",
+      "mirrored": 118.18,
+      "verified": 123.28
+    },
+    {
+      "rosterId": 4,
+      "team": "Spidey",
+      "mirrored": 103.38,
+      "verified": 112.38
+    },
+    {
+      "rosterId": 6,
+      "team": "Buy the Dip-hins",
+      "mirrored": 108.7,
+      "sleeperRaw": 124.3,
+      "commissionerFinal": 134.3
+    },
+    {
+      "rosterId": 8,
+      "team": "Trablos United",
+      "mirrored": 81.5,
+      "verified": 88.8
+    },
+    {
+      "rosterId": 10,
+      "team": "Snorlax",
+      "mirrored": 143.6,
+      "verified": 169.46
+    }
+  ],
+  "sixPartAudit": {
+    "standings": "records/PF/PA/seeds recomputed through Week 9 from 45 canonical games with Dip-hins 134.30",
+    "standingsSchedule": "2026 standings schedule exposes completed Weeks 1-9 only",
+    "seasonStats": "all 14 2026 categories recompute through Week 9, including Best start of the season",
+    "allTimeRecords": "Week 9 creates no new SCL all-time record",
+    "franchiseHub": "all-time regular-season W-L derives from H2H matrix plus Weeks 1-9; playoff records remain untouched",
+    "h2h": "five Week 9 games added to record matrix and matchup history; Dip-hins–Trablos score stored as 134.30–88.80"
+  },
+  "qa": {
+    "completedWeek": 9,
+    "canonicalGames": 45,
+    "h2hGamesExpected": 381,
+    "teams": 10,
+    "seasonStats": 14,
+    "week9BestTeam": "Snorlax 169.46",
+    "rawSleeperTotalsVerifiedByStarterSums": true,
+    "diphinsCommissionerScore": 134.3,
+    "calebDouglasBenchPointsVerified": 10,
+    "noWinnerChangeFromAdjustment": true,
+    "sleeperStatusLagDocumented": true,
+    "noNewAllTimeRecord": true,
+    "bestStartOfSeason": "Snorlax 4-0",
+    "longestWinningStreak": "Invincibles 7",
+    "standingsOrder": [
+      "maleksexcornflex",
+      "snorlax",
+      "sixowls",
+      "barjalona",
+      "svetunited",
+      "miami",
+      "drhtown",
+      "daddytate",
+      "angolarookie",
+      "deeznutterz"
+    ]
+  }
+}
