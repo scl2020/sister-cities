@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-8 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 8 totals were verified against connected Sleeper starter sums while rollover status lagged.
+// Weeks 1-9 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 9 includes the commissioner-approved Buy the Dip-hins +10.00 Caleb Douglas bench adjustment.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -68,24 +68,32 @@
     { week:8, matchupId:4, left:"sixowls"           , leftScore:111.58, right:"maleksexcornflex"  , rightScore:118.64 },
     { week:8, matchupId:5, left:"daddytate"         , leftScore:129.90, right:"barjalona"         , rightScore:111.08 },
     { week:8, matchupId:2, left:"angolarookie"      , leftScore:115.46, right:"deeznutterz"       , rightScore:82.16  },
-    { week:8, matchupId:3, left:"miami"             , leftScore:201.42, right:"snorlax"           , rightScore:156.96 }
+    { week:8, matchupId:3, left:"miami"             , leftScore:201.42, right:"snorlax"           , rightScore:156.96 },
+
+    // WEEK 9
+    { week:9, matchupId:1, left:"drhtown"           , leftScore:137.68, right:"angolarookie"      , rightScore:144.66 },
+    { week:9, matchupId:3, left:"sixowls"           , leftScore:123.28, right:"deeznutterz"       , rightScore:88.16  },
+    { week:9, matchupId:5, left:"maleksexcornflex"  , leftScore:132.50, right:"barjalona"         , rightScore:106.34 },
+    { week:9, matchupId:4, left:"daddytate"         , leftScore:112.38, right:"snorlax"           , rightScore:169.46 },
+    { week:9, matchupId:2, left:"miami"             , leftScore:134.30, right:"svetunited"        , rightScore:88.80  }
   ]);
 
-  // Canonical cumulative totals after finalized Week 8. Sleeper's cumulative
-  // standings were still showing Week 7 when Week 8 was declared complete, so
-  // these use the latest official Week 7 standings (including late stat corrections)
-  // plus the verified Week 8 matchup totals.
+  // Canonical cumulative totals after finalized Week 9. Sleeper's cumulative
+  // standings were still showing Week 8 when Week 9 was declared complete, so
+  // these use the latest official Week 8 standings plus the verified Week 9 scores.
+  // Buy the Dip-hins Week 9 is commissioner-adjusted from 124.30 to 134.30 by
+  // adding Caleb Douglas' verified 10.00 bench points; Trablos PA reflects it.
   const OFFICIAL_TOTALS = Object.freeze({
-    snorlax            : { pf:1187.34, pa:1178.58 },
-    sixowls            : { pf:1100.96, pa:997.88  },
-    barjalona          : { pf:1092.34, pa:983.56  },
-    maleksexcornflex   : { pf:1109.56, pa:1040.04 },
-    drhtown            : { pf:1018.72, pa:1145.80 },
-    svetunited         : { pf:1004.08, pa:1023.92 },
-    miami              : { pf:1157.41, pa:1111.88 },
-    deeznutterz        : { pf:929.78,  pa:1052.08 },
-    daddytate          : { pf:994.14,  pa:1002.20 },
-    angolarookie       : { pf:925.56,  pa:983.96  }
+    snorlax            : { pf:1356.80, pa:1290.96 },
+    sixowls            : { pf:1224.24, pa:1086.04 },
+    barjalona          : { pf:1198.68, pa:1116.06 },
+    maleksexcornflex   : { pf:1242.06, pa:1146.38 },
+    drhtown            : { pf:1156.40, pa:1290.46 },
+    svetunited         : { pf:1092.88, pa:1158.22 },
+    miami              : { pf:1291.72, pa:1200.68 },
+    deeznutterz        : { pf:1017.94, pa:1175.36 },
+    daddytate          : { pf:1106.52, pa:1171.66 },
+    angolarookie       : { pf:1070.22, pa:1121.64 }
   });
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -399,6 +407,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper verified Weeks 1-8 data; Week 6 accepted corrections preserved; Week 7 late stat corrections incorporated; Week 8 totals cross-checked against starter sums while rollover status lagged"
+    source:"Sleeper verified Weeks 1-9 data; prior accepted corrections preserved; Week 9 Buy the Dip-hins commissioner-adjusted to 134.30 with Caleb Douglas 10.00 bench points"
   });
 })();
