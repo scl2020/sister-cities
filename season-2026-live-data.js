@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-9 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 9 includes the commissioner-approved Buy the Dip-hins +10.00 Caleb Douglas bench adjustment.
+// Weeks 1-9 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 9 was re-verified after Sleeper rollover and uses the official Buy the Dip-hins score of 124.30.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -75,22 +75,20 @@
     { week:9, matchupId:3, left:"sixowls"           , leftScore:123.28, right:"deeznutterz"       , rightScore:88.16  },
     { week:9, matchupId:5, left:"maleksexcornflex"  , leftScore:132.50, right:"barjalona"         , rightScore:106.34 },
     { week:9, matchupId:4, left:"daddytate"         , leftScore:112.38, right:"snorlax"           , rightScore:169.46 },
-    { week:9, matchupId:2, left:"miami"             , leftScore:134.30, right:"svetunited"        , rightScore:88.80  }
+    { week:9, matchupId:2, left:"miami"             , leftScore:124.30, right:"svetunited"        , rightScore:88.80  }
   ]);
 
-  // Canonical cumulative totals after finalized Week 9. Sleeper's cumulative
-  // standings were still showing Week 8 when Week 9 was declared complete, so
-  // these use the latest official Week 8 standings plus the verified Week 9 scores.
-  // Buy the Dip-hins Week 9 is commissioner-adjusted from 124.30 to 134.30 by
-  // adding Caleb Douglas' verified 10.00 bench points; Trablos PA reflects it.
+  // Official Sleeper cumulative totals after finalized Week 9. Re-verified
+  // after Sleeper rolled the Week 9 standings; Buy the Dip-hins uses the official
+  // 124.30 score with no Caleb Douglas bench adjustment.
   const OFFICIAL_TOTALS = Object.freeze({
     snorlax            : { pf:1356.80, pa:1290.96 },
     sixowls            : { pf:1224.24, pa:1086.04 },
     barjalona          : { pf:1198.68, pa:1116.06 },
     maleksexcornflex   : { pf:1242.06, pa:1146.38 },
     drhtown            : { pf:1156.40, pa:1290.46 },
-    svetunited         : { pf:1092.88, pa:1158.22 },
-    miami              : { pf:1291.72, pa:1200.68 },
+    svetunited         : { pf:1092.88, pa:1148.22 },
+    miami              : { pf:1281.72, pa:1200.68 },
     deeznutterz        : { pf:1017.94, pa:1175.36 },
     daddytate          : { pf:1106.52, pa:1171.66 },
     angolarookie       : { pf:1070.22, pa:1121.64 }
@@ -407,6 +405,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper verified Weeks 1-9 data; prior accepted corrections preserved; Week 9 Buy the Dip-hins commissioner-adjusted to 134.30 with Caleb Douglas 10.00 bench points"
+    source:"Sleeper finalized Weeks 1-9 data; prior accepted corrections preserved; Week 9 re-verified after official rollover with Buy the Dip-hins at 124.30"
   });
 })();
