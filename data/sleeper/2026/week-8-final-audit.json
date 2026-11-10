@@ -3,17 +3,18 @@
   "season": 2026,
   "week": 8,
   "scope": "regular season only",
-  "source": "Connected Sleeper Week 8 matchup totals, verified by summing every listed starter. Sleeper status/cumulative standings were still on Week 7 when the user declared Week 8 complete.",
+  "source": "Post-rollover Week 8 verification against finalized Sleeper matchup scores and official cumulative standings.",
   "verification": {
     "allTenTeamTotalsMatchStarterSums": true,
-    "sleeperMatchupStatusAtFinalization": "in_progress",
-    "sleeperCumulativeStandingsThroughWeek": 7,
+    "sleeperMatchupStatusAtFinalization": "final",
+    "sleeperCumulativeStandingsThroughWeek": 8,
     "priorWeekCorrectionsApplied": true,
     "priorWeekCorrectionDetails": {
       "Deez Nutterz Week 7": "136.88 replacing 136.98",
       "Snorlax Week 7": "126.92 replacing 127.42"
     },
-    "canonicalPolicy": "Use latest official Week 7 baseline plus verified Week 8 matchup totals; preserve accepted commissioner adjustments."
+    "canonicalPolicy": "Use latest official Week 7 baseline plus verified Week 8 matchup totals; preserve accepted commissioner adjustments.",
+    "officialStandingsVerified": true
   },
   "bestTeam": {
     "team": "Buy the Dip-hins",
@@ -82,7 +83,7 @@
       "pa": 1023.92
     },
     "miami": {
-      "pf": 1157.41,
+      "pf": 1157.42,
       "pa": 1111.88
     },
     "deeznutterz": {
@@ -152,7 +153,7 @@
       "seed": 8,
       "team": "Buy the Dip-hins",
       "record": "3-5",
-      "pf": 1157.41,
+      "pf": 1157.42,
       "pa": 1111.88
     },
     {
@@ -319,7 +320,7 @@
     "seasonStats": 14,
     "week8BestTeam": "Buy the Dip-hins 201.42",
     "sleeperTotalsVerifiedByStarterSums": true,
-    "sleeperStatusLagDocumented": true,
+    "sleeperStatusLagDocumented": false,
     "noNewAllTimeRecord": true,
     "bestStartOfSeason": "Snorlax 4-0",
     "longestWinningStreak": "Invincibles 6",
@@ -336,6 +337,11 @@
       "miami",
       "angolarookie",
       "deeznutterz"
-    ]
+    ],
+    "sleeperStatusNowFinal": true,
+    "officialTotalsVerified": true,
+    "lateWeek8CumulativeCorrection": {
+      "Buy the Dip-hins PF": "1157.42 (site had derived 1157.41)"
+    }
   }
 }
