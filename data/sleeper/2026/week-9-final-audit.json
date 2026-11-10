@@ -3,27 +3,14 @@
   "season": 2026,
   "week": 9,
   "scope": "regular season only",
-  "source": "Connected Sleeper Week 9 matchup totals, verified by summing all listed starters, with commissioner-approved Buy the Dip-hins Caleb Douglas bench adjustment.",
+  "source": "Post-rollover verification against finalized Sleeper Week 9 matchups and official cumulative standings.",
   "verification": {
     "allTenRawSleeperTotalsMatchStarterSums": true,
-    "sleeperMatchupStatusAtFinalization": "in_progress",
-    "sleeperCumulativeStandingsThroughWeek": 8,
-    "officialWeek8BaselineUsed": true,
-    "commissionerAdjustmentVerified": true,
-    "canonicalPolicy": "Use official Week 8 cumulative standings plus verified Week 9 totals; override Buy the Dip-hins Week 9 to include Caleb Douglas' 10.00 bench points."
-  },
-  "commissionerOverride": {
-    "team": "Buy the Dip-hins",
-    "sleeperRawScore": 124.3,
-    "benchPlayer": {
-      "player": "Caleb Douglas",
-      "position": "WR",
-      "points": 10
-    },
-    "adjustment": 10,
-    "canonicalScore": 134.3,
-    "calculation": "124.30 + 10.00 = 134.30",
-    "winnerChanged": false
+    "sleeperMatchupStatus": "final",
+    "sleeperCumulativeStandingsThroughWeek": 9,
+    "officialStandingsVerified": true,
+    "officialTotalsVerified": true,
+    "canonicalPolicy": "Use finalized Sleeper Week 9 scores and official cumulative standings. No Caleb Douglas bench adjustment is applied to Buy the Dip-hins."
   },
   "bestTeam": {
     "team": "Snorlax",
@@ -40,7 +27,7 @@
     {
       "matchupId": 2,
       "left": "Buy the Dip-hins",
-      "leftScore": 134.3,
+      "leftScore": 124.3,
       "right": "Trablos United",
       "rightScore": 88.8
     },
@@ -89,10 +76,10 @@
     },
     "svetunited": {
       "pf": 1092.88,
-      "pa": 1158.22
+      "pa": 1148.22
     },
     "miami": {
-      "pf": 1291.72,
+      "pf": 1281.72,
       "pa": 1200.68
     },
     "deeznutterz": {
@@ -142,13 +129,13 @@
       "team": "Trablos United",
       "record": "5-4",
       "pf": 1092.88,
-      "pa": 1158.22
+      "pa": 1148.22
     },
     {
       "seed": 6,
       "team": "Buy the Dip-hins",
       "record": "4-5",
-      "pf": 1291.72,
+      "pf": 1281.72,
       "pa": 1200.68
     },
     {
@@ -284,53 +271,15 @@
       "The 201.42 weekly high and 82.16 weekly low from Week 8 remain the 2026 marks and do not break all-time records."
     ]
   },
-  "rawMirrorNote": "The repository auto-synced week-9.json is an earlier snapshot. Canonical Week 9 uses the later connected Sleeper totals, plus the commissioner-approved Caleb Douglas +10 adjustment for Buy the Dip-hins.",
-  "rawMirrorDifferences": [
-    {
-      "rosterId": 1,
-      "team": "Dr. H-Town",
-      "mirrored": 111.68,
-      "verified": 137.68
-    },
-    {
-      "rosterId": 2,
-      "team": "6ixOwls",
-      "mirrored": 118.18,
-      "verified": 123.28
-    },
-    {
-      "rosterId": 4,
-      "team": "Spidey",
-      "mirrored": 103.38,
-      "verified": 112.38
-    },
-    {
-      "rosterId": 6,
-      "team": "Buy the Dip-hins",
-      "mirrored": 108.7,
-      "sleeperRaw": 124.3,
-      "commissionerFinal": 134.3
-    },
-    {
-      "rosterId": 8,
-      "team": "Trablos United",
-      "mirrored": 81.5,
-      "verified": 88.8
-    },
-    {
-      "rosterId": 10,
-      "team": "Snorlax",
-      "mirrored": 143.6,
-      "verified": 169.46
-    }
-  ],
+  "rawMirrorNote": "The repository Week 9 mirror and roster standings now match finalized Sleeper. Canonical Week 9 also uses Buy the Dip-hins' official 124.30 score with no Douglas bench adjustment.",
+  "rawMirrorDifferences": [],
   "sixPartAudit": {
-    "standings": "records/PF/PA/seeds recomputed through Week 9 from 45 canonical games with Dip-hins 134.30",
-    "standingsSchedule": "2026 standings schedule exposes completed Weeks 1-9 only",
-    "seasonStats": "all 14 2026 categories recompute through Week 9, including Best start of the season",
-    "allTimeRecords": "Week 9 creates no new SCL all-time record",
-    "franchiseHub": "all-time regular-season W-L derives from H2H matrix plus Weeks 1-9; playoff records remain untouched",
-    "h2h": "five Week 9 games added to record matrix and matchup history; Dip-hins–Trablos score stored as 134.30–88.80"
+    "standings": "official Week 9 records/PF/PA/seeds verified against Sleeper after rollover",
+    "standingsSchedule": "2026 standings schedule exposes completed Weeks 1-9 with all five Week 9 final scores verified",
+    "seasonStats": "all 14 2026 categories recompute through Week 9; removing the Douglas +10 does not change any stat holder",
+    "allTimeRecords": "Week 9 still creates no new SCL all-time record after official rollover verification",
+    "franchiseHub": "regular-season W-L remains correct; removing the Douglas adjustment changes no matchup winner",
+    "h2h": "all five Week 9 outcomes and scores match finalized Sleeper; Dip-hins–Trablos is 124.30–88.80"
   },
   "qa": {
     "completedWeek": 9,
@@ -340,10 +289,10 @@
     "seasonStats": 14,
     "week9BestTeam": "Snorlax 169.46",
     "rawSleeperTotalsVerifiedByStarterSums": true,
-    "diphinsCommissionerScore": 134.3,
+    "diphinsCommissionerScore": 124.3,
     "calebDouglasBenchPointsVerified": 10,
     "noWinnerChangeFromAdjustment": true,
-    "sleeperStatusLagDocumented": true,
+    "sleeperStatusLagDocumented": false,
     "noNewAllTimeRecord": true,
     "bestStartOfSeason": "Snorlax 4-0",
     "longestWinningStreak": "Invincibles 7",
@@ -358,6 +307,23 @@
       "daddytate",
       "angolarookie",
       "deeznutterz"
-    ]
+    ],
+    "sleeperStatusNowFinal": true,
+    "officialStandingsVerified": true,
+    "officialTotalsVerified": true,
+    "douglasAdjustmentApplied": false,
+    "noWinnerChangeFromAdjustmentRemoval": true
+  },
+  "withdrawnAdjustment": {
+    "team": "Buy the Dip-hins",
+    "previousTemporarySiteScore": 134.3,
+    "officialSleeperScore": 124.3,
+    "removedBenchAdjustment": {
+      "player": "Caleb Douglas",
+      "position": "WR",
+      "points": 10
+    },
+    "canonicalScore": 124.3,
+    "winnerChanged": false
   }
 }
