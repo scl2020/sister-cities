@@ -64,6 +64,10 @@
   },
   "avatar": null,
   "company_id": null,
+  "shard": 556,
+  "season": "2021",
+  "season_type": "regular",
+  "sport": "nfl",
   "scoring_settings": {
     "sack": 1,
     "fgm_40_49": 4,
@@ -125,10 +129,6 @@
     "pts_allow_7_13": 6,
     "st_ff": 0.5
   },
-  "season": "2021",
-  "season_type": "regular",
-  "shard": 556,
-  "sport": "nfl",
   "last_message_id": "828016639248351232",
   "last_author_avatar": null,
   "last_author_display_name": "sys",
