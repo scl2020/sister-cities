@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-9 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 9 was re-verified after Sleeper rollover and uses the official Buy the Dip-hins score of 124.30.
+// Weeks 1-10 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 9 was re-verified after Sleeper rollover; Week 10 totals were verified against connected Sleeper starter sums while rollover status lagged.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -75,23 +75,30 @@
     { week:9, matchupId:3, left:"sixowls"           , leftScore:123.28, right:"deeznutterz"       , rightScore:88.16  },
     { week:9, matchupId:5, left:"maleksexcornflex"  , leftScore:132.50, right:"barjalona"         , rightScore:106.34 },
     { week:9, matchupId:4, left:"daddytate"         , leftScore:112.38, right:"snorlax"           , rightScore:169.46 },
-    { week:9, matchupId:2, left:"miami"             , leftScore:124.30, right:"svetunited"        , rightScore:88.80  }
+    { week:9, matchupId:2, left:"miami"             , leftScore:124.30, right:"svetunited"        , rightScore:88.80  },
+
+    // WEEK 10
+    { week:10, matchupId:1, left:"drhtown"          , leftScore:154.16, right:"miami"             , rightScore:108.30 },
+    { week:10, matchupId:2, left:"sixowls"          , leftScore:137.00, right:"angolarookie"      , rightScore:112.02 },
+    { week:10, matchupId:5, left:"maleksexcornflex" , leftScore:171.92, right:"snorlax"           , rightScore:186.54 },
+    { week:10, matchupId:3, left:"daddytate"        , leftScore:171.08, right:"svetunited"        , rightScore:130.22 },
+    { week:10, matchupId:4, left:"barjalona"        , leftScore:86.38,  right:"deeznutterz"       , rightScore:155.66 }
   ]);
 
-  // Official Sleeper cumulative totals after finalized Week 9. Re-verified
-  // after Sleeper rolled the Week 9 standings; Buy the Dip-hins uses the official
-  // 124.30 score with no Caleb Douglas bench adjustment.
+  // Canonical cumulative totals after finalized Week 10. Sleeper's cumulative
+  // standings were still showing Week 9 when Week 10 was declared complete, so
+  // these use the finalized Week 9 baseline plus verified Week 10 matchup totals.
   const OFFICIAL_TOTALS = Object.freeze({
-    snorlax            : { pf:1356.80, pa:1290.96 },
-    sixowls            : { pf:1224.24, pa:1086.04 },
-    barjalona          : { pf:1198.68, pa:1116.06 },
-    maleksexcornflex   : { pf:1242.06, pa:1146.38 },
-    drhtown            : { pf:1156.40, pa:1290.46 },
-    svetunited         : { pf:1092.88, pa:1148.22 },
-    miami              : { pf:1281.72, pa:1200.68 },
-    deeznutterz        : { pf:1017.94, pa:1175.36 },
-    daddytate          : { pf:1106.52, pa:1171.66 },
-    angolarookie       : { pf:1070.22, pa:1121.64 }
+    snorlax            : { pf:1543.34, pa:1462.88 },
+    sixowls            : { pf:1361.24, pa:1198.06 },
+    barjalona          : { pf:1285.06, pa:1271.72 },
+    maleksexcornflex   : { pf:1413.98, pa:1332.92 },
+    drhtown            : { pf:1310.56, pa:1398.76 },
+    svetunited         : { pf:1223.10, pa:1319.30 },
+    miami              : { pf:1390.02, pa:1354.84 },
+    deeznutterz        : { pf:1173.60, pa:1261.74 },
+    daddytate          : { pf:1277.60, pa:1301.88 },
+    angolarookie       : { pf:1182.24, pa:1258.64 }
   });
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -405,6 +412,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper finalized Weeks 1-9 data; prior accepted corrections preserved; Week 9 re-verified after official rollover with Buy the Dip-hins at 124.30"
+    source:"Sleeper verified Weeks 1-10 data; prior accepted corrections preserved; Week 10 team totals cross-checked against starter sums while rollover status lagged"
   });
 })();
