@@ -68,6 +68,10 @@
   "avatar": null,
   "company_id": null,
   "league_id": "1124816318139219968",
+  "shard": 380,
+  "season": "2024",
+  "season_type": "regular",
+  "sport": "nfl",
   "scoring_settings": {
     "sack": 1,
     "fgm_40_49": 4,
@@ -129,10 +133,6 @@
     "pts_allow_7_13": 6,
     "st_ff": 0.5
   },
-  "season": "2024",
-  "season_type": "regular",
-  "sport": "nfl",
-  "shard": 380,
   "last_message_id": "1180084123251777537",
   "draft_id": "1124816318139219969",
   "last_author_avatar": null,
@@ -146,7 +146,6 @@
   "last_read_id": null,
   "previous_league_id": "992917547848704000",
   "bracket_id": 1172489047940026400,
-  "bracket_overrides_id": null,
   "roster_positions": [
     "QB",
     "RB",
@@ -164,6 +163,7 @@
     "BN",
     "BN"
   ],
+  "bracket_overrides_id": null,
   "group_id": null,
   "loser_bracket_id": 1172489047948415000,
   "loser_bracket_overrides_id": null,
