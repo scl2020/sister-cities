@@ -2,7 +2,7 @@
 // SISTER CITIES — 2026 LIVE REGULAR-SEASON DATA
 // Canonical completed-week layer. Update FINALIZED_GAMES only after the user
 // declares a week complete; every derived view is rebuilt from that one source.
-// Weeks 1-10 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 9 was re-verified after Sleeper rollover; Week 10 totals were verified against connected Sleeper starter sums while rollover status lagged.
+// Weeks 1-11 source: finalized connected Sleeper results; Week 4 includes the 6ixOwls post-final scoring adjustment; Week 6 includes the commissioner-approved Deez Nutterz 111.28 lineup correction; Week 7 late Sleeper stat corrections are incorporated; Week 9 was re-verified after Sleeper rollover; Week 10 was re-verified after rollover; Week 11 totals were verified against connected Sleeper starter sums while rollover status lagged.
 // =====================
 
 (function initScl2026LiveSeason(){
@@ -82,23 +82,30 @@
     { week:10, matchupId:2, left:"sixowls"          , leftScore:137.00, right:"angolarookie"      , rightScore:112.02 },
     { week:10, matchupId:5, left:"maleksexcornflex" , leftScore:171.92, right:"snorlax"           , rightScore:186.54 },
     { week:10, matchupId:3, left:"daddytate"        , leftScore:171.08, right:"svetunited"        , rightScore:130.22 },
-    { week:10, matchupId:4, left:"barjalona"        , leftScore:86.38,  right:"deeznutterz"       , rightScore:155.66 }
+    { week:10, matchupId:4, left:"barjalona"        , leftScore:86.38,  right:"deeznutterz"       , rightScore:155.66 },
+
+    // WEEK 11
+    { week:11, matchupId:1, left:"drhtown"          , leftScore:112.60, right:"sixowls"           , rightScore:120.36 },
+    { week:11, matchupId:4, left:"maleksexcornflex" , leftScore:179.56, right:"svetunited"        , rightScore:117.74 },
+    { week:11, matchupId:2, left:"daddytate"        , leftScore:117.74, right:"miami"             , rightScore:111.82 },
+    { week:11, matchupId:3, left:"angolarookie"     , leftScore:126.20, right:"barjalona"         , rightScore:118.10 },
+    { week:11, matchupId:5, left:"deeznutterz"      , leftScore:119.96, right:"snorlax"           , rightScore:115.26 }
   ]);
 
-  // Canonical cumulative totals after finalized Week 10. Sleeper's cumulative
-  // standings were still showing Week 9 when Week 10 was declared complete, so
-  // these use the finalized Week 9 baseline plus verified Week 10 matchup totals.
+  // Canonical cumulative totals after finalized Week 11. Sleeper's cumulative
+  // standings were still showing Week 10 when Week 11 was declared complete, so
+  // these use the finalized Week 10 baseline plus verified Week 11 matchup totals.
   const OFFICIAL_TOTALS = Object.freeze({
-    snorlax            : { pf:1543.34, pa:1462.88 },
-    sixowls            : { pf:1361.24, pa:1198.06 },
-    barjalona          : { pf:1285.06, pa:1271.72 },
-    maleksexcornflex   : { pf:1413.98, pa:1332.92 },
-    drhtown            : { pf:1310.56, pa:1398.76 },
-    svetunited         : { pf:1223.10, pa:1319.30 },
-    miami              : { pf:1390.02, pa:1354.84 },
-    deeznutterz        : { pf:1173.60, pa:1261.74 },
-    daddytate          : { pf:1277.60, pa:1301.88 },
-    angolarookie       : { pf:1182.24, pa:1258.64 }
+    snorlax            : { pf:1658.60, pa:1582.84 },
+    sixowls            : { pf:1481.60, pa:1310.66 },
+    barjalona          : { pf:1403.16, pa:1397.92 },
+    maleksexcornflex   : { pf:1593.54, pa:1450.66 },
+    drhtown            : { pf:1423.16, pa:1519.12 },
+    svetunited         : { pf:1340.84, pa:1498.86 },
+    miami              : { pf:1501.84, pa:1472.58 },
+    deeznutterz        : { pf:1293.56, pa:1377.00 },
+    daddytate          : { pf:1395.34, pa:1413.70 },
+    angolarookie       : { pf:1308.44, pa:1376.74 }
   });
 
   const completedWeek = FINALIZED_GAMES.reduce((max, game) => Math.max(max, Number(game.week) || 0), 0);
@@ -412,6 +419,6 @@
     standingsRows:standings.length,
     statsRows:seasonStats.length,
     h2hGamesCount:window.SISTER_CITIES_H2H_HISTORY?.gamesCount || null,
-    source:"Sleeper verified Weeks 1-10 data; prior accepted corrections preserved; Week 10 team totals cross-checked against starter sums while rollover status lagged"
+    source:"Sleeper verified Weeks 1-11 data; prior accepted corrections preserved; Week 10 re-verified after rollover; Week 11 team totals cross-checked against starter sums while rollover status lagged"
   });
 })();
