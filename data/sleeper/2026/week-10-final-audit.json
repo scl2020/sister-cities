@@ -3,13 +3,14 @@
   "season": 2026,
   "week": 10,
   "scope": "regular season only",
-  "source": "Connected Sleeper Week 10 matchup totals, verified by summing every listed starter. Sleeper status/cumulative standings were still on Week 9 when the user declared Week 10 complete.",
+  "source": "Post-rollover Week 10 verification against finalized Sleeper matchup scores and official cumulative standings.",
   "verification": {
     "allTenTeamTotalsMatchStarterSums": true,
-    "sleeperMatchupStatusAtFinalization": "in_progress",
-    "sleeperCumulativeStandingsThroughWeek": 9,
+    "sleeperMatchupStatusAtFinalization": "final",
+    "sleeperCumulativeStandingsThroughWeek": 10,
     "priorWeekVerifiedFinal": true,
-    "canonicalPolicy": "Use finalized Week 9 baseline plus verified Week 10 matchup totals; preserve all prior accepted SCL corrections."
+    "canonicalPolicy": "Use finalized Week 9 baseline plus verified Week 10 matchup totals; preserve all prior accepted SCL corrections.",
+    "officialStandingsVerified": true
   },
   "bestTeam": {
     "team": "Snorlax",
@@ -307,7 +308,7 @@
     "seasonStats": 14,
     "week10BestTeam": "Snorlax 186.54",
     "sleeperTotalsVerifiedByStarterSums": true,
-    "sleeperStatusLagDocumented": true,
+    "sleeperStatusLagDocumented": false,
     "noNewAllTimeRecord": true,
     "bestStartOfSeason": "Snorlax 4-0",
     "longestWinningStreak": "Invincibles 7",
@@ -323,6 +324,9 @@
       "miami",
       "angolarookie",
       "deeznutterz"
-    ]
+    ],
+    "sleeperStatusNowFinal": true,
+    "officialStandingsVerified": true,
+    "officialTotalsVerified": true
   }
 }
